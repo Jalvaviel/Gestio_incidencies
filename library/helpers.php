@@ -1,5 +1,5 @@
 <?php
-function send_to($url)  // Función que sirve para redireccionar a otra página
+function url_function($url)  // Función que sirve para redireccionar a otra página
 {    
     header("Location: $url");
     die();
@@ -7,7 +7,7 @@ function send_to($url)  // Función que sirve para redireccionar a otra página
 
 function database_connect($user, $password) // Función que crea la conexion con la base de datos gestio_incidencies.
 {
-    return mysqli_connect("127.0.0.1", $user, hash_passwords($password), "gestio_incidencies");
+    return mysqli_connect("127.0.0.1", $user, $password, "gestio_incidencies");
 }
 
 function test_database_connection()

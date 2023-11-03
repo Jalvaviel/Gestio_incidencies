@@ -57,7 +57,7 @@ CREATE TABLE `incidents` (
   `date` date DEFAULT NULL,
   `id_user` int NOT NULL,
   PRIMARY KEY (`id_incident`),
-  FOREIGN KEY (`id_user`)
+  FOREIGN KEY (`id_user`) REFERENCES users (id_user)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -108,13 +108,20 @@ UNLOCK TABLES;
 
 -- Dump completed on 2023-11-02 13:24:59
 
+DROP USER IF EXISTS 'treballador'@'127.0.0.1';
+DROP USER IF EXISTS 'tecnic'@'127.0.0.1';
 DROP USER IF EXISTS 'jalvabot'@'127.0.0.1';
 
-CREATE USER 'treballador'@'127.0.0.1' IDENTIFIED BY '9073376d33cee68ac03143f917defc2f893519f9eb63ccd9bc1e47ca96aa327c';
+/*
+  Hay que poner las contaseñas sin proteger(hash) al importar, o da
+  problemas al iniciar sesión.
+*/
 
-CREATE USER 'tecnic'@'127.0.0.1' IDENTIFIED BY 'ef6407b112b9f97624772a896b99266035ceefb4c0afb961136d7efd888f64fd';
+CREATE USER 'treballador'@'127.0.0.1' IDENTIFIED BY 'Xf4,5iB8£9q3%';
 
-CREATE USER 'jalvabot'@'127.0.0.1' IDENTIFIED BY '8d22c90a23de826cf47ab427289ac43c4f42c0312fa8e368e338b29928cec808';
+CREATE USER 'tecnic'@'127.0.0.1' IDENTIFIED BY 'H9t#11B}<$?0~>';
+
+CREATE USER 'jalvabot'@'127.0.0.1' IDENTIFIED BY 'c0Oku)44:jV^|X}bv1O@£o?n)';
 
 GRANT INSERT, SELECT ON gestio_incidencies.incidents TO 'treballador'@'127.0.0.1';
 GRANT SELECT ON gestio_incidencies.devices TO 'treballador'@'127.0.0.1';
@@ -126,3 +133,5 @@ GRANT SELECT ON gestio_incidencies.users TO 'tecnic'@'127.0.0.1';
 GRANT CREATE, INSERT, UPDATE, DELETE, SELECT ON gestio_incidencies.incidents TO 'jalvabot'@'127.0.0.1';
 GRANT CREATE, INSERT, UPDATE, DELETE, SELECT ON gestio_incidencies.devices TO 'jalvabot'@'127.0.0.1';
 GRANT CREATE, INSERT, UPDATE, DELETE, SELECT ON  gestio_incidencies.users TO 'jalvabot'@'127.0.0.1';
+
+INSERT INTO users VALUES (1,'Admin','admin','admin@jviladoms.cat','b03ddf3ca2e714a6548e7495e2a03f5e824eaac9837cd7f159c67b90fb4b7342','admin');
