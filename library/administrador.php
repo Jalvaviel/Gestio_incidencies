@@ -1,5 +1,8 @@
 <?php
 include "funciones.php";
+include "treballador.php";
+include "tecnic.php";
+
 function insert_into_users($conexio, $id, $name, $surname, $email, $password, $role)
 {
     $enc_passwd = hash("sha256", $password);
@@ -8,10 +11,10 @@ function insert_into_users($conexio, $id, $name, $surname, $email, $password, $r
     mysqli_close($connect);
 }
 
-function insert_into_incidents($conexio, $id, $description, $status, $date)
+function insert_into_devices($conexio, $id,$os, $code, $description, $room, $ip)
 {
     $connect = database_connect();
-    mysqli_query($connect, "insert $id, $description, $status, $date into gestio_incidencies.incidents");
+    mysqli_query($connect, "insert $id, $os, $code, $description, $room, $ip into gestio_incidencies.incidents");
     mysqli_close($connect);
 }
 ?>
