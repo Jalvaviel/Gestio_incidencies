@@ -6,12 +6,15 @@ function send_to($url)  // Función que sirve para redireccionar a otra página
 
 function database_connect() // Función que crea la conexion con la base de datos gestio_incidencies.
 {
-    return mysqli_connect("127.0.0.1", getenv("user"), getenv("password"), "gestio_incidencies");
+    $env = parse_ini_file('.env');
+    $user = $env['user'];
+    $password = $env['password'];
+    return mysqli_connect("127.0.0.1", $user, hash("sha256",$password), "gestio_incidencies");
 }
 
-function test_database_connection($username, $password)
+function test_database_connection()
 {
-$connect = database_connect(); // Función que hace una prueba para saber si hace bien la conexión y debugging.
+    $connect = database_connect(); // Función que hace una prueba para saber si hace bien la conexión y debugging.
     if (!$connect) 
     {
         echo "Error: No se pudo conectar a MySQL." . PHP_EOL;
