@@ -134,4 +134,4 @@ GRANT CREATE, INSERT, UPDATE, DELETE, SELECT ON gestio_incidencies.incidents TO 
 GRANT CREATE, INSERT, UPDATE, DELETE, SELECT ON gestio_incidencies.devices TO 'jalvabot'@'127.0.0.1';
 GRANT CREATE, INSERT, UPDATE, DELETE, SELECT ON  gestio_incidencies.users TO 'jalvabot'@'127.0.0.1';
 
-INSERT INTO users VALUES (1,'Admin','admin','admin@jviladoms.cat','b03ddf3ca2e714a6548e7495e2a03f5e824eaac9837cd7f159c67b90fb4b7342','admin');
+INSERT INTO users VALUES (1,'Admin','admin','admin@jviladoms.cat','$2y$13$Pj55Y1Zyc0V4NGFxQURaSeKYn960V4t.mfoSLBK0PH6/DSHmXHKm6','admin');
