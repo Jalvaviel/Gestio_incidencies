@@ -1,3 +1,42 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: Monospaced;
+}
+
+body {
+    background: rgb(165,141,181);
+    background: linear-gradient(90deg, rgba(165,141,181,1) 0%, rgba(255,176,176,1) 50%, rgba(255,226,184,1) 100%);
+}
+
 h1 {
-    color: red;
+    font-size: xxx-large;
+    text-align: center;
+    margin: 40px;
+}
+form {
+    font-size: x-large;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+input {
+    width: 50%;
+    height: 40px;
+    margin: 20px;
+    text-align: center;
+    border-radius: 10px;
+    font-size: x-large;
+}
+.button{
+    width: 20%;
+}
+
+body footer {
+    position: absolute;
+    bottom: 0;
+    color: grey;
+    width: 100%;
+    text-align: end;
 }
