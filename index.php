@@ -1,5 +1,4 @@
 <?php
-$nuevaURL = "/Gestio_incidencies/html/login";
-header("Location: $nuevaURL.html");
-die();
+include "library/funciones.php";
+send_to("/Gestio_incidencies/html/login.php");
 ?>
