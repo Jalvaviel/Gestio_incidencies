@@ -1,17 +1,17 @@
 <?php
-function send_to($url)
+function send_to($url)  // Función que sirve para redireccionar a otra página
 {    header("Location: $url");
     die();
 }
 
-function database_connect()
+function database_connect() // Función que crea la conexion con la base de datos gestio_incidencies.
 {
     return mysqli_connect("127.0.0.1", "jalvabot", "Xf4,5iB8£9q3%", "gestio_incidencies");
 }
 
 function test_database_connexion()
 {
-    $connect = database_connect();
+    $connect = database_connect(); // Función que hace una prueba para saber si hace bien la conexión y debugging.
     if (!$connect) 
     {
         echo "Error: No se pudo conectar a MySQL." . PHP_EOL;
@@ -25,7 +25,4 @@ function test_database_connexion()
 
     mysqli_close($connect);
 }
-
-?>
-
 ?>
