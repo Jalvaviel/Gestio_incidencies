@@ -81,6 +81,7 @@ CREATE TABLE `users` (
   `surname` varchar(200) COLLATE utf8mb4_spanish_ci NOT NULL,
   `email` varchar(200) COLLATE utf8mb4_spanish_ci NOT NULL,
   `password` varchar(256) COLLATE utf8mb4_spanish_ci NOT NULL,
+  `role` varchar(256) COLLATE utf8mb4_spanish_ci NOT NULL,
   PRIMARY KEY (`id_user`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
