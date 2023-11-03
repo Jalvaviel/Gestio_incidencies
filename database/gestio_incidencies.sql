@@ -105,8 +105,8 @@ UNLOCK TABLES;
 
 -- Dump completed on 2023-11-02 13:24:59
 
-DROP USER IF EXISTS jalvabot;
+DROP USER IF EXISTS 'jalvabot'@'127.0.0.1';
 
-CREATE USER 'jalvabot'@'127.0.0.1' IDENTIFIED BY 'Xf4,5iB8£9q3%';
+CREATE USER 'jalvabot'@'127.0.0.1' IDENTIFIED BY '9073376d33cee68ac03143f917defc2f893519f9eb63ccd9bc1e47ca96aa327c';
 
 GRANT CREATE, INSERT, UPDATE, DELETE, SELECT ON gestio_incidencies TO 'jalvabot'@'127.0.0.1';
