@@ -1,5 +1,5 @@
 <?php
-include "funciones.php";
+include "helpers.php";
 include "treballador.php";
 include "tecnic.php";
 

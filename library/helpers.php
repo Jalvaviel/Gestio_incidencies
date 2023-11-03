@@ -9,7 +9,7 @@ function database_connect() // Función que crea la conexion con la base de dato
     $env = parse_ini_file('.env');
     $user = $env['user'];
     $password = $env['password'];
-    return mysqli_connect("127.0.0.1", $user, hash("sha256",$password), "gestio_incidencies");
+    return mysqli_connect("127.0.0.1", $user, hash_passwords($password), "gestio_incidencies");
 }
 
 function test_database_connection()
@@ -29,4 +29,10 @@ function test_database_connection()
     mysqli_close($connect);
 }
 
+function hash_passwords($password)
+{
+    $env = parse_ini_file('.env');
+    $options = ['cost'=>$env['cost'], 'salt'=>$env['salt']];
+    return password_hash($password,PASSWORD_BCRYPT,$options);
+}
 ?>

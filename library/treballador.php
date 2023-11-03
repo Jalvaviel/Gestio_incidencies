@@ -1,5 +1,5 @@
 <?php
-include "funciones.php";
+include "helpers.php";
 function insert_into_incidents($conexio, $id, $description, $status, $date)
 {
     $connect = database_connect();
