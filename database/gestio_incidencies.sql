@@ -109,4 +109,6 @@ DROP USER IF EXISTS 'jalvabot'@'127.0.0.1';
 
 CREATE USER 'jalvabot'@'127.0.0.1' IDENTIFIED BY '9073376d33cee68ac03143f917defc2f893519f9eb63ccd9bc1e47ca96aa327c';
 
-GRANT CREATE, INSERT, UPDATE, DELETE, SELECT ON gestio_incidencies TO 'jalvabot'@'127.0.0.1';
+GRANT CREATE, INSERT, UPDATE, DELETE, SELECT ON gestio_incidencies.devices TO 'jalvabot'@'127.0.0.1';
+GRANT CREATE, INSERT, UPDATE, DELETE, SELECT ON gestio_incidencies.incidents TO 'jalvabot'@'127.0.0.1';
+GRANT CREATE, INSERT, UPDATE, DELETE, SELECT ON  gestio_incidencies.users TO 'jalvabot'@'127.0.0.1';
