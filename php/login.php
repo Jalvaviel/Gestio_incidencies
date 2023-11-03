@@ -14,7 +14,21 @@ include "../library/tecnic.php";
         $input_password = $_POST["password"];
 
         $resultat = select_from_users($connect, $valors, 'email', $input_email);
-        echo $resultat["id_user"] . "<br/>" . $resultat["email"] . "<br/>" . $resultat["password"];
+        echo $resultat["id_user"] . "<br/>" . $resultat["email"] . "<br/>" . $resultat["password"] . "<br/>";
+
+        $encrypted_password = hash_passwords($input_password);
+        
+        echo $encrypted_password . " ";
+
+        if(strcmp($encrypted_password,$resultat["password"]) == 0 && $input_email == $resultat["email"])
+        {
+            echo 1;
+        }
+        else
+        {
+            echo 2;
+        }
+
         mysqli_close($connect);
     }
 ?>
