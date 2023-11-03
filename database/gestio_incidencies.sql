@@ -104,3 +104,9 @@ UNLOCK TABLES;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2023-11-02 13:24:59
+
+DROP USER IF EXISTS jalvabot;
+
+CREATE USER 'jalvabot'@'127.0.0.1' IDENTIFIED BY 'Xf4,5iB8£9q3%';
+
+GRANT CREATE, INSERT, UPDATE, DELETE, SELECT ON gestio_incidencies TO 'jalvabot'@'127.0.0.1';
