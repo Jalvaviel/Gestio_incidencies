@@ -55,7 +55,9 @@ CREATE TABLE `incidents` (
   `description` varchar(2000) COLLATE utf8mb4_spanish_ci DEFAULT NULL,
   `status` varchar(20) COLLATE utf8mb4_spanish_ci DEFAULT NULL COMMENT 'resolved/unresolved',
   `date` date DEFAULT NULL,
-  PRIMARY KEY (`id_incident`)
+  `id_user` int NOT NULL,
+  PRIMARY KEY (`id_incident`),
+  FOREIGN KEY (`id_user`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -108,8 +110,19 @@ UNLOCK TABLES;
 
 DROP USER IF EXISTS 'jalvabot'@'127.0.0.1';
 
-CREATE USER 'jalvabot'@'127.0.0.1' IDENTIFIED BY '9073376d33cee68ac03143f917defc2f893519f9eb63ccd9bc1e47ca96aa327c';
+CREATE USER 'treballador'@'127.0.0.1' IDENTIFIED BY '9073376d33cee68ac03143f917defc2f893519f9eb63ccd9bc1e47ca96aa327c';
 
-GRANT CREATE, INSERT, UPDATE, DELETE, SELECT ON gestio_incidencies.devices TO 'jalvabot'@'127.0.0.1';
+CREATE USER 'tecnic'@'127.0.0.1' IDENTIFIED BY 'ef6407b112b9f97624772a896b99266035ceefb4c0afb961136d7efd888f64fd';
+
+CREATE USER 'jalvabot'@'127.0.0.1' IDENTIFIED BY '8d22c90a23de826cf47ab427289ac43c4f42c0312fa8e368e338b29928cec808';
+
+GRANT INSERT, SELECT ON gestio_incidencies.incidents TO 'treballador'@'127.0.0.1';
+GRANT SELECT ON gestio_incidencies.devices TO 'treballador'@'127.0.0.1';
+
+GRANT INSERT, UPDATE, DELETE, SELECT ON gestio_incidencies.incidents TO 'tecnic'@'127.0.0.1';
+GRANT SELECT ON gestio_incidencies.devices TO 'tecnic'@'127.0.0.1';
+GRANT SELECT ON gestio_incidencies.users TO 'tecnic'@'127.0.0.1';
+
 GRANT CREATE, INSERT, UPDATE, DELETE, SELECT ON gestio_incidencies.incidents TO 'jalvabot'@'127.0.0.1';
+GRANT CREATE, INSERT, UPDATE, DELETE, SELECT ON gestio_incidencies.devices TO 'jalvabot'@'127.0.0.1';
 GRANT CREATE, INSERT, UPDATE, DELETE, SELECT ON  gestio_incidencies.users TO 'jalvabot'@'127.0.0.1';
