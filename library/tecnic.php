@@ -30,7 +30,7 @@ function select_from_users($connect,$array_a_consultar,$columna_a_comparar,$valo
         }
     }
     
-    $sql = "SELECT COUNT(id_user) FROM gestio_incidencies.users WHERE $columna_a_comparar = '$valor_a_buscar'";
+    $sql = "SELECT COUNT(id_user) FROM gestio_incidencies.users WHERE $columna_a_comparar = '$valor_a_buscar';";
     $check = mysqli_query($connect, $sql);
 
     if(mysqli_fetch_assoc($check)) // Comproba que s'han trobat al menys 1 usuari
