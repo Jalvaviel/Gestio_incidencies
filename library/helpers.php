@@ -1,5 +1,5 @@
 <?php
-function url_function($url)  // Función que sirve para redireccionar a otra página
+function to_url($url)  // Función que sirve para redireccionar a otra página
 {    
     header("Location: $url");
     die();
