@@ -27,10 +27,7 @@ session_start();
                 $_SESSION["id_user"] = $resultat["id_user"];
                 $_SESSION["email"] = $resultat["email"];
                 $_SESSION["role"] = $resultat["role"];
-                if(SESSION_DESTROY())
-                {
-                    to_url("/Gestio_incidencies/html/menu/");
-                }
+                to_url("/Gestio_incidencies/php/menu.php");
             }
             else
             {
