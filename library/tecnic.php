@@ -30,14 +30,14 @@ function select_from_users($connect,$array_a_consultar,$columna_a_comparar,$valo
         }
     }
     
-    $sql = "SELECT COUNT(id_user) FROM gestio_incidencies.users WHERE $columna_a_comparar = '$valor_a_buscar';";
+    $sql = "SELECT COUNT(id_user) FROM gestio_incidencies.users WHERE $columna_a_comparar = '$valor_a_buscar';"; // Separo la consulta para los sql injection
     $check = mysqli_query($connect, $sql);
 
     if(mysqli_fetch_assoc($check)) // Comproba que s'han trobat al menys 1 usuari
     {
         $sql = "SELECT $query FROM gestio_incidencies.users WHERE $columna_a_comparar = '$valor_a_buscar'";
-        $data = mysqli_query($connect, $sql); // fa la consulta
-        return mysqli_fetch_assoc($data);
+        $data = mysqli_query($connect, $sql); // Fa la consulta
+        return mysqli_fetch_assoc($data); // Retorna la consulta
     }
     else
     {

@@ -27,14 +27,22 @@ session_start();
                 $_SESSION["id_user"] = $resultat["id_user"];
                 $_SESSION["email"] = $resultat["email"];
                 $_SESSION["role"] = $resultat["role"];
+                if(SESSION_DESTROY())
+                {
+                    to_url("/Gestio_incidencies/html/menu/");
+                }
             }
             else
             {
+                $_SESSION = array();
+                SESSION_DESTROY();
                 to_url("/Gestio_incidencies/html/login.html");
             }
         }
         else
         {
+            $_SESSION = array();
+            SESSION_DESTROY();
             to_url("/Gestio_incidencies/html/login.html");
         }
         mysqli_close($connect);
