@@ -1,10 +1,6 @@
 <?php
 include "helpers.php";
-function insert_into_incidents($connect, $id, $description, $status, $date)
-{
-    mysqli_query($connect, "insert $id, $description, $status, $date into gestio_incidencies.incidents");
-    mysqli_close($connect);
-}
+
 function select_from($connect,$array_a_consultar,$base_de_dades="users",$columna_a_comparar=1,$valor_a_buscar=1)
 {
     /*
@@ -33,7 +29,7 @@ function select_from($connect,$array_a_consultar,$base_de_dades="users",$columna
         }
     }
     
-    $sql = "SELECT COUNT(id_user) FROM gestio_incidencies.$base_de_dades WHERE $columna_a_comparar = '$valor_a_buscar';"; // Separo la consulta para los sql injection
+    $sql = "SELECT COUNT(*) AS 'afected_rows' FROM gestio_incidencies.$base_de_dades WHERE $columna_a_comparar = '$valor_a_buscar';"; // Separo la consulta para los sql injection
     $check = mysqli_query($connect, $sql);
 
     if(mysqli_fetch_assoc($check)) // Comproba que s'han trobat al menys 1 usuari
@@ -46,5 +42,26 @@ function select_from($connect,$array_a_consultar,$base_de_dades="users",$columna
     {
         return "Error, no s'han trobat usuaris.";
     }
+}
+
+function insert_into($connect, $array_a_afegir, $base_de_dades="incidents")
+{
+    $valors = "(";
+    for($i = 0; $i < sizeof($array_a_afegir); $i++) // Objetivo del for, hacer que un array se transforme en (id_incident,description,status,date,id_user)
+    {
+        $valors = $valors + $array_a_afegir[$i];
+    }
+    $valors = ")";
+    $sql = "insert into gestio_incidencies.$base_de_dades VALUES $array_a_afegir"; // PD: la fecha tiene que ser en YYYY-MM-DD
+    $check = mysqli_query($connect, $sql);
+    if($check)
+    {
+        echo "<br/>S'ha inserit de manera satisfactoria<br/>";
+    }
+    else
+    {
+        echo "<br/>Error al inserir<br/>";
+    }
+    mysqli_close($connect);
 }
 ?>
