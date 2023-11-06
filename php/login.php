@@ -14,7 +14,7 @@ session_start();
         $input_email = $_POST["email"];
         $input_password = $_POST["password"];
 
-        if($resultat = select_from_users($connect, $valors, 'email', $input_email))
+        if($resultat = select_from($connect, "users", $valors, 'email', $input_email))
         {
             echo $resultat["id_user"] . "<br/>" . $resultat["email"] . "<br/>" . $resultat["password"] . "<br/>";
 

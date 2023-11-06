@@ -2,7 +2,7 @@
 
 include "treballador.php";
 
-function select_from_users($connect,$array_a_consultar,$base_de_dades="users",$columna_a_comparar=1,$valor_a_buscar=1)
+function select_from($connect,$array_a_consultar,$base_de_dades="users",$columna_a_comparar=1,$valor_a_buscar=1)
 {
     /*
     Justificación de la ida de olla siguiente:
