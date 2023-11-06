@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-
+        <link rel="stylesheet" src="../css/style.css">
     </head>
     <body>
         <header>
@@ -11,6 +11,10 @@
             <?php 
                 SESSION_START();
                 $rol = $_SESSION["role"];
+                if(!isset($_SESSION["role"]) || EMPTY($_SESSION["role"]))
+                {
+                    to_url("../html/login.html");
+                }
                 if(strcmp($rol,"treballador") == 0 || strcmp($rol,"tecnic") == 0 || strcmp($rol,"admin") == 0)
                 {
                     
