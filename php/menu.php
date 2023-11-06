@@ -18,6 +18,9 @@
                     <div>
                         <a href="">Incidencies</a>
                     </div>
+                    <div>
+                        <a href="">Reportar incidència</a>
+                    </div>
             <?php
                 }
             ?>
