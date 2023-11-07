@@ -8,7 +8,7 @@ class Device
     private string $ip;
     private string $room;
 
-    public function create_device($os, $code, $description, $ip, $room) : void{
+    public function create_device($os, $code, $description, $ip, $room) : void{ // Builder.
         $this->os = $os;
         $this->code = $code;
         $this->description = $description;
@@ -16,7 +16,7 @@ class Device
         $this->ip = $ip;
     }
 
-    public function get_device_properties() : array{
+    public function get_device_properties() : array{ // Associative array getter.
         return [
             'os' => $this->os,
             'code' => $this->code,
