@@ -47,7 +47,7 @@ class Device
         mysqli_close($connect);
     }
 
-    public function deleteDeviceFromDatabase(string $type, int $id) : void
+    public function deleteDeviceFromDatabase(string $type, int $id) : void //
     {
         $connect = databaseConnect($type);
         $statement = $connect->prepare("DELETE FROM gestio_incidencies.devices WHERE id_device = ?"); // Prepare and execute the insert to prevent SQL attacks.
