@@ -1,4 +1,15 @@
 <!DOCTYPE html>
+<?php
+include "../library/helpers.php";
+SESSION_START();
+if(!isset($_SESSION["role"]) || EMPTY($_SESSION["role"]))
+{
+    to_url("/gestio_incidencies/html/login.html");
+}
+else
+{
+    $rol = $_SESSION["role"];
+?>
 <html>
     <head>
         <link rel="stylesheet" src="../css/style.css">
@@ -8,16 +19,9 @@
             <h1>Menu</h1>
         </header>
         <nav>
-            <?php 
-                SESSION_START();
-                $rol = $_SESSION["role"];
-                if(!isset($_SESSION["role"]) || EMPTY($_SESSION["role"]))
-                {
-                    to_url("../html/login.html");
-                }
+            <?php     
                 if(strcmp($rol,"treballador") == 0 || strcmp($rol,"tecnic") == 0 || strcmp($rol,"admin") == 0)
                 {
-                    
             ?>
                     <div>
                         <a href="">Mostrar incidencies</a>
@@ -72,3 +76,6 @@
         </footer>
     </body>
 </html>
+<?php 
+}
+?>
