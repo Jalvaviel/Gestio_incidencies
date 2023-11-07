@@ -1,112 +1,124 @@
--- MySQL dump 10.13  Distrib 8.0.31, for Win64 (x86_64)
+-- phpMyAdmin SQL Dump
+-- version 5.1.1
+-- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1    Database: gestio_incidencies
--- ------------------------------------------------------
--- Server version	8.0.31
--- hola
+-- Servidor: 127.0.0.1:3306
+-- Tiempo de generación: 07-11-2023 a las 10:44:23
+-- Versión del servidor: 5.7.36
+-- Versión de PHP: 7.4.26
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8mb4 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+/*!40101 SET NAMES utf8mb4 */;
 
 --
--- Table structure for table `devices`
+-- Base de datos: `gestio_incidencies`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `devices`
 --
 
 DROP TABLE IF EXISTS `devices`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `devices` (
-  `id_device` int NOT NULL,
+CREATE TABLE IF NOT EXISTS `devices` (
+  `id_device` int(11) NOT NULL,
   `os` varchar(200) COLLATE utf8mb4_spanish_ci DEFAULT NULL COMMENT 'Operative System',
   `code` varchar(200) COLLATE utf8mb4_spanish_ci DEFAULT NULL,
   `description` varchar(2000) COLLATE utf8mb4_spanish_ci DEFAULT NULL,
-  `room` int DEFAULT NULL,
+  `room` int(11) DEFAULT NULL,
   `ip` varchar(15) COLLATE utf8mb4_spanish_ci DEFAULT NULL COMMENT 'internet protocol v4',
   PRIMARY KEY (`id_device`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+
+-- --------------------------------------------------------
 
 --
--- Dumping data for table `devices`
---
-
-LOCK TABLES `devices` WRITE;
-/*!40000 ALTER TABLE `devices` DISABLE KEYS */;
-/*!40000 ALTER TABLE `devices` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `incidents`
+-- Estructura de tabla para la tabla `incidents`
 --
 
 DROP TABLE IF EXISTS `incidents`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `incidents` (
-  `id_incident` int NOT NULL,
+CREATE TABLE IF NOT EXISTS `incidents` (
+  `id_incident` int(11) NOT NULL,
   `description` varchar(2000) COLLATE utf8mb4_spanish_ci DEFAULT NULL,
   `status` varchar(20) COLLATE utf8mb4_spanish_ci DEFAULT NULL COMMENT 'resolved/unresolved',
   `date` date DEFAULT NULL,
-  `id_user` int NOT NULL,
+  `id_user` int(11) NOT NULL,
   PRIMARY KEY (`id_incident`),
-  FOREIGN KEY (`id_user`) REFERENCES users (id_user)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+  KEY `id_user` (`id_user`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 
 --
--- Dumping data for table `incidents`
+-- Volcado de datos para la tabla `incidents`
 --
 
-LOCK TABLES `incidents` WRITE;
-/*!40000 ALTER TABLE `incidents` DISABLE KEYS */;
-/*!40000 ALTER TABLE `incidents` ENABLE KEYS */;
-UNLOCK TABLES;
+INSERT INTO `incidents` (`id_incident`, `description`, `status`, `date`, `id_user`) VALUES
+(1, 'test', 'unresolved', '2023-11-23', 1);
+
+-- --------------------------------------------------------
 
 --
--- Table structure for table `users`
+-- Estructura de tabla para la tabla `incidents_devices`
+--
+
+DROP TABLE IF EXISTS `incidents_devices`;
+CREATE TABLE IF NOT EXISTS `incidents_devices` (
+  `id` int(11) NOT NULL,
+  `id_incident` int(11) NOT NULL,
+  `id_device` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_incident` (`id_incident`),
+  KEY `fk_device` (`id_device`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `users`
 --
 
 DROP TABLE IF EXISTS `users`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `users` (
-  `id_user` int NOT NULL,
+CREATE TABLE IF NOT EXISTS `users` (
+  `id_user` int(11) NOT NULL,
   `name` varchar(200) COLLATE utf8mb4_spanish_ci NOT NULL,
   `surname` varchar(200) COLLATE utf8mb4_spanish_ci NOT NULL,
   `email` varchar(200) COLLATE utf8mb4_spanish_ci NOT NULL,
   `password` varchar(256) COLLATE utf8mb4_spanish_ci NOT NULL,
   `role` varchar(256) COLLATE utf8mb4_spanish_ci NOT NULL,
   PRIMARY KEY (`id_user`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 
 --
--- Dumping data for table `users`
+-- Volcado de datos para la tabla `users`
 --
 
-LOCK TABLES `users` WRITE;
-/*!40000 ALTER TABLE `users` DISABLE KEYS */;
-/*!40000 ALTER TABLE `users` ENABLE KEYS */;
-UNLOCK TABLES;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+INSERT INTO `users` (`id_user`, `name`, `surname`, `email`, `password`, `role`) VALUES
+(1, 'Admin', 'admin', 'admin@jviladoms.cat', '$2y$13$Pj55Y1Zyc0V4NGFxQURaSeKYn960V4t.mfoSLBK0PH6/DSHmXHKm6', 'admin');
 
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+--
+-- Restricciones para tablas volcadas
+--
+
+--
+-- Filtros para la tabla `incidents_devices`
+--
+ALTER TABLE `incidents_devices`
+  ADD CONSTRAINT `fk_device` FOREIGN KEY (`id_device`) REFERENCES `devices` (`id_device`),
+  ADD CONSTRAINT `fk_incident` FOREIGN KEY (`id_incident`) REFERENCES `incidents` (`id_incident`);
+COMMIT;
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-11-02 13:24:59
+-- Crear usuarios
 
 DROP USER IF EXISTS 'treballador'@'127.0.0.1';
 DROP USER IF EXISTS 'tecnic'@'127.0.0.1';
@@ -123,15 +135,36 @@ CREATE USER 'tecnic'@'127.0.0.1' IDENTIFIED BY 'H9t#11B}<$?0~>';
 
 CREATE USER 'jalvabot'@'127.0.0.1' IDENTIFIED BY 'c0Oku)44:jV^|X}bv1O@£o?n)';
 
-GRANT INSERT, SELECT ON gestio_incidencies.incidents TO 'treballador'@'127.0.0.1';
-GRANT SELECT ON gestio_incidencies.devices TO 'treballador'@'127.0.0.1';
 
-GRANT INSERT, UPDATE, DELETE, SELECT ON gestio_incidencies.incidents TO 'tecnic'@'127.0.0.1';
-GRANT SELECT ON gestio_incidencies.devices TO 'tecnic'@'127.0.0.1';
-GRANT SELECT ON gestio_incidencies.users TO 'tecnic'@'127.0.0.1';
+-- Privilegios para `jalvabot`@`127.0.0.1`
 
-GRANT CREATE, INSERT, UPDATE, DELETE, SELECT ON gestio_incidencies.incidents TO 'jalvabot'@'127.0.0.1';
-GRANT CREATE, INSERT, UPDATE, DELETE, SELECT ON gestio_incidencies.devices TO 'jalvabot'@'127.0.0.1';
-GRANT CREATE, INSERT, UPDATE, DELETE, SELECT ON  gestio_incidencies.users TO 'jalvabot'@'127.0.0.1';
+GRANT USAGE ON *.* TO 'jalvabot'@'127.0.0.1';
+
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE ON `gestio_incidencies`.`users` TO 'jalvabot'@'127.0.0.1';
+
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE ON `gestio_incidencies`.`devices` TO 'jalvabot'@'127.0.0.1';
+
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE ON `gestio_incidencies`.`incidents` TO 'jalvabot'@'127.0.0.1';
+
+
+-- Privilegios para `tecnic`@`127.0.0.1`
+
+GRANT USAGE ON *.* TO 'tecnic'@'127.0.0.1';
+
+GRANT SELECT ON `gestio_incidencies`.`users` TO 'tecnic'@'127.0.0.1';
+
+GRANT SELECT ON `gestio_incidencies`.`devices` TO 'tecnic'@'127.0.0.1';
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON `gestio_incidencies`.`incidents` TO 'tecnic'@'127.0.0.1';
+
+
+-- Privilegios para `treballador`@`127.0.0.1`
+
+GRANT USAGE ON *.* TO 'treballador'@'127.0.0.1';
+
+GRANT SELECT ON `gestio_incidencies`.`devices` TO 'treballador'@'127.0.0.1';
+
+GRANT SELECT, INSERT ON `gestio_incidencies`.`incidents` TO 'treballador'@'127.0.0.1';
+
 
 INSERT INTO users VALUES (1,'Admin','admin','admin@jviladoms.cat','$2y$13$Pj55Y1Zyc0V4NGFxQURaSeKYn960V4t.mfoSLBK0PH6/DSHmXHKm6','admin');
