@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <?php
 include "../library/helpers.php";
 SESSION_START();
@@ -10,9 +9,12 @@ else
 {
     $rol = $_SESSION["role"];
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="en">
     <head>
-        <link rel="stylesheet" src="../css/style.css">
+        <meta charset="UTF-8">
+        <title>Menu</title>
+        <link rel="stylesheet" href="../css/style.css">
     </head>
     <body>
         <header>

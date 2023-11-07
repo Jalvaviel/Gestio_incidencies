@@ -40,3 +40,18 @@ body footer {
     width: 100%;
     text-align: end;
 }
+
+nav
+{
+    display: flex;
+    justify-content: center;
+}
+nav div
+{
+    border: 1px black;
+    border-style: solid;
+    background-color: white;
+    margin: 2%;
+    justify-content: center;
+    display: flex;
+}
