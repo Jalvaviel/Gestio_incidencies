@@ -28,10 +28,15 @@ class User
         $this->role = null;
     }
 
-    public function insert(string $type)
+    public function insert(string $type, int $id)
     {
-        $connexio = databaseConnect($type);
-        
+        $connect = databaseConnect($type);
+        $statement = $connect->prepare("SELECT * FROM gestio_incidencies.devices WHERE id_device = ?"); // Prepara i executa el insert per prevenir SQL injections.
+        $statement->execute([$id]);
+        $user = $statement->get_result()->fetch_assoc();
+        $this->__construct($user['user_id'], $user['name'], $user['surname'], $user['email'], $user['password'], $user['role']);
+        mysqli_close($connect);
+
     }
 }
 ?>
