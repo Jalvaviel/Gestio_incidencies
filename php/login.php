@@ -7,7 +7,7 @@ session_start();
         $db_user = $env['technician']; // Faig servir el usuari tecnic perque nomes interesa fer un select
         $db_password = $env['technician_password'];
 
-        $connect = database_connect($db_user, $db_password); // Conexió a la base de dades
+        $connect = databaseConnect($db_user, $db_password); // Conexió a la base de dades
 
         $valors = ["id_user","email","password","role"];
         
@@ -18,7 +18,7 @@ session_start();
         {
             echo $resultat["id_user"] . "<br/>" . $resultat["email"] . "<br/>" . $resultat["password"] . "<br/>";
 
-            $encrypted_password = hash_passwords($input_password);
+            $encrypted_password = hashPasswords($input_password);
             
             echo $encrypted_password . " ";
     
@@ -27,20 +27,20 @@ session_start();
                 $_SESSION["id_user"] = $resultat["id_user"];
                 $_SESSION["email"] = $resultat["email"];
                 $_SESSION["role"] = $resultat["role"];
-                to_url("/Gestio_incidencies/php/menu.php");
+                toUrl("/Gestio_incidencies/php/menu.php");
             }
             else
             {
                 $_SESSION = array();
                 SESSION_DESTROY();
-                to_url("/Gestio_incidencies/html/login.html");
+                toUrl("/Gestio_incidencies/html/login.html");
             }
         }
         else
         {
             $_SESSION = array();
             SESSION_DESTROY();
-            to_url("/Gestio_incidencies/html/login.html");
+            toUrl("/Gestio_incidencies/html/login.html");
         }
         mysqli_close($connect);
     }

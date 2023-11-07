@@ -3,7 +3,7 @@ include "../library/helpers.php";
 SESSION_START();
 if(!isset($_SESSION["role"]) || EMPTY($_SESSION["role"]))
 {
-    to_url("/gestio_incidencies/html/login.html");
+    toUrl("/gestio_incidencies/html/login.html");
 }
 else
 {
