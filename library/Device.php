@@ -19,7 +19,8 @@ class Device
 
     public function getProperties() : array
     { // Getter d'una array associativa
-        return [
+        return 
+        [
             'os' => $this->os,
             'code' => $this->code,
             'description' => $this->description,
