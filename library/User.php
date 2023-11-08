@@ -21,18 +21,18 @@ class User
     public function insert(string $type, int $id)
     {
         $connect = databaseConnect($type);
-        $statement = $connect->prepare("SELECT * FROM gestio_incidencies.devices WHERE id_device = ?"); // Prepara i executa el insert per prevenir SQL injections.
+        $statement = $connect->prepare("SELECT * FROM gestio_incidencies.users WHERE id_device = ?"); // Prepara i executa el insert per prevenir SQL injections.
         $statement->execute([$id]);
         $user = $statement->get_result()->fetch_assoc();
         $this->__construct($user['user_id'], $user['name'], $user['surname'], $user['email'], $user['password'], $user['role']);
         mysqli_close($connect);
     }
 
-    public function select(string $type, int $id)
+    public function select(string $type, $id)
     {
         $connect = databaseConnect($type);
-        $statement = $connect->prepare("SELECT * FROM gestio_incidencies.devices WHERE id_device = ?"); // Prepara i executa el insert per prevenir SQL injections.
-        $statement->execute([$this->id_user]);
+        $statement = $connect->prepare("SELECT * FROM gestio_incidencies.users WHERE id_device = ?"); // Prepara i executa el insert per prevenir SQL injections.
+        $statement->execute([$id]);
         $user = $statement->get_result()->fetch_assoc();
         $this->id_user = $user['id_user'];
         $this->name = $user['name'];
@@ -42,5 +42,7 @@ class User
         $this->role = $user['role'];
         mysqli_close($connect);
     }
+
+
 }
 ?>
