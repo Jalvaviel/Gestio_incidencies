@@ -18,16 +18,6 @@ class User
         $this->role = $role;
     }
 
-    public function __destruct(): void
-    {
-        $this->id_user = null;
-        $this->name = null;
-        $this->surname = null;
-        $this->email = null;
-        $this->password = null;
-        $this->role = null;
-    }
-
     public function insert(string $type, int $id)
     {
         $connect = databaseConnect($type);
@@ -36,7 +26,21 @@ class User
         $user = $statement->get_result()->fetch_assoc();
         $this->__construct($user['user_id'], $user['name'], $user['surname'], $user['email'], $user['password'], $user['role']);
         mysqli_close($connect);
+    }
 
+    public function select(string $type, int $id)
+    {
+        $connect = databaseConnect($type);
+        $statement = $connect->prepare("SELECT * FROM gestio_incidencies.devices WHERE id_device = ?"); // Prepara i executa el insert per prevenir SQL injections.
+        $statement->execute([$this->id_user]);
+        $user = $statement->get_result()->fetch_assoc();
+        $this->id_user = $user['id_user'];
+        $this->name = $user['name'];
+        $this->surname = $user['surname'];
+        $this->email = $user['email'];
+        $this->password = $user['password'];
+        $this->role = $user['role'];
+        mysqli_close($connect);
     }
 }
 ?>
