@@ -27,7 +27,7 @@ class User
     {
         $connect = databaseConnect($type);
         $statement = $connect->prepare("SELECT * FROM gestio_incidencies.users WHERE id_user = ?"); // Prepara i executa el insert per prevenir SQL injections.
-        $statement->bind_param("s", $id);
+        $statement->bind_param("i", $id);
         $statement->execute();
         $user = $statement->get_result()->fetch_assoc();
         $this->__construct($user['user_id'], $user['name'], $user['surname'], $user['email'], $user['password'], $user['role']);
@@ -38,7 +38,7 @@ class User
     {
         $connect = databaseConnect($type); // Fa la conexió a la base de dades
         $statement = $connect->prepare("SELECT * FROM gestio_incidencies.users WHERE id_user = ?"); // Prepara i executa el insert per prevenir SQL injections. 
-        $statement->bind_param("s", $id);
+        $statement->bind_param("i", $id);
         if(!$statement->execute()) // Executa i comproba si s'executa bé el codi
         {
             echo("Error: " . $statement->error);
@@ -84,7 +84,7 @@ class User
     {
         $connect = databaseConnect($type);
         $statement = $connect->prepare("DELETE FROM gestio_incidencies.users WHERE id_user = ?"); // Prepara i executa el insert per prevenir SQL injections.
-        $statement->bind_param("s", $id);
+        $statement->bind_param("i", $id);
         $statement->execute();
         $user = $statement->get_result()->fetch_assoc();
         mysqli_close($connect);
