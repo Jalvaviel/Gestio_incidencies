@@ -90,10 +90,6 @@ class User
             $user = $statement->get_result()->fetch_assoc(); // Guarda la informació als atributs de la clase
             $this->__construct($user['id_user'], $user['name'], $user['surname'], $user['email'], $user['password'], $user['role']);
         }
-        else
-        {
-
-        }
         mysqli_close($connect); // Tanca la conexió
     }
 
