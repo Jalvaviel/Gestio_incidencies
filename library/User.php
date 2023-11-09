@@ -20,28 +20,7 @@ class User
 
     private function executeQuery($connect, $statement)
     {
-        if(!$statement) // Executa i comproba si s'executa bé el codi
-        {
-            echo("Error: " . $statement->error);
-        }
-        else
-        {
-            $affected_rows = $statement->affected_rows;
-            if($affected_rows <= 0) // Comproba si troba algún usuari
-            {
-                echo("Error: no s'ha trobat cap usuari."); 
-            }
-            else
-            {
-                $user = $statement->get_result()->fetch_assoc(); // Guarda la informació als atributs de la clase
-                $this->id_user = $user['id_user'];
-                $this->name = $user['name'];
-                $this->surname = $user['surname'];
-                $this->email = $user['email'];
-                $this->password = $user['password'];
-                $this->role = $user['role'];
-            }
-        }
+        
     }
 
     public function insert(string $type, int $id)
@@ -57,24 +36,23 @@ class User
     public function select(string $type, $id) // Funció dedicada a buscar usuaris per ID únicament
     {
         $connect = databaseConnect($type); // Fa la conexió a la base de dades
-        $statement = $connect->prepare("SELECT * FROM gestio_incidencies.users WHERE id_user = ?"); // Prepara i executa el insert per prevenir SQL injections.
-        $statement->execute([$id]); // Executa i comproba si s'executa bé el codi
-        $this->executeQuery($connect, $statement);
-        /*
+        $statement = $connect->prepare("SELECT * FROM gestio_incidencies.users WHERE id_user = ?"); // Prepara i executa el insert per prevenir SQL injections. 
+        $statement->bind_param("s", $id);
+        if(!$statement->execute()) // Executa i comproba si s'executa bé el codi
         {
             echo("Error: " . $statement->error);
         }
         else
         {
-            $affected_rows = $statement->affected_rows;
-            if($affected_rows <= 0) // Comproba si troba algún usuari
+            $num_rows = $statement->num_rows;
+            if($num_rows <= 0) // Comproba si troba algún usuari
             {
                 echo("Error: no s'ha trobat cap usuari."); 
             }
             else
             {
                 $user = $statement->get_result()->fetch_assoc(); // Guarda la informació als atributs de la clase
-                $this->id_user = $id;
+                $this->id_user = $user['id_user'];
                 $this->name = $user['name'];
                 $this->surname = $user['surname'];
                 $this->email = $user['email'];
@@ -82,7 +60,6 @@ class User
                 $this->role = $user['role'];
             }
         }
-        */
         mysqli_close($connect); // Tanca la conexió
     }
 
@@ -90,7 +67,8 @@ class User
     {
         $connect = databaseConnect($type);
         $statement = $connect->prepare("SELECT * FROM gestio_incidencies.users WHERE email = ?"); // Prepara i executa el insert per prevenir SQL injections.
-        $statement->execute([$email]);
+        $statement->bind_param("s", $email);
+        $statement->execute();
         $user = $statement->get_result()->fetch_assoc();
         $this->id_user = $user['id_user'];
         $this->name = $user['name'];
@@ -110,6 +88,17 @@ class User
         mysqli_close($connect);
     }
 
+    public function getInfo()
+    {
+        return [
+            $this->id_user,
+            $this->name,
+            $this->surname,
+            $this->email,
+            $this->password,
+            $this->role
+        ];
+    }
 
 }
 ?>
