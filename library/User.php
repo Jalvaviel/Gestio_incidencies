@@ -17,12 +17,56 @@ class User
         $this->password = $password;
         $this->role = $role;
     }
-/*
-    private function executeQuery($connect, $statement)
+
+    private function checkErrors($connect, string $condition, int $mode=1)
     {
-        
+        $check = true;
+        if($mode == 1)
+        {
+            $statement = $connect->prepare("SELECT COUNT(id_user) AS 'num' FROM gestio_incidencies.users WHERE id_user = ?"); // Prepara i executa el insert per prevenir SQL injections.
+            $statement->bind_param("i", $condition);
+            if(!$statement->execute()) // Executa i comproba si s'executa bé el codi
+            {
+                echo("Error: " . $statement->error);
+                $check = false;
+            }
+            else
+            {
+                $rows_selected = $statement->get_result()->fetch_assoc();
+                if($rows_selected["num"] <= 0) // Comproba si troba algún usuari
+                {
+                    echo("Error: no s'ha trobat cap usuari."); 
+                    $check = false;
+                }
+            }
+        }
+        elseif($mode == 2)
+        {
+            $statement = $connect->prepare("SELECT COUNT(id_user) AS 'num' FROM gestio_incidencies.users WHERE email = ?"); // Prepara i executa el insert per prevenir SQL injections.
+            $statement->bind_param("s", $condition);
+            if(!$statement->execute()) // Executa i comproba si s'executa bé el codi
+            {
+                echo("Error: " . $statement->error);
+                $check = false;
+            }
+            else
+            {
+                $rows_selected = $statement->get_result()->fetch_assoc();
+                if($rows_selected["num"] <= 0) // Comproba si troba algún usuari
+                {
+                    echo("Error: no s'ha trobat cap usuari."); 
+                    $check = false;
+                }
+            }
+        }
+        else
+        {
+            echo "<br/>Has introduit un mode invalid a la funcio checkErrors<br/>";
+            $check = false;
+        }
+        return $check;
     }
-*/
+
     public function insert(string $type, int $id)
     {
         $connect = databaseConnect($type);
@@ -37,32 +81,18 @@ class User
     public function select(string $type, $id) // Funció dedicada a buscar usuaris per ID únicament
     {
         $connect = databaseConnect($type); // Fa la conexió a la base de dades
-        $statement = $connect->prepare("SELECT COUNT(id_user) FROM gestio_incidencies.users WHERE id_user = ?"); // Prepara i executa el insert per prevenir SQL injections. 
-        $statement->bind_param("i", $id);
-        if(!$statement->execute()) // Executa i comproba si s'executa bé el codi
+        $check = $this->checkErrors($connect, $id, 1);
+        if($check)
         {
-            echo("Error: " . $statement->error);
+            $statement = $connect->prepare("SELECT * FROM gestio_incidencies.users WHERE id_user = ?"); // Prepara i executa el insert per prevenir SQL injections. 
+            $statement->bind_param("i", $id);
+            $statement->execute();
+            $user = $statement->get_result()->fetch_assoc(); // Guarda la informació als atributs de la clase
+            $this->__construct($user['id_user'], $user['name'], $user['surname'], $user['email'], $user['password'], $user['role']);
         }
         else
         {
-            $rows_selected = $statement->get_result()->fetch_assoc();
-            if($rows_selected <= 0) // Comproba si troba algún usuari
-            {
-                echo("Error: no s'ha trobat cap usuari."); 
-            }
-            else
-            {
-                $statement = $connect->prepare("SELECT * FROM gestio_incidencies.users WHERE id_user = ?"); // Prepara i executa el insert per prevenir SQL injections. 
-                $statement->bind_param("i", $id);
-                $statement->execute(); // Executa el codi
-                $user = $statement->get_result()->fetch_assoc(); // Guarda la informació als atributs de la clase
-                $this->id_user = $user['id_user'];
-                $this->name = $user['name'];
-                $this->surname = $user['surname'];
-                $this->email = $user['email'];
-                $this->password = $user['password'];
-                $this->role = $user['role'];
-            }
+
         }
         mysqli_close($connect); // Tanca la conexió
     }
