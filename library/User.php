@@ -18,28 +18,95 @@ class User
         $this->role = $role;
     }
 
+    private function executeQuery($connect, $statement)
+    {
+        if(!$statement) // Executa i comproba si s'executa bé el codi
+        {
+            echo("Error: " . $statement->error);
+        }
+        else
+        {
+            $affected_rows = $statement->affected_rows;
+            if($affected_rows <= 0) // Comproba si troba algún usuari
+            {
+                echo("Error: no s'ha trobat cap usuari."); 
+            }
+            else
+            {
+                $user = $statement->get_result()->fetch_assoc(); // Guarda la informació als atributs de la clase
+                $this->id_user = $user['id_user'];
+                $this->name = $user['name'];
+                $this->surname = $user['surname'];
+                $this->email = $user['email'];
+                $this->password = $user['password'];
+                $this->role = $user['role'];
+            }
+        }
+    }
+
     public function insert(string $type, int $id)
     {
         $connect = databaseConnect($type);
-        $statement = $connect->prepare("SELECT * FROM gestio_incidencies.users WHERE id_device = ?"); // Prepara i executa el insert per prevenir SQL injections.
+        $statement = $connect->prepare("SELECT * FROM gestio_incidencies.users WHERE id_user = ?"); // Prepara i executa el insert per prevenir SQL injections.
         $statement->execute([$id]);
         $user = $statement->get_result()->fetch_assoc();
         $this->__construct($user['user_id'], $user['name'], $user['surname'], $user['email'], $user['password'], $user['role']);
         mysqli_close($connect);
     }
 
-    public function select(string $type, $id)
+    public function select(string $type, $id) // Funció dedicada a buscar usuaris per ID únicament
+    {
+        $connect = databaseConnect($type); // Fa la conexió a la base de dades
+        $statement = $connect->prepare("SELECT * FROM gestio_incidencies.users WHERE id_user = ?"); // Prepara i executa el insert per prevenir SQL injections.
+        $statement->execute([$id]); // Executa i comproba si s'executa bé el codi
+        $this->executeQuery($connect, $statement);
+        /*
+        {
+            echo("Error: " . $statement->error);
+        }
+        else
+        {
+            $affected_rows = $statement->affected_rows;
+            if($affected_rows <= 0) // Comproba si troba algún usuari
+            {
+                echo("Error: no s'ha trobat cap usuari."); 
+            }
+            else
+            {
+                $user = $statement->get_result()->fetch_assoc(); // Guarda la informació als atributs de la clase
+                $this->id_user = $id;
+                $this->name = $user['name'];
+                $this->surname = $user['surname'];
+                $this->email = $user['email'];
+                $this->password = $user['password'];
+                $this->role = $user['role'];
+            }
+        }
+        */
+        mysqli_close($connect); // Tanca la conexió
+    }
+
+    public function login(string $type, $email)
     {
         $connect = databaseConnect($type);
-        $statement = $connect->prepare("SELECT * FROM gestio_incidencies.users WHERE id_device = ?"); // Prepara i executa el insert per prevenir SQL injections.
-        $statement->execute([$id]);
+        $statement = $connect->prepare("SELECT * FROM gestio_incidencies.users WHERE email = ?"); // Prepara i executa el insert per prevenir SQL injections.
+        $statement->execute([$email]);
         $user = $statement->get_result()->fetch_assoc();
         $this->id_user = $user['id_user'];
         $this->name = $user['name'];
         $this->surname = $user['surname'];
-        $this->email = $user['email'];
+        $this->email = $email;
         $this->password = $user['password'];
         $this->role = $user['role'];
+        mysqli_close($connect);
+    }
+
+    public function delete(string $type, $id)
+    {
+        $connect = databaseConnect($type);
+        $statement = $connect->prepare("DELETE FROM gestio_incidencies.users WHERE id_user = ?"); // Prepara i executa el insert per prevenir SQL injections.
+        $statement->execute([$id]);
+        $user = $statement->get_result()->fetch_assoc();
         mysqli_close($connect);
     }
 
