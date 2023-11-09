@@ -17,17 +17,18 @@ class User
         $this->password = $password;
         $this->role = $role;
     }
-
+/*
     private function executeQuery($connect, $statement)
     {
         
     }
-
+*/
     public function insert(string $type, int $id)
     {
         $connect = databaseConnect($type);
         $statement = $connect->prepare("SELECT * FROM gestio_incidencies.users WHERE id_user = ?"); // Prepara i executa el insert per prevenir SQL injections.
-        $statement->execute([$id]);
+        $statement->bind_param("s", $id);
+        $statement->execute();
         $user = $statement->get_result()->fetch_assoc();
         $this->__construct($user['user_id'], $user['name'], $user['surname'], $user['email'], $user['password'], $user['role']);
         mysqli_close($connect);
@@ -83,7 +84,8 @@ class User
     {
         $connect = databaseConnect($type);
         $statement = $connect->prepare("DELETE FROM gestio_incidencies.users WHERE id_user = ?"); // Prepara i executa el insert per prevenir SQL injections.
-        $statement->execute([$id]);
+        $statement->bind_param("s", $id);
+        $statement->execute();
         $user = $statement->get_result()->fetch_assoc();
         mysqli_close($connect);
     }
