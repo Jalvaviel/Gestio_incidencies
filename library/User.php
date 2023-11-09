@@ -37,7 +37,7 @@ class User
     public function select(string $type, $id) // Funció dedicada a buscar usuaris per ID únicament
     {
         $connect = databaseConnect($type); // Fa la conexió a la base de dades
-        $statement = $connect->prepare("SELECT * FROM gestio_incidencies.users WHERE id_user = ?"); // Prepara i executa el insert per prevenir SQL injections. 
+        $statement = $connect->prepare("SELECT COUNT(id_user) FROM gestio_incidencies.users WHERE id_user = ?"); // Prepara i executa el insert per prevenir SQL injections. 
         $statement->bind_param("i", $id);
         if(!$statement->execute()) // Executa i comproba si s'executa bé el codi
         {
@@ -45,13 +45,16 @@ class User
         }
         else
         {
-            $num_rows = $statement->num_rows;
-            if($num_rows <= 0) // Comproba si troba algún usuari
+            $rows_selected = $statement->get_result()->fetch_assoc();
+            if($rows_selected <= 0) // Comproba si troba algún usuari
             {
                 echo("Error: no s'ha trobat cap usuari."); 
             }
             else
             {
+                $statement = $connect->prepare("SELECT * FROM gestio_incidencies.users WHERE id_user = ?"); // Prepara i executa el insert per prevenir SQL injections. 
+                $statement->bind_param("i", $id);
+                $statement->execute(); // Executa el codi
                 $user = $statement->get_result()->fetch_assoc(); // Guarda la informació als atributs de la clase
                 $this->id_user = $user['id_user'];
                 $this->name = $user['name'];
