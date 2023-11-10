@@ -52,7 +52,7 @@ class User
             else
             {
                 $rows_selected = $statement->get_result()->fetch_assoc();
-                if($rows_selected["num"] <= 0) // Comproba si troba algún usuari
+                if($rows_selected["num"] <= 0 || $rows_selected["num"] > 1) // Comproba si només troba un usuari
                 {
                     echo("Error: no s'ha trobat cap usuari."); 
                     $check = false;
@@ -89,24 +89,35 @@ class User
             $statement->execute();
             $user = $statement->get_result()->fetch_assoc(); // Guarda la informació als atributs de la clase
             $this->__construct($user['id_user'], $user['name'], $user['surname'], $user['email'], $user['password'], $user['role']);
+            mysqli_close($connect); // Tanca la conexió
+            return true;
         }
-        mysqli_close($connect); // Tanca la conexió
+        else
+        {
+            mysqli_close($connect); // Tanca la conexió
+            return false;
+        }
     }
 
     public function login(string $type, $email)
     {
-        $connect = databaseConnect($type);
-        $statement = $connect->prepare("SELECT * FROM gestio_incidencies.users WHERE email = ?"); // Prepara i executa el insert per prevenir SQL injections.
-        $statement->bind_param("s", $email);
-        $statement->execute();
-        $user = $statement->get_result()->fetch_assoc();
-        $this->id_user = $user['id_user'];
-        $this->name = $user['name'];
-        $this->surname = $user['surname'];
-        $this->email = $email;
-        $this->password = $user['password'];
-        $this->role = $user['role'];
-        mysqli_close($connect);
+        $connect = databaseConnect($type); // Fa la conexió a la base de dades
+        $check = $this->checkErrors($connect, $email, 2);
+        if($check)
+        {
+            $statement = $connect->prepare("SELECT * FROM gestio_incidencies.users WHERE email = ?"); // Prepara i executa el insert per prevenir SQL injections. 
+            $statement->bind_param("s", $email);
+            $statement->execute();
+            $user = $statement->get_result()->fetch_assoc(); // Guarda la informació als atributs de la clase
+            $this->__construct($user['id_user'], $user['name'], $user['surname'], $user['email'], $user['password'], $user['role']);
+            mysqli_close($connect); // Tanca la conexió
+            return true;
+        }
+        else
+        {
+            mysqli_close($connect); // Tanca la conexió
+            return false;
+        }
     }
 
     public function delete(string $type, $id)
