@@ -24,9 +24,9 @@ DROP TABLE IF EXISTS `devices`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `devices` (
   `id_device` int NOT NULL AUTO_INCREMENT,
-  `os` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci DEFAULT NULL COMMENT 'Operative System',
-  `code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci DEFAULT NULL,
-  `description` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci DEFAULT NULL,
+  `os` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci DEFAULT NULL COMMENT 'Operative System',
+  `code` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci DEFAULT NULL,
+  `description` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci DEFAULT NULL,
   `room` int DEFAULT NULL,
   `ip` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci DEFAULT NULL COMMENT 'internet protocol v4',
   PRIMARY KEY (`id_device`),
