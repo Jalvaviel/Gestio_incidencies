@@ -1,7 +1,7 @@
 <?php
 include 'helpers.php';
 
-class Device // This allows the properties in the builder to change dynamically, since it is called again in "select" function
+#[AllowDynamicProperties] class Device
 {
     private int $id_device;
     private string $os;
@@ -10,7 +10,7 @@ class Device // This allows the properties in the builder to change dynamically,
     private string $ip;
     private string $room;
 
-    public function __construct($id_device, $os, $code, $description, $ip, $room)
+    public function __construct($id_device = 1, $os = NULL, $code = NULL, $description = NULL, $ip = NULL, $room = NULL)
     { // Builder.
         $this->id_device = $id_device;
         $this->os = $os;
@@ -31,22 +31,23 @@ class Device // This allows the properties in the builder to change dynamically,
         ];
     }
 
-    public function insertDeviceIntoDatabase(string $type) : void
+    public function insertDeviceIntoDatabase(string $type) : void // Gets the Device object and inserts it into the DB.
     {
         $connect = databaseConnect($type);
-        $statement = $connect->prepare("INSERT INTO gestio_incidencies.devices VALUES (?,?,?,?,?,?)"); // Prepare and execute the insert to prevent SQL attacks.
-        $statement->bind_param('isssis',$this->id_device,$this->os,$this->code,$this->description,$this->room,$this->ip);
+        $statement = $connect->prepare("INSERT INTO gestio_incidencies.devices VALUES (DEFAULT,?,?,?,?,?)"); // Prepare and execute the insert to prevent SQL attacks.
+        $statement->bind_param('sssis',$this->os,$this->code,$this->description,$this->room,$this->ip);
         $statement->execute();
         if ($statement->execute()) {
             echo "Data inserted successfully.";
         } else {
             echo "Error: " . $connect->error;
+
         }
 
         mysqli_close($connect);
     }
 
-    public function selectDeviceFromDatabase(string $type) : void
+    public function loadDeviceFromDatabase(string $type) : void // Gets the device from the DB with the same device_id and updates the Device object with the same properties.
     {
         $connect = databaseConnect($type);
         $statement = $connect->prepare("SELECT * FROM gestio_incidencies.devices WHERE id_device = ?"); // Prepare and execute the query to prevent SQL attacks.
@@ -61,20 +62,20 @@ class Device // This allows the properties in the builder to change dynamically,
             $this->room = $device['room'];
             $this->ip = $device['ip'];
             mysqli_close($connect);
-            echo "Data inserted successfully.";
+            echo "Data loaded successfully.";
         } else {
             echo "Error: " . $connect->error;
         }
     }
 
-    public function deleteDeviceFromDatabase(string $type) : void
+    public function deleteDeviceFromDatabase(string $type) : void // Gets the device from the DB with the same device_id and deletes it from the DB.
     {
         $connect = databaseConnect($type);
         $statement = $connect->prepare("DELETE FROM gestio_incidencies.devices WHERE id_device = ?"); // Prepare and execute the insert to prevent SQL attacks.
         $statement->bind_param('i',$this->id_device);
         $statement->execute();
         if ($statement->execute()) {
-            echo "Data inserted successfully.";
+            echo "Data deleted successfully.";
         } else {
             echo "Error: " . $connect->error;
         }
