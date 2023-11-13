@@ -132,7 +132,8 @@ class User
 
     public function getInfo()
     {
-        return [
+        return 
+        [
             $this->id_user,
             $this->name,
             $this->surname,
