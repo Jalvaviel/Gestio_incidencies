@@ -8,7 +8,7 @@ class User
     private string $password;
     private string $role;
 
-    public function __construct($id_user, $name, $surname, $email, $password, $role)
+    public function __construct($id_user=0, $name=null, $surname=null, $email=null, $password=null, $role=null)
     {
         $this->id_user = $id_user;
         $this->name = $name;
@@ -106,7 +106,7 @@ class User
         if($check)
         {
             $statement = $connect->prepare("SELECT * FROM gestio_incidencies.users WHERE email = ? AND password = ?"); // Prepara i executa el insert per prevenir SQL injections. 
-            $statement->bind_param("s", $email, $password);
+            $statement->bind_param("ss", $email, $password);
             $statement->execute();
             $user = $statement->get_result()->fetch_assoc(); // Guarda la informació als atributs de la clase
             $this->__construct($user['id_user'], $user['name'], $user['surname'], $user['email'], $user['password'], $user['role']);

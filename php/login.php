@@ -1,28 +1,29 @@
 <?php
-include "../library/tecnic.php";
+include "../library/User.php";
+include "../library/helpers.php";
 session_start();
     if (isset($_POST["submit"])){
-        $user = new User(0,"null","null","null","null","null"); // Crear clase User.
 
         // test_database_connection();
 
-        $input_email = $_POST["email"];
         $encrypted_password = $_POST["password"];
         $encrypted_password = hashPasswords($encrypted_password);
+        $input_email = $_POST["email"];
         
 
         $env = parse_ini_file('../library/.env');
         $db_user = $env['technician']; // Faig servir el usuari tecnic perque nomes interesa fer un select.
         $db_password = $env['technician_password'];
         
-        $user->$email = $_POST["email"];
-        $user->$password = $_POST["password"];
+        $user = new User(0,"null","null",$input_email,$encrypted_password,"null"); // Faig una classe user amb la informació que tinc, email i password.
         
-        if($user->login("technician", $user->$email, $user->$password)) // Executa la consulta a la base de dades, i retorna true si funciona o false si falla.
+        if($user->login("technician", $input_email, $encrypted_password)) // Executa la consulta a la base de dades, i retorna true si funciona o false si falla.
         {
-            $_SESSION["id_user"] = $resultat["id_user"];
-            $_SESSION["email"] = $resultat["email"];
-            $_SESSION["role"] = $resultat["role"];
+            $result = $user->getUserProperties();
+            $_SESSION["id_user"] = $result["id_user"];
+            $_SESSION["email"] = $result["email"];
+            $_SESSION["password"] = $result["password"];
+            $_SESSION["role"] = $result["role"];
             // toUrl("/Gestio_incidencies/php/menu.php");
         }
         else
@@ -32,6 +33,7 @@ session_start();
             toUrl("/Gestio_incidencies/html/login.html");
         }
 
-        mysqli_close($connect);
+        echo $_SESSION["id_user"] . " " . $_SESSION["email"] . " " . $_SESSION["password"] . " " . $_SESSION["role"];
+
     }
 ?>
