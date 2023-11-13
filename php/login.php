@@ -2,39 +2,28 @@
 include "../library/tecnic.php";
 session_start();
     if (isset($_POST["submit"])){
+        $user = new User(0,"null","null","null","null","null"); // Crear clase User.
+
         // test_database_connection();
-        $env = parse_ini_file('../library/.env');
-        $db_user = $env['technician']; // Faig servir el usuari tecnic perque nomes interesa fer un select
-        $db_password = $env['technician_password'];
 
-        $connect = databaseConnect($db_user, $db_password); // Conexió a la base de dades
-
-        $valors = ["id_user","email","password","role"];
-        
         $input_email = $_POST["email"];
-        $input_password = $_POST["password"];
+        $encrypted_password = $_POST["password"];
+        $encrypted_password = hashPasswords($encrypted_password);
+        
 
-        if($resultat = select_from($connect, $valors, 'users', 'email', $input_email))
+        $env = parse_ini_file('../library/.env');
+        $db_user = $env['technician']; // Faig servir el usuari tecnic perque nomes interesa fer un select.
+        $db_password = $env['technician_password'];
+        
+        $user->$email = $_POST["email"];
+        $user->$password = $_POST["password"];
+        
+        if($user->login("technician", $user->$email, $user->$password)) // Executa la consulta a la base de dades, i retorna true si funciona o false si falla.
         {
-            echo $resultat["id_user"] . "<br/>" . $resultat["email"] . "<br/>" . $resultat["password"] . "<br/>";
-
-            $encrypted_password = hashPasswords($input_password);
-            
-            echo $encrypted_password . " ";
-    
-            if(strcmp($encrypted_password,$resultat["password"]) == 0 && $input_email == $resultat["email"])
-            {
-                $_SESSION["id_user"] = $resultat["id_user"];
-                $_SESSION["email"] = $resultat["email"];
-                $_SESSION["role"] = $resultat["role"];
-                toUrl("/Gestio_incidencies/php/menu.php");
-            }
-            else
-            {
-                $_SESSION = array();
-                SESSION_DESTROY();
-                toUrl("/Gestio_incidencies/html/login.html");
-            }
+            $_SESSION["id_user"] = $resultat["id_user"];
+            $_SESSION["email"] = $resultat["email"];
+            $_SESSION["role"] = $resultat["role"];
+            // toUrl("/Gestio_incidencies/php/menu.php");
         }
         else
         {
@@ -42,6 +31,7 @@ session_start();
             SESSION_DESTROY();
             toUrl("/Gestio_incidencies/html/login.html");
         }
+
         mysqli_close($connect);
     }
 ?>

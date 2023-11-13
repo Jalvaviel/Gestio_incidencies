@@ -99,14 +99,14 @@ class User
         }
     }
 
-    public function login(string $type, $email)
+    public function login(string $type, $email, $password)
     {
         $connect = databaseConnect($type); // Fa la conexió a la base de dades
         $check = $this->checkErrors($connect, $email, 2);
         if($check)
         {
-            $statement = $connect->prepare("SELECT * FROM gestio_incidencies.users WHERE email = ?"); // Prepara i executa el insert per prevenir SQL injections. 
-            $statement->bind_param("s", $email);
+            $statement = $connect->prepare("SELECT * FROM gestio_incidencies.users WHERE email = ? AND password = ?"); // Prepara i executa el insert per prevenir SQL injections. 
+            $statement->bind_param("s", $email, $password);
             $statement->execute();
             $user = $statement->get_result()->fetch_assoc(); // Guarda la informació als atributs de la clase
             $this->__construct($user['id_user'], $user['name'], $user['surname'], $user['email'], $user['password'], $user['role']);
