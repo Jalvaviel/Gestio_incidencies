@@ -55,12 +55,7 @@ include 'helpers.php';
         $statement->execute();
         if ($statement->execute()) {
             $device = $statement->get_result()->fetch_assoc();
-            $this->id = $device['id_device']; // This is niggerlicious
-            $this->os = $device['os'];
-            $this->code = $device['code'];
-            $this->description = $device['description'];
-            $this->room = $device['room'];
-            $this->ip = $device['ip'];
+            $this->__construct($device['id_device'], $device['os'], $device['code'], $device['description'], $device['room'], $device['ip']);
             mysqli_close($connect);
             echo "Data loaded successfully.";
         } else {
