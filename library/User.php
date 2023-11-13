@@ -130,16 +130,16 @@ class User
         mysqli_close($connect);
     }
 
-    public function getInfo()
+    public function getUserProperties()
     {
         return 
         [
-            $this->id_user,
-            $this->name,
-            $this->surname,
-            $this->email,
-            $this->password,
-            $this->role
+            'id_user' => $this->id_user,
+            'name' => $this->name,
+            'surname' => $this->surname,
+            'email' => $this->email,
+            'password' => $this->password,
+            'role' => $this->role
         ];
     }
 
