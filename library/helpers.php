@@ -36,14 +36,14 @@ function testDatabaseConnection()
     $connect = databaseConnect($db_user, $db_password);
     if (!$connect) 
     { 
-        echo "Error: No se pudo conectar a MySQL." . PHP_EOL;
-        echo "errno de depuración: " . mysqli_connect_errno() . PHP_EOL;
-        echo "error de depuración: " . mysqli_connect_error() . PHP_EOL;
+        echo "Error: No s'ha pogut connectar a MySQL" . PHP_EOL;
+        echo "errno de depuració: " . mysqli_connect_errno() . PHP_EOL;
+        echo "error de depuració: " . mysqli_connect_error() . PHP_EOL;
         exit;
     }
 
-    echo "Éxito: Se realizó una conexión apropiada a MySQL! La base de datos es genial." . PHP_EOL;
-    echo "Información del host: " . mysqli_get_host_info($connect) . PHP_EOL;
+    echo "Èxit: S'ha realitzat una connexió apropiada a MySQL! La base de dades és genial." . PHP_EOL;
+    echo "Informació del host: " . mysqli_get_host_info($connect) . PHP_EOL;
 
     mysqli_close($connect);
 }

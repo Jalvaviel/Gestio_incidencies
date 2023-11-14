@@ -76,7 +76,7 @@ class User
                 $statement->bind_param("sssss", $this->id_user, $this->name, $this->surname, $this->email, $this->password, $this->role);
                 if($statement->execute())
                 {
-                    echo "S'ha inserit l'usuari correctament.";
+                    echo "S'ha inserit l'usuari correctament." . PHP_EOL;
                     $connect->close();
                     return true;
                 }
@@ -119,7 +119,7 @@ class User
             $statement->bind_param("sssssi", $this->name, $this->surname, $this->email, $this->password, $this->role, $this->id_user);
             if($statement->execute())
             {
-                echo "S'han actualitzat els valors de manera satisfactioria";
+                echo "S'han actualitzat els valors de manera satisfactioria" . PHP_EOL;
                 return true;
             }
             else
