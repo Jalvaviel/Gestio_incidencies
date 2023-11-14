@@ -19,6 +19,16 @@ include 'helpers.php';
         $this->room = $room;
         $this->ip = $ip;
     }
+
+    public function updateDeviceObject($id_device, $os, $code, $description, $ip, $room): void
+    {
+        $this->id_device = $id_device;
+        $this->os = $os;
+        $this->code = $code;
+        $this->description = $description;
+        $this->room = $room;
+        $this->ip = $ip;
+    }
     public function getDeviceProperties() : array
     { // Associative array getter.
         return [
@@ -31,49 +41,81 @@ include 'helpers.php';
         ];
     }
 
-    public function insertDeviceIntoDatabase(string $type) : void // Gets the Device object and inserts it into the DB.
+    /**
+     * @throws Exception
+     */
+    public function insertDeviceIntoDatabase(string $type): void
     {
         $connect = databaseConnect($type);
-        $statement = $connect->prepare("INSERT INTO gestio_incidencies.devices VALUES (DEFAULT,?,?,?,?,?)"); // Prepare and execute the insert to prevent SQL attacks.
-        $statement->bind_param('sssis',$this->os,$this->code,$this->description,$this->room,$this->ip);
-        $statement->execute();
-        if ($statement->execute()) {
-            echo "Data inserted successfully.";
-        } else {
-            echo "Error: " . $connect->error;
+        $statement = $connect->prepare("INSERT INTO gestio_incidencies.devices VALUES (DEFAULT,?,?,?,?,?)");
 
-        }
+        checkStatement($statement, $connect);
+
+        $statement->bind_param('sssis', $this->os, $this->code, $this->description, $this->room, $this->ip);
+        $result = $statement->execute();
+
+        checkResult($result, $statement);
 
         mysqli_close($connect);
     }
 
-    public function loadDeviceFromDatabase(string $type) : void // Gets the device from the DB with the same device_id and updates the Device object with the same properties.
+    /**
+     * @throws Exception
+     */
+    public function loadDeviceFromDatabase(string $type): void
     {
         $connect = databaseConnect($type);
-        $statement = $connect->prepare("SELECT * FROM gestio_incidencies.devices WHERE id_device = ?"); // Prepare and execute the query to prevent SQL attacks.
-        $statement->bind_param('i',$this->id_device);
-        $statement->execute();
-        if ($statement->execute()) {
+        $statement = $connect->prepare("SELECT * FROM gestio_incidencies.devices WHERE id_device = ?");
+
+        checkStatement($statement, $connect);
+
+        $statement->bind_param('i', $this->id_device);
+        $result = $statement->execute();
+
+        if ($result) {
             $device = $statement->get_result()->fetch_assoc();
-            $this->__construct($device['id_device'], $device['os'], $device['code'], $device['description'], $device['room'], $device['ip']);
+            $this->updateDeviceObject($device['id_device'], $device['os'], $device['code'], $device['description'], $device['room'], $device['ip']);
             mysqli_close($connect);
-            echo "Data loaded successfully.";
+            echo "Data carregada correctament.";
         } else {
-            echo "Error: " . $connect->error;
+            throw new Exception("Error executing query: " . $statement->error);
         }
     }
 
-    public function deleteDeviceFromDatabase(string $type) : void // Gets the device from the DB with the same device_id and deletes it from the DB.
+    /**
+     * @throws Exception
+     */
+    public function deleteDeviceFromDatabase(string $type): void
     {
         $connect = databaseConnect($type);
-        $statement = $connect->prepare("DELETE FROM gestio_incidencies.devices WHERE id_device = ?"); // Prepare and execute the insert to prevent SQL attacks.
-        $statement->bind_param('i',$this->id_device);
-        $statement->execute();
-        if ($statement->execute()) {
-            echo "Data deleted successfully.";
-        } else {
-            echo "Error: " . $connect->error;
-        }
+        $statement = $connect->prepare("DELETE FROM gestio_incidencies.devices WHERE id_device = ?");
+
+        checkStatement($statement, $connect);
+
+        $statement->bind_param('i', $this->id_device);
+        $result = $statement->execute();
+
+        checkResult($result, $statement);
+
         mysqli_close($connect);
     }
+
+    /**
+     * @throws Exception
+     */
+    public function updateDeviceInDatabase(string $type): void
+    {
+        $connect = databaseConnect($type);
+        $statement = $connect->prepare("UPDATE gestio_incidencies.devices SET os=?, code=?, description=?, room=?, ip=? WHERE id_device = ?");
+
+        checkStatement($statement, $connect);
+
+        $statement->bind_param('issss', $this->id_device, $this->os, $this->code, $this->description, $this->room, $this->ip);
+        $result = $statement->execute();
+
+        checkResult($result, $statement);
+
+        mysqli_close($connect);
+    }
+
 }
