@@ -1,14 +1,14 @@
 <?php
 class User
 {
-    private int $id_user;
-    private string $name;
-    private string $surname;
-    private string $email;
-    private string $password;
-    private string $role;
+    private int $id_user = 0;
+    private string $name = null;
+    private string $surname = null;
+    private string $email = null;
+    private string $password = null;
+    private string $role = null;
 
-    public function __construct($id_user=0, $name=null, $surname=null, $email=null, $password=null, $role=null)
+    public function __construct($id_user, $name, $surname, $email, $password, $role)
     {
         $this->id_user = $id_user;
         $this->name = $name;
@@ -18,165 +18,228 @@ class User
         $this->role = $role;
     }
 
-    private function checkErrors($connect, string $condition, int $mode=1) // Funció que comproba si existeix algun usuari com a minim amb un id o email especific.
+    /** Funció checkErrors
+     * És una funció que s'encarrega de buscar només un usuari.
+     * Té dos modes, el mode 1 busca per id i el 2 per email.
+    */
+    private function checkErrors($connect, string $condition, int $mode=1)
     {
         $check = true;
-        if($mode == 1)
+
+        $column = ($mode == 1) ? "id_user" : "email";
+        $varType = ($mode == 1) ? "i" : "s";
+
+        $sql = "SELECT COUNT(id_user) AS 'count' FROM gestio_incidencies.users WHERE $column = ?";
+        $statement = $connect->prepare($sql);
+        $statement->bind_param($varType, $condition);
+        
+        if (!$statement->execute())
         {
-            $statement = $connect->prepare("SELECT COUNT(id_user) AS 'num' FROM gestio_incidencies.users WHERE id_user = ?"); // Prepara i executa el insert per prevenir SQL injections.
-            $statement->bind_param("i", $condition);
-            if(!$statement->execute()) // Executa i comproba si s'executa bé el codi
-            {
-                echo("Error: " . $statement->error);
-                $check = false;
-            }
-            else
-            {
-                $rows_selected = $statement->get_result()->fetch_assoc();
-                if($rows_selected["num"] <= 0) // Comproba si troba algún usuari
-                {
-                    echo("Error: no s'ha trobat cap usuari."); 
-                    $check = false;
-                }
-            }
-        }
-        elseif($mode == 2)
-        {
-            $statement = $connect->prepare("SELECT COUNT(id_user) AS 'num' FROM gestio_incidencies.users WHERE email = ?"); // Prepara i executa el insert per prevenir SQL injections.
-            $statement->bind_param("s", $condition);
-            if(!$statement->execute()) // Executa i comproba si s'executa bé el codi
-            {
-                echo("Error: " . $statement->error);
-                $check = false;
-            }
-            else
-            {
-                $rows_selected = $statement->get_result()->fetch_assoc();
-                if($rows_selected["num"] <= 0 || $rows_selected["num"] > 1) // Comproba si només troba un usuari
-                {
-                    echo("Error: no s'ha trobat cap usuari."); 
-                    $check = false;
-                }
-            }
-        }
-        else
-        {
-            echo "<br/>Has introduit un mode invalid a la funcio checkErrors<br/>";
+            throw new Exception("Error: " . $statement->error);
             $check = false;
         }
-        return $check;
+
+        $rowsSelected = $statement->get_result()->fetch_assoc();
+        $count = $rowsSelected["count"];
+
+        if ($rowsSelected["count"] <= 0 || $count > 1)
+        {
+            throw new Exception("Error: s'han trobat $count usuaris. Esperaba 1.");
+            $check = false;
+        }
+    return $check;
     }
 
-    public function insert(string $type) // Comprobar que l'usuari té els permisos necesaris.
+    /**Funció insert
+     * Serveix per insertar un usuari amb les variables de la classe,
+       pots fer servir el constructor per omplir els valors a la classe
+       i seguidament, fer un insert, per insertar-ho a la base de dades.
+     * Crida a la funció checkErrors per comprobar que no hi hagi cap 
+       usuari amb el mateix email o id.
+     */
+    public function insert(string $type)
     {
         if(strcmp($type,'admin') == 0)
         {
             $connect = databaseConnect($type);
             if($this->checkErrors($connect, $this->email, 2) && $this->checkErrors($connect, $this->id_user, 1))
             {
-                echo "Ja existeix un usuari amb el mateix Email";
+                throw new Exception("Ja existeix un usuari amb el mateix Email");
                 return false;
             }
             else
             {
-                $statement = $connect->prepare("INSERT INTO gestio_incidencies.users VALUES (?,?,?,?,?,?)"); // Prepara i executa el insert per prevenir SQL injections.
-                $statement->bind_param("isssss", $this->id_user, $this->name, $this->surname, $this->email, $this->password, $this->role);
+                $sql = "INSERT INTO gestio_incidencies.users VALUES (DEFAULT,?,?,?,?,?)";
+                $statement = $connect->prepare($sql);
+                $statement->bind_param("sssss", $this->id_user, $this->name, $this->surname, $this->email, $this->password, $this->role);
                 if($statement->execute())
                 {
                     echo "S'ha inserit l'usuari correctament.";
-                    mysqli_close($connect);
+                    $connect->close();
                     return true;
                 }
                 else
                 {
-                    echo "Eror, no s'ha inserit l'usuari.";
-                    mysqli_close($connect);
+                    throw new Exception("Error, no s'ha inserit l'usuari." . $statement->error);
+                    $connect->close();
                     return false;
                 }
             }
         }
         else
         {
-            echo "No tens permisos suficients";
+            throw new Exception("No tens permisos suficients");
             return false;
         }
     }
 
-    public function select(string $type) // Funció dedicada a buscar usuaris per ID únicament.
+    /**Funció update
+     * Funció que actualitza tots el valors del usuari,
+       i fa servir el id per buscar-lo.
+     */
+    public function update(string $type)
     {
-        if(strcmp($type,'technician') == 0 || strcmp($type,'admin') == 0) // Comprobar que l'usuari té els permisos necesaris.
+        if(EMPTY($this->id_user) || EMPTY($this->name) || EMPTY($this->surname) || EMPTY($this->email) || EMPTY($this->password) || EMPTY($this->role) || strcmp($this->id_user,'null') == 0 || strcmp($this->name,'null') == 0 || strcmp($this->surname,'null') == 0 || strcmp($this->email,'null') == 0 || strcmp($this->password,'null') == 0 || strcmp($this->role,'null') == 0)
         {
-            $connect = databaseConnect($type); // Fa la conexió a la base de dades
-            $check = $this->checkErrors($connect, $this->id_user, 1);
-            if($check)
+            throw new Exception("Falta informació a la classe per actualitzar l'usuari");
+            return false;
+        }
+        if(strcmp($type,'admin') != 0)
+        {
+            throw new Exception("No tens permisos suficients.");
+            return false;
+        }
+        else
+        {
+            $connect = databaseConnect($type);
+            $sql = "INSERT INTO gestio_incidencies.users SET name = ?, surname = ?, email = ?, password = ?, role = ? WHERE id_user = ?";
+            $statement = $connect->prepare($sql);
+            $statement->bind_param("sssssi", $this->name, $this->surname, $this->email, $this->password, $this->role, $this->id_user);
+            if($statement->execute())
             {
-                $statement = $connect->prepare("SELECT * FROM gestio_incidencies.users WHERE id_user = ?"); // Prepara i executa el insert per prevenir SQL injections. 
-                $statement->bind_param("i", $this->id_user);
-                $statement->execute();
-                $user = $statement->get_result()->fetch_assoc(); // Guarda la informació als atributs de la clase
-                $this->__construct($user['id_user'], $user['name'], $user['surname'], $user['email'], $user['password'], $user['role']);
-                mysqli_close($connect); // Tanca la conexió
+                echo "S'han actualitzat els valors de manera satisfactioria";
                 return true;
             }
             else
             {
-                mysqli_close($connect); // Tanca la conexió
+                throw new Exception("Error, no s'ha actualitzat l'usuari" . $statement->error);
                 return false;
             }
-        }
-        else
-        {
-            echo "No tens permisos suficients";
         }
     }
 
-    public function login(string $type) // Funció que faig servir per al login.
+    /**Funció select
+     * Aquest funció serveix més per a buscar algún usuari en concret
+       o actualitzar els valors de la classe.
+     * Crida a la funció checkErrors per veure que no hi han colisions
+       al id o email i que només troba 1 usuari, i guarda els valors
+       a la classe.
+     */
+    public function select(string $type)
     {
-        if(strcmp($type,'technician') == 0 || strcmp($type,'admin') == 0) // Comprobar que l'usuari té els permisos necesaris.
+        if(strcmp($type,'technician') == 0 || strcmp($type,'admin') == 0)
         {
-            $connect = databaseConnect($type); // Fa la conexió a la base de dades
-            $check = $this->checkErrors($connect, $this->email, 2);
+            $connect = databaseConnect($type);
+            $check = $this->checkErrors($connect, $this->id_user, 1);
             if($check)
             {
-                $statement = $connect->prepare("SELECT * FROM gestio_incidencies.users WHERE email = ? AND password = ?"); // Prepara i executa el insert per prevenir SQL injections. 
-                $statement->bind_param("ss", $this->email, $this->password);
+                $sql = "SELECT * FROM gestio_incidencies.users WHERE id_user = ?";
+                $statement = $connect->prepare($sql);
+                $statement->bind_param("i", $this->id_user);
                 $statement->execute();
-                $user = $statement->get_result()->fetch_assoc(); // Guarda la informació als atributs de la clase
+                $user = $statement->get_result()->fetch_assoc();
                 $this->__construct($user['id_user'], $user['name'], $user['surname'], $user['email'], $user['password'], $user['role']);
-                mysqli_close($connect); // Tanca la conexió
+                $connect->close();
                 return true;
             }
             else
             {
-                mysqli_close($connect); // Tanca la conexió
+                $connect->close();
                 return false;
             }
         }
         else
         {
-            echo "No tens permisos suficients";
+            throw new Exception("No tens permisos suficients.");
+        }
+    }
+
+    /**Funció Login.
+     * Aquesta funció és molt similar a la select, però aquesta
+       li paso el el password sense encriptar a la classe, i 
+       ho comproba amb el password_verify() i si és el mateix,
+       guarda a la classe el usuari amb totes les dades i el 
+       password encriptat.
+     */
+    public function login(string $type)
+    {
+        if(strcmp($type,'technician') == 0 || strcmp($type,'admin') == 0)
+        {
+            $connect = databaseConnect($type);
+            $check = $this->checkErrors($connect, $this->email, 2);
+            if($check)
+            {
+                $sql = "SELECT * FROM gestio_incidencies.users WHERE email = ? AND password = ?";
+                $statement = $connect->prepare($sql);
+                $statement->bind_param("ss", $this->email, $this->password);
+                $statement->execute();
+                $user = $statement->get_result()->fetch_assoc();
+                if(password_verify($this->password,$user['password']))
+                {
+                    $this->__construct($user['id_user'], $user['name'], $user['surname'], $user['email'], $user['password'], $user['role']);
+                    $connect->close();
+                    return true;
+                }
+                else
+                {
+                    $connect->close();
+                    return false;
+                }
+            }
+            else
+            {
+                $connect->close(); // Tanca la conexió
+                return false;
+            }
+        }
+        else
+        {
+            throw new Exception("No tens permisos suficients");
             return false;
         }
     }
 
     public function delete(string $type)
     {
-        if(strcmp($type, 'admin') == 0)
+        $connect = databaseConnect($type);
+        $check = $this->checkErrors($connect, $this->id_user);
+        if(strcmp($type, 'admin') == 0 && $check)
         {
-            $connect = databaseConnect($type);
-            $statement = $connect->prepare("DELETE FROM gestio_incidencies.users WHERE id_user = ?"); // Prepara i executa el insert per prevenir SQL injections.
+            $sql = "DELETE FROM gestio_incidencies.users WHERE id_user = ?";
+            $statement = $connect->prepare($sql); // Prepara i executa el insert per prevenir SQL injections.
             $statement->bind_param("i", $this->id_user);
             $statement->execute();
             $user = $statement->get_result()->fetch_assoc();
-            mysqli_close($connect);
+            $connect->close();
             return true;
+        }
+        elseif(strcmp($type, 'admin') != 0)
+        {
+            throw new Exception("No tens permisos suficients");
+            $connect->close();
+            return false;
         }
         else
         {
+            $connect->close();
             return false;
         }
     }
 
+    /**Funció getuserProperties
+     * És un getter, retorna un array associatiu
+       amb els valors de la classe.
+     */
     public function getUserProperties()
     {
         return 
@@ -189,6 +252,5 @@ class User
             'role' => $this->role
         ];
     }
-
 }
 ?>
