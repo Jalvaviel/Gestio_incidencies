@@ -37,7 +37,7 @@ class User
         
         if (!$statement->execute())
         {
-            throw new Exception("Error: " . $statement->error);
+            throw new Exception("Error: ha fallat l'execucio");
             $check = false;
         }
 
@@ -46,7 +46,7 @@ class User
 
         if ($rowsSelected["count"] <= 0 || $count > 1)
         {
-            throw new Exception("Error: s'han trobat $count usuaris. Esperaba 1.");
+            throw new Exception("Error: quantitat d'usuaris invalid");
             $check = false;
         }
     return $check;
@@ -66,7 +66,7 @@ class User
             $connect = databaseConnect($type);
             if($this->checkErrors($connect, $this->email, 2) && $this->checkErrors($connect, $this->id_user, 1))
             {
-                throw new Exception("Ja existeix un usuari amb el mateix Email");
+                throw new Exception("Error: colisions al email");
                 return false;
             }
             else
@@ -82,7 +82,7 @@ class User
                 }
                 else
                 {
-                    throw new Exception("Error, no s'ha inserit l'usuari." . $statement->error);
+                    throw new Exception("Error, ha fallat l'insecio");
                     $connect->close();
                     return false;
                 }
@@ -90,7 +90,7 @@ class User
         }
         else
         {
-            throw new Exception("No tens permisos suficients");
+            throw new Exception("Error: No tens permisos");
             return false;
         }
     }
@@ -103,12 +103,12 @@ class User
     {
         if(EMPTY($this->id_user) || EMPTY($this->name) || EMPTY($this->surname) || EMPTY($this->email) || EMPTY($this->password) || EMPTY($this->role) || strcmp($this->id_user,'null') == 0 || strcmp($this->name,'null') == 0 || strcmp($this->surname,'null') == 0 || strcmp($this->email,'null') == 0 || strcmp($this->password,'null') == 0 || strcmp($this->role,'null') == 0)
         {
-            throw new Exception("Falta informació a la classe per actualitzar l'usuari");
+            throw new Exception("Error: falta informacio");
             return false;
         }
         if(strcmp($type,'admin') != 0)
         {
-            throw new Exception("No tens permisos suficients.");
+            throw new Exception("Error: No tens permisos");
             return false;
         }
         else
@@ -124,7 +124,7 @@ class User
             }
             else
             {
-                throw new Exception("Error, no s'ha actualitzat l'usuari" . $statement->error);
+                throw new Exception("Error, no s'ha actualitzat l'usuari");
                 return false;
             }
         }
@@ -162,7 +162,7 @@ class User
         }
         else
         {
-            throw new Exception("No tens permisos suficients.");
+            throw new Exception("Error: No tens permisos");
         }
     }
 
@@ -186,7 +186,7 @@ class User
                 $statement->bind_param("ss", $this->email, $this->password);
                 $statement->execute();
                 $user = $statement->get_result()->fetch_assoc();
-                if(password_verify($this->password,$user['password']))
+                if(password_verify($this->password, $user['password']))
                 {
                     $this->__construct($user['id_user'], $user['name'], $user['surname'], $user['email'], $user['password'], $user['role']);
                     $connect->close();
@@ -200,13 +200,13 @@ class User
             }
             else
             {
-                $connect->close(); // Tanca la conexió
+                $connect->close();
                 return false;
             }
         }
         else
         {
-            throw new Exception("No tens permisos suficients");
+            throw new Exception("Error: No tens permisos");
             return false;
         }
     }
@@ -227,12 +227,13 @@ class User
         }
         elseif(strcmp($type, 'admin') != 0)
         {
-            throw new Exception("No tens permisos suficients");
+            throw new Exception("Error: No tens permisos");
             $connect->close();
             return false;
         }
         else
         {
+            throw new Exception("Error: No existeix l'usuari");
             $connect->close();
             return false;
         }
