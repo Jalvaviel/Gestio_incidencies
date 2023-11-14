@@ -23,6 +23,7 @@ class User
     /** Funció checkErrors
      * És una funció que s'encarrega de buscar només un usuari.
      * Té dos modes, el mode 1 busca per id i el 2 per email.
+     * No tanca la conexió, ja que és una funció auxiliar.
      * Retorna bool.
     */
     private function checkErrors($connect, string $condition, int $mode=1) : bool
