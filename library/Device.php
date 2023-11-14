@@ -32,7 +32,6 @@ include 'helpers.php';
     public function getDeviceProperties() : array
     { // Associative array getter.
         return [
-            'id_device' => $this->id_device,
             'os' => $this->os,
             'code' => $this->code,
             'description' => $this->description,
@@ -41,6 +40,14 @@ include 'helpers.php';
         ];
     }
 
+    public function printDeviceProperties() : void
+    {
+        echo "<li>Sistema operatiu: $this->os</li>";
+        echo "<li>Codi: $this->code</li>";
+        echo "<li>Descripció: $this->description</li>";
+        echo "<li>Sala: $this->room</li>";
+        echo "<li>IP: $this->ip</li>";
+    }
     /**
      * @throws Exception
      */
