@@ -206,12 +206,12 @@ class Device
     {
         return 
         [
-            'id_user' => $this->id_device,
-            'name' => $this->os,
-            'surname' => $this->code,
-            'email' => $this->description,
-            'password' => $this->ip,
-            'role' => $this->room
+            'id_device' => $this->id_device,
+            'os' => $this->os,
+            'code' => $this->code,
+            'description' => $this->description,
+            'ip' => $this->ip,
+            'room' => $this->room
         ];
     }
 }
