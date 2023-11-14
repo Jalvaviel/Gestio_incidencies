@@ -1,128 +1,217 @@
 <?php
 include 'helpers.php';
 
-#[AllowDynamicProperties] class Device
+class Device
 {
-    private int $id_device;
-    private string $os;
-    private string $code;
-    private string $description;
-    private string $ip;
-    private string $room;
+    private int $id_device = 0;
+    private string $os = "";
+    private string $code = "";
+    private string $description = "";
+    private string $ip = "";
+    private string $room = "";
 
-    public function __construct($id_device = 1, $os = NULL, $code = NULL, $description = NULL, $ip = NULL, $room = NULL)
-    { // Builder.
-        $this->id_device = $id_device;
-        $this->os = $os;
-        $this->code = $code;
-        $this->description = $description;
-        $this->room = $room;
-        $this->ip = $ip;
-    }
-
-    public function updateDeviceObject($id_device, $os, $code, $description, $ip, $room): void
+    public function __construct(int $id_device, string $os, string $code, string $description, string $ip, string $room)
     {
         $this->id_device = $id_device;
         $this->os = $os;
         $this->code = $code;
         $this->description = $description;
-        $this->room = $room;
         $this->ip = $ip;
-    }
-    public function getDeviceProperties() : array
-    { // Associative array getter.
-        return [
-            'os' => $this->os,
-            'code' => $this->code,
-            'description' => $this->description,
-            'room' => $this->room,
-            'ip' => $this->ip
-        ];
+        $this->room = $room;
     }
 
-    public function printDeviceProperties() : void
+    /** Funció checkErrors
+     * És una funció que s'encarrega de buscar només un dispositiu.
+     * Té dos modes, el mode 1 busca per id i el 2 per codi.
+     * No tanca la conexió, ja que és una funció auxiliar.
+     * Retorna bool.
+    */
+    private function checkErrors($connect, string $condition, int $mode=1) : bool
     {
-        echo "<li>Sistema operatiu: $this->os</li>";
-        echo "<li>Codi: $this->code</li>";
-        echo "<li>Descripció: $this->description</li>";
-        echo "<li>Sala: $this->room</li>";
-        echo "<li>IP: $this->ip</li>";
+        $column = ($mode == 1) ? "id_device" : "code";
+        $varType = ($mode == 1) ? "i" : "s";
+
+        $sql = "SELECT COUNT(id_device) AS 'count' FROM gestio_incidencies.devices WHERE $column = ?";
+        $statement = $connect->prepare($sql);
+        $statement->bind_param($varType, $condition);
+        
+        if (!$statement->execute())
+        {
+            return false;
+        }
+
+        $rowsSelected = $statement->get_result()->fetch_assoc();
+        $count = $rowsSelected["count"];
+
+        if ($rowsSelected["count"] <= 0 || $count > 1)
+        {
+            return false;
+        }
+        return true;
     }
-    /**
-     * @throws Exception
+
+    /**Funció insert
+     * Serveix per insertar un usuari amb les variables de la classe,
+       pots fer servir el constructor per omplir els valors a la classe
+       i seguidament, fer un insert, per insertar-ho a la base de dades.
+     * Crida a la funció checkErrors per comprobar que no hi hagi cap 
+       usuari amb el mateix email o id.
+     * Retorna bool.
      */
-    public function insertDeviceIntoDatabase(string $type): void
+    public function insert(string $type) : bool
     {
-        $connect = databaseConnect($type);
-        $statement = $connect->prepare("INSERT INTO gestio_incidencies.devices VALUES (DEFAULT,?,?,?,?,?)");
-
-        checkStatement($statement, $connect);
-
-        $statement->bind_param('sssis', $this->os, $this->code, $this->description, $this->room, $this->ip);
-        $result = $statement->execute();
-
-        checkResult($result, $statement);
-
-        mysqli_close($connect);
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function loadDeviceFromDatabase(string $type): void
-    {
-        $connect = databaseConnect($type);
-        $statement = $connect->prepare("SELECT * FROM gestio_incidencies.devices WHERE id_device = ?");
-
-        checkStatement($statement, $connect);
-
-        $statement->bind_param('i', $this->id_device);
-        $result = $statement->execute();
-
-        if ($result) {
-            $device = $statement->get_result()->fetch_assoc();
-            $this->updateDeviceObject($device['id_device'], $device['os'], $device['code'], $device['description'], $device['room'], $device['ip']);
-            mysqli_close($connect);
-            echo "Data carregada correctament.";
-        } else {
-            throw new Exception("Error executing query: " . $statement->error);
+        if(strcmp($type,'admin') == 0)
+        {
+            $connect = databaseConnect($type);
+            if($this->checkErrors($connect, $this->code, 2) && $this->checkErrors($connect, $this->id_device, 1))
+            {
+                return false;
+            }
+            else
+            {
+                $sql = "INSERT INTO gestio_incidencies.devices VALUES (DEFAULT,?,?,?,?,?)";
+                $statement = $connect->prepare($sql);
+                $statement->bind_param("sssss", $this->os, $this->code, $this->description, $this->ip, $this->room);
+                if($statement->execute())
+                {
+                    $connect->close();
+                    return true;
+                }
+                else
+                {
+                    $connect->close();
+                    return false;
+                }
+            }
+        }
+        else
+        {
+            return false;
         }
     }
 
-    /**
-     * @throws Exception
+    /**Funció update
+     * Funció que actualitza tots el valors del dispositiu,
+       i fa servir el id per buscar-lo.
+     * Retorna bool.
      */
-    public function deleteDeviceFromDatabase(string $type): void
+    public function update(string $type) : bool
     {
-        $connect = databaseConnect($type);
-        $statement = $connect->prepare("DELETE FROM gestio_incidencies.devices WHERE id_device = ?");
-
-        checkStatement($statement, $connect);
-
-        $statement->bind_param('i', $this->id_device);
-        $result = $statement->execute();
-
-        checkResult($result, $statement);
-
-        mysqli_close($connect);
+        if(strcmp($type,'admin') != 0)
+        {
+            return false;
+        }
+        else
+        {
+            $connect = databaseConnect($type);
+            $sql = "UPDATE gestio_incidencies.devices SET os = ?, code = ?, description = ?, ip = ?, room = ? WHERE id_device = ?";
+            $statement = $connect->prepare($sql);
+            $statement->bind_param("sssssi", $this->os, $this->code, $this->description, $this->ip, $this->room, $this->id_device);
+            if($statement->execute())
+            {
+                $connect->close();
+                return true;
+            }
+            else
+            {
+                $connect->close();
+                return false;
+            }
+        }
+    }
+    
+    /**Funció select
+     * Aquest funció serveix més per a buscar algún device en concret
+       o actualitzar els valors de la classe, fent servir el id.
+     * Crida a la funció checkErrors per veure que no hi han colisions
+       al id o codi i que només troba 1 dispositiu, i guarda els valors
+       a la classe.
+     * Retorna bool.
+     */
+    public function select(string $type) : bool
+    {
+        if(strcmp($type,'technician') == 0 || strcmp($type,'admin') == 0)
+        {
+            $connect = databaseConnect($type);
+            $check = $this->checkErrors($connect, $this->id_device, 1);
+            if($check)
+            {
+                $sql = "SELECT * FROM gestio_incidencies.devices WHERE id_device = ?";
+                $statement = $connect->prepare($sql);
+                $statement->bind_param("i", $this->id_device);
+                $statement->execute();
+                $device = $statement->get_result()->fetch_assoc();
+                $this->__construct($device['id_device'], $device['os'], $device['code'], $device['description'], $device['ip'], $device['room']);
+                $connect->close();
+                return true;
+            }
+            else
+            {
+                $connect->close();
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
     }
 
-    /**
-     * @throws Exception
+    /**Funció delete
+     * Agafa el id de la classe, i esborra l'usuari
+       amb la id de la classe.
+     * El type, serà del $_SESSION[], per així fer 
+       servir la classe per agafar la info, i 
+       executar el delete.
+     * Retorna bool.
      */
-    public function updateDeviceInDatabase(string $type): void
+    public function delete(string $type) : bool
     {
         $connect = databaseConnect($type);
-        $statement = $connect->prepare("UPDATE gestio_incidencies.devices SET os=?, code=?, description=?, room=?, ip=? WHERE id_device = ?");
-
-        checkStatement($statement, $connect);
-
-        $statement->bind_param('issss', $this->id_device, $this->os, $this->code, $this->description, $this->room, $this->ip);
-        $result = $statement->execute();
-
-        checkResult($result, $statement);
-
-        mysqli_close($connect);
+        $check = $this->checkErrors($connect, $this->id_device);
+        if(strcmp($type, 'admin') == 0 && $check)
+        {
+            $sql = "DELETE FROM gestio_incidencies.devices WHERE id_device = ?";
+            $statement = $connect->prepare($sql);
+            $statement->bind_param("i", $this->id_device);
+            if($statement->execute())
+            {
+                $connect->close();
+                return true;
+            }
+            else
+            {
+                $connect->close();
+                return false;
+            }
+        }
+        elseif(strcmp($type, 'admin') != 0)
+        {
+            $connect->close();
+            return false;
+        }
+        else
+        {
+            $connect->close();
+            return false;
+        }
     }
 
+    /**Funció getProperties
+     * És un getter, retorna un array associatiu
+       amb els valors de la classe.
+     * Retorna un array.
+     */
+    public function getProperties() : array
+    {
+        return 
+        [
+            'id_user' => $this->id_device,
+            'name' => $this->os,
+            'surname' => $this->code,
+            'email' => $this->description,
+            'password' => $this->ip,
+            'role' => $this->room
+        ];
+    }
 }

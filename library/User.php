@@ -76,7 +76,6 @@ class User
                 $statement->bind_param("sssss", $this->name, $this->surname, $this->email, $this->password, $this->role);
                 if($statement->execute())
                 {
-                    echo "S'ha inserit l'usuari correctament." . PHP_EOL;
                     $connect->close();
                     return true;
                 }
@@ -219,12 +218,18 @@ class User
         if(strcmp($type, 'admin') == 0 && $check)
         {
             $sql = "DELETE FROM gestio_incidencies.users WHERE id_user = ?";
-            $statement = $connect->prepare($sql); // Prepara i executa el insert per prevenir SQL injections.
+            $statement = $connect->prepare($sql);
             $statement->bind_param("i", $this->id_user);
-            $statement->execute();
-            $user = $statement->get_result()->fetch_assoc();
-            $connect->close();
-            return true;
+            if($statement->execute())
+            {
+                $connect->close();
+                return true;
+            }
+            else
+            {
+                $connect->close();
+                return false;
+            }
         }
         elseif(strcmp($type, 'admin') != 0)
         {
@@ -238,12 +243,12 @@ class User
         }
     }
 
-    /**Funció getuserProperties
+    /**Funció getProperties
      * És un getter, retorna un array associatiu
        amb els valors de la classe.
      * Retorna un array.
      */
-    public function getUserProperties() : array
+    public function getProperties() : array
     {
         return 
         [
