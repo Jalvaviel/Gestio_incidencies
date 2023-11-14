@@ -1,4 +1,6 @@
 <?php
+include 'helpers.php';
+
 class User
 {
     private int $id_user = 0;
