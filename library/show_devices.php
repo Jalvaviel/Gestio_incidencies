@@ -16,7 +16,10 @@
         try {
             $all_devices = loadAllDevices('admin');
             foreach($all_devices as $device) {
-                $device->printDeviceProperties();
+                $device_dict = $device->getDeviceProperties();
+                foreach($device_dict as $key => $value){
+                    echo "<li class='llista'>$key => $value</li>";
+                }
             }
         }catch (Exception $e) {
             echo 'Error al mostrar els dispositius';
