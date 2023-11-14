@@ -4,11 +4,11 @@ include 'helpers.php';
 class User
 {
     private int $id_user = 0;
-    private string $name = null;
-    private string $surname = null;
-    private string $email = null;
-    private string $password = null;
-    private string $role = null;
+    private string $name = "";
+    private string $surname = "";
+    private string $email = "";
+    private string $password = "";
+    private string $role = "";
 
     public function __construct($id_user, $name, $surname, $email, $password, $role)
     {
@@ -23,8 +23,9 @@ class User
     /** Funció checkErrors
      * És una funció que s'encarrega de buscar només un usuari.
      * Té dos modes, el mode 1 busca per id i el 2 per email.
+     * Retorna bool.
     */
-    private function checkErrors($connect, string $condition, int $mode=1)
+    private function checkErrors($connect, string $condition, int $mode=1) : bool
     {
         $check = true;
 
@@ -37,7 +38,6 @@ class User
         
         if (!$statement->execute())
         {
-            throw new Exception("Error: ha fallat l'execucio");
             $check = false;
         }
 
@@ -46,10 +46,9 @@ class User
 
         if ($rowsSelected["count"] <= 0 || $count > 1)
         {
-            throw new Exception("Error: quantitat d'usuaris invalid");
             $check = false;
         }
-    return $check;
+        return $check;
     }
 
     /**Funció insert
@@ -58,22 +57,22 @@ class User
        i seguidament, fer un insert, per insertar-ho a la base de dades.
      * Crida a la funció checkErrors per comprobar que no hi hagi cap 
        usuari amb el mateix email o id.
+     * Retorna bool.
      */
-    public function insert(string $type)
+    public function insert(string $type) : bool
     {
         if(strcmp($type,'admin') == 0)
         {
             $connect = databaseConnect($type);
             if($this->checkErrors($connect, $this->email, 2) && $this->checkErrors($connect, $this->id_user, 1))
             {
-                throw new Exception("Error: colisions al email");
                 return false;
             }
             else
             {
                 $sql = "INSERT INTO gestio_incidencies.users VALUES (DEFAULT,?,?,?,?,?)";
                 $statement = $connect->prepare($sql);
-                $statement->bind_param("sssss", $this->id_user, $this->name, $this->surname, $this->email, $this->password, $this->role);
+                $statement->bind_param("sssss", $this->name, $this->surname, $this->email, $this->password, $this->role);
                 if($statement->execute())
                 {
                     echo "S'ha inserit l'usuari correctament." . PHP_EOL;
@@ -82,7 +81,6 @@ class User
                 }
                 else
                 {
-                    throw new Exception("Error, ha fallat l'insecio");
                     $connect->close();
                     return false;
                 }
@@ -90,7 +88,6 @@ class User
         }
         else
         {
-            throw new Exception("Error: No tens permisos");
             return false;
         }
     }
@@ -98,33 +95,28 @@ class User
     /**Funció update
      * Funció que actualitza tots el valors del usuari,
        i fa servir el id per buscar-lo.
+     * Retorna bool.
      */
-    public function update(string $type)
+    public function update(string $type) : bool
     {
-        if(EMPTY($this->id_user) || EMPTY($this->name) || EMPTY($this->surname) || EMPTY($this->email) || EMPTY($this->password) || EMPTY($this->role) || strcmp($this->id_user,'null') == 0 || strcmp($this->name,'null') == 0 || strcmp($this->surname,'null') == 0 || strcmp($this->email,'null') == 0 || strcmp($this->password,'null') == 0 || strcmp($this->role,'null') == 0)
-        {
-            throw new Exception("Error: falta informacio");
-            return false;
-        }
         if(strcmp($type,'admin') != 0)
         {
-            throw new Exception("Error: No tens permisos");
             return false;
         }
         else
         {
             $connect = databaseConnect($type);
-            $sql = "INSERT INTO gestio_incidencies.users SET name = ?, surname = ?, email = ?, password = ?, role = ? WHERE id_user = ?";
+            $sql = "UPDATE gestio_incidencies.users SET name = ?, surname = ?, email = ?, password = ?, role = ? WHERE id_user = ?";
             $statement = $connect->prepare($sql);
             $statement->bind_param("sssssi", $this->name, $this->surname, $this->email, $this->password, $this->role, $this->id_user);
             if($statement->execute())
             {
-                echo "S'han actualitzat els valors de manera satisfactioria" . PHP_EOL;
+                $connect->close();
                 return true;
             }
             else
             {
-                throw new Exception("Error, no s'ha actualitzat l'usuari");
+                $connect->close();
                 return false;
             }
         }
@@ -136,8 +128,9 @@ class User
      * Crida a la funció checkErrors per veure que no hi han colisions
        al id o email i que només troba 1 usuari, i guarda els valors
        a la classe.
+     * Retorna bool.
      */
-    public function select(string $type)
+    public function select(string $type) : bool
     {
         if(strcmp($type,'technician') == 0 || strcmp($type,'admin') == 0)
         {
@@ -162,7 +155,7 @@ class User
         }
         else
         {
-            throw new Exception("Error: No tens permisos");
+            return false;
         }
     }
 
@@ -172,8 +165,9 @@ class User
        ho comproba amb el password_verify() i si és el mateix,
        guarda a la classe el usuari amb totes les dades i el 
        password encriptat.
+     * Retorna bool.
      */
-    public function login(string $type)
+    public function login(string $type) : bool
     {
         if(strcmp($type,'technician') == 0 || strcmp($type,'admin') == 0)
         {
@@ -206,12 +200,18 @@ class User
         }
         else
         {
-            throw new Exception("Error: No tens permisos");
             return false;
         }
     }
 
-    public function delete(string $type)
+/**Funció delete
+ * Agafa el id de la classe i l'esborra.
+ * El type, serà del $_SESSION[], per així
+ * fer servir la classe per agafar la info,
+ * i executar el delete.
+ * Retorna bool.
+ */
+    public function delete(string $type) : bool
     {
         $connect = databaseConnect($type);
         $check = $this->checkErrors($connect, $this->id_user);
@@ -227,13 +227,11 @@ class User
         }
         elseif(strcmp($type, 'admin') != 0)
         {
-            throw new Exception("Error: No tens permisos");
             $connect->close();
             return false;
         }
         else
         {
-            throw new Exception("Error: No existeix l'usuari");
             $connect->close();
             return false;
         }
@@ -242,8 +240,9 @@ class User
     /**Funció getuserProperties
      * És un getter, retorna un array associatiu
        amb els valors de la classe.
+     * Retorna un array.
      */
-    public function getUserProperties()
+    public function getUserProperties() : array
     {
         return 
         [
