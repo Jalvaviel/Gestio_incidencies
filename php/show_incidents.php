@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Usuaris</title>
+    <title>Incidències</title>
     <link rel="stylesheet" href="../css/style_users.css">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,9 +14,9 @@
 <header>
     <img id="logo" src="../png/logo-no-background.png" alt="logo" width="200"/>
     <nav id="mainmenu">
-        <a href="show_users.php" class="mainmenu">Usuaris</a>
-        <a href="show_incidents.php" class="mainmenu">Incidències</a>
-        <a href="show_devices.php" class="mainmenu">Equips</a>
+        <a href="login.php" class="mainmenu">Usuaris</a>
+        <a href="login.php" class="mainmenu">Incidències</a>
+        <a href="login.php" class="mainmenu">Equips</a>
     </nav>
     <nav id="mainoptions">
         <a href="login.php" id="profile"><img src="../png/user.png" alt="profile" width="41"/>Perfil</a>
@@ -26,16 +26,16 @@
 <nav class="menu">
     <table>
         <tr>
-            <th><strong>ID Usuari</strong></th>
-            <th><strong>Nom</strong></th>
-            <th><strong>Cognom</strong></th>
-            <th><strong>Correu</strong></th>
-            <th><strong>Contrasenya (Hash)</strong></th>
-            <th><strong>Rol</strong></th>
+            <th><strong>ID Incidència</strong></th>
+            <th><strong>Descripció</strong></th>
+            <th><strong>Estat</strong></th>
+            <th><strong>Data</strong></th>
+            <th><strong>Usuari</strong></th>
+            <th><strong>Dispositiu</strong></th>
             <th><strong>Modificar</strong></th>
         </tr>
         <?php
-        include "../library/User.php";
+        include "../library/Incident.php";
         try {
             $all_users = loadUsers('admin', 1); // TODO change to variable in session from database
             foreach($all_users as $user) {
@@ -60,7 +60,7 @@
 </html>
 
 <?php
-function loadUsers($type, $id_user): array
+function loadIncidents($type, $id_incident): array
 {
 
     $connect = databaseConnect($type);
@@ -68,34 +68,41 @@ function loadUsers($type, $id_user): array
 
     switch ($type) { // Comprova el tipus d'usuari que vol fer la consulta.
         case 'admin':
-            $statement = $connect->prepare("SELECT * FROM gestio_incidencies.users");
+        case 'technician':
+            $statement_incident = $connect->prepare("SELECT * FROM gestio_incidencies.incidents");
             break;
         case 'worker':
-        case 'technician':
-            $statement = $connect->prepare("SELECT * FROM gestio_incidencies.users WHERE id_user = $id_user");
+            $statement_incident = $connect->prepare("SELECT * FROM gestio_incidencies.incidents"); // TODO change access
             break;
     }
     if (!$statement) {
         echo "<div class='error'>Error preparant consulta.</div>";
     }
-    $result = $statement->execute();
+    $result_incident = $statement_incident->execute();
+
     if (!$result) {
         echo "<div class='error'>Error obtenint resultats.</div>";
     }
-    $users = [];
-    $row = $statement->get_result();
+    $incidents = [];
+    $row_incident = $statement_incident->get_result();
+    // $statement_user = $connect->prepare("SELECT * FROM gestio_incidencies.users WHERE id_user =");
 
-    while ($userData = $row->fetch_assoc()) {
-        $user = new User(
-            $userData['id_user'],
-            $userData['name'],
-            $userData['surname'],
-            $userData['email'],
-            $userData['password'],
-            $userData['role']
+    while ($incidentData = $row_incident->fetch_assoc()) {
+        $id_incident = $incidentData['id_incident'];
+        $incident = new Incident(
+            $id_incident,
+            $incidentData['description'],
+            $incidentData['status'],
+            $incidentData['date'],
+            $incidentData['id_user'],
+            $statement_incident_device = $connect->prepare("SELECT id_device FROM gestio_incidencies.incidents_devices WHERE id_incident = $id_incident");
+            $result_incident_device = $statement_incident_device->execute();
+            $row_incident_device = $statement_incident_device->get_result();
+            while($incident_device_data = $row_incident_device->fetch_assoc());
+
         );
-        $users[] = $user;
+        $incidents[] = $incident;
     }
-    return $users;
+    return $incident;
 }
 ?>
