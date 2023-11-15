@@ -62,7 +62,7 @@ class Incident
         if(strcmp($type,'admin') == 0)
         {
             $connect = databaseConnect($type);
-            if($this->checkErrors($connect, $this->id_user, 1))
+            if(!$this->checkErrors($connect, $this->id_incident, 1) || $this->checkErrors($connect, $this->id_user, 2))
             {
                 return false;
             }
@@ -70,7 +70,7 @@ class Incident
             {
                 $sql = "INSERT INTO gestio_incidencies.users VALUES (DEFAULT,?,?,?,?,?)";
                 $statement = $connect->prepare($sql);
-                $statement->bind_param("sssss", $this->name, $this->surname, $this->email, $this->password, $this->role);
+                $statement->bind_param("sssi", $this->description, $this->status, $this->date, $this->id_user);
                 if($statement->execute())
                 {
                     $connect->close();
@@ -103,9 +103,9 @@ class Incident
         else
         {
             $connect = databaseConnect($type);
-            $sql = "UPDATE gestio_incidencies.users SET name = ?, surname = ?, email = ?, password = ?, role = ? WHERE id_user = ?";
+            $sql = "UPDATE gestio_incidencies.users SET description = ?, status = ?, date = ?, id_user = ? WHERE id_incident = ?";
             $statement = $connect->prepare($sql);
-            $statement->bind_param("sssssi", $this->name, $this->surname, $this->email, $this->password, $this->role, $this->id_user);
+            $statement->bind_param("sssii", $this->description, $this->status, $this->date, $this->id_user, $this->id_incident);
             if($statement->execute())
             {
                 $connect->close();
@@ -132,62 +132,17 @@ class Incident
         if(strcmp($type,'technician') == 0 || strcmp($type,'admin') == 0)
         {
             $connect = databaseConnect($type);
-            $check = $this->checkErrors($connect, $this->id_user, 1);
+            $check = $this->checkErrors($connect, $this->id_incident, 1);
             if($check)
             {
-                $sql = "SELECT * FROM gestio_incidencies.users WHERE id_user = ?";
+                $sql = "SELECT * FROM gestio_incidencies.incidents WHERE id_incident = ?";
                 $statement = $connect->prepare($sql);
-                $statement->bind_param("i", $this->id_user);
+                $statement->bind_param("i", $this->id_incident);
                 $statement->execute();
-                $user = $statement->get_result()->fetch_assoc();
-                $this->__construct($user['id_user'], $user['name'], $user['surname'], $user['email'], $user['password'], $user['role']);
+                $incident = $statement->get_result()->fetch_assoc();
+                $this->__construct($incident['id_incident'], $incident['description'], $incident['status'], $incident['date'], $incident['id_user']);
                 $connect->close();
                 return true;
-            }
-            else
-            {
-                $connect->close();
-                return false;
-            }
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    /**Funció Login.
-     * Aquesta funció és molt similar a la select, però aquesta
-       li paso el el password sense encriptar a la classe, i 
-       ho comproba amb el password_verify() i si és el mateix,
-       guarda a la classe el usuari amb totes les dades i el 
-       password encriptat.
-     * Retorna bool.
-     */
-    public function login(string $type) : bool
-    {
-        if(strcmp($type,'technician') == 0 || strcmp($type,'admin') == 0)
-        {
-            $connect = databaseConnect($type);
-            $check = $this->checkErrors($connect, $this->email, 2);
-            if($check)
-            {
-                $sql = "SELECT * FROM gestio_incidencies.users WHERE email = ? AND password = ?";
-                $statement = $connect->prepare($sql);
-                $statement->bind_param("ss", $this->email, $this->password);
-                $statement->execute();
-                $user = $statement->get_result()->fetch_assoc();
-                if(password_verify($this->password, $user['password']))
-                {
-                    $this->__construct($user['id_user'], $user['name'], $user['surname'], $user['email'], $user['password'], $user['role']);
-                    $connect->close();
-                    return true;
-                }
-                else
-                {
-                    $connect->close();
-                    return false;
-                }
             }
             else
             {
@@ -211,12 +166,12 @@ class Incident
     public function delete(string $type) : bool
     {
         $connect = databaseConnect($type);
-        $check = $this->checkErrors($connect, $this->id_user);
+        $check = $this->checkErrors($connect, $this->id_incident);
         if(strcmp($type, 'admin') == 0 && $check)
         {
-            $sql = "DELETE FROM gestio_incidencies.users WHERE id_user = ?";
+            $sql = "DELETE FROM gestio_incidencies.incidents WHERE id_incident = ?";
             $statement = $connect->prepare($sql);
-            $statement->bind_param("i", $this->id_user);
+            $statement->bind_param("i", $this->id_incident);
             if($statement->execute())
             {
                 $connect->close();
@@ -249,12 +204,11 @@ class Incident
     {
         return 
         [
-            'id_user' => $this->id_user,
-            'name' => $this->name,
-            'surname' => $this->surname,
-            'email' => $this->email,
-            'password' => $this->password,
-            'role' => $this->role
+            'id_incident' => $this->id_incident,
+            'description' => $this->description,
+            'surname' => $this->status,
+            'email' => $this->date,
+            'password' => $this->id_user
         ];
     }
 }
