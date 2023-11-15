@@ -33,7 +33,7 @@ class User
         $column = ($mode == 1) ? "id_user" : "email";
         $varType = ($mode == 1) ? "i" : "s";
 
-        $sql = "SELECT COUNT(id_user) AS 'count' FROM gestio_incidencies.users WHERE $column = ?";
+        $sql = "SELECT COUNT($column) AS 'count' FROM gestio_incidencies.users WHERE $column = ?";
         $statement = $connect->prepare($sql);
         $statement->bind_param($varType, $condition);
         
