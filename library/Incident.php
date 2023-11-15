@@ -1,77 +1,260 @@
 <?php
 
-#[AllowDynamicProperties] class Incident
+class Incident
 {
-    private int $id_incident;
-    private string $description;
-    private string $status;
-    private string $date;
-    private User $user;
+    private int $id_incident = 0;
+    private string $description = "";
+    private string $status = "";
+    private string $date = "";
+    private int $id_user = 0;
 
-    public function __construct($id_incident = 1, $description = NULL, $status = NULL, $date = NULL, $user = NULL)
-    { // Builder.
+    public function __construct($id_incident, $description, $status, $date, $id_user)
+    {
         $this->id_incident = $id_incident;
         $this->description = $description;
         $this->status = $status;
         $this->date = $date;
-        $this->user = $user;
+        $this->id_user = $id_user;
+    }
+    
+    /** Funció checkErrors
+     * És una funció que s'encarrega de buscar només un usuari.
+     * Té dos modes, el mode 1 busca per id i el 2 per email.
+     * No tanca la conexió, ja que és una funció auxiliar.
+     * Retorna bool.
+    */
+    private function checkErrors($connect, string $condition, int $mode=1) : bool
+    {
+        $check = true;
+
+        $column = ($mode == 1) ? "id_incident" : "id_user";
+        $table = ($mode == 1) ? "incidents" : "users";
+        
+        $sql = "SELECT COUNT(?) AS 'count' FROM gestio_incidencies.$table WHERE ? = ?";
+        $statement = $connect->prepare($sql);
+        $statement->bind_param('ssi', $column, $column,$condition);
+        
+        if (!$statement->execute())
+        {
+            $check = false;
+        }
+
+        $rowsSelected = $statement->get_result()->fetch_assoc();
+        $count = $rowsSelected["count"];
+
+        if ($rowsSelected["count"] <= 0 || $count > 1)
+        {
+            $check = false;
+        }
+        return $check;
     }
 
-    public function getIncidentProperties() : array
-    { // Associative array getter.
-        return [
-            'id_incident' => $this->id_incident,
-            'description' => $this->description,
-            'status' => $this->status,
-            'date' => $this->date,
-            'user' => $this->user
+    /**Funció insert
+     * Serveix per insertar un usuari amb les variables de la classe,
+       pots fer servir el constructor per omplir els valors a la classe
+       i seguidament, fer un insert, per insertar-ho a la base de dades.
+     * Crida a la funció checkErrors per comprobar que no hi hagi cap 
+       usuari amb el mateix email o id.
+     * Retorna bool.
+     */
+    public function insert(string $type) : bool
+    {
+        if(strcmp($type,'admin') == 0)
+        {
+            $connect = databaseConnect($type);
+            if($this->checkErrors($connect, $this->id_user, 1))
+            {
+                return false;
+            }
+            else
+            {
+                $sql = "INSERT INTO gestio_incidencies.users VALUES (DEFAULT,?,?,?,?,?)";
+                $statement = $connect->prepare($sql);
+                $statement->bind_param("sssss", $this->name, $this->surname, $this->email, $this->password, $this->role);
+                if($statement->execute())
+                {
+                    $connect->close();
+                    return true;
+                }
+                else
+                {
+                    $connect->close();
+                    return false;
+                }
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    /**Funció update
+     * Funció que actualitza tots el valors del usuari,
+       i fa servir el id per buscar-lo.
+     * Retorna bool.
+     */
+    public function update(string $type) : bool
+    {
+        if(strcmp($type,'admin') != 0)
+        {
+            return false;
+        }
+        else
+        {
+            $connect = databaseConnect($type);
+            $sql = "UPDATE gestio_incidencies.users SET name = ?, surname = ?, email = ?, password = ?, role = ? WHERE id_user = ?";
+            $statement = $connect->prepare($sql);
+            $statement->bind_param("sssssi", $this->name, $this->surname, $this->email, $this->password, $this->role, $this->id_user);
+            if($statement->execute())
+            {
+                $connect->close();
+                return true;
+            }
+            else
+            {
+                $connect->close();
+                return false;
+            }
+        }
+    }
+
+    /**Funció select
+     * Aquest funció serveix més per a buscar algún usuari en concret
+       o actualitzar els valors de la classe.
+     * Crida a la funció checkErrors per veure que no hi han colisions
+       al id o email i que només troba 1 usuari, i guarda els valors
+       a la classe.
+     * Retorna bool.
+     */
+    public function select(string $type) : bool
+    {
+        if(strcmp($type,'technician') == 0 || strcmp($type,'admin') == 0)
+        {
+            $connect = databaseConnect($type);
+            $check = $this->checkErrors($connect, $this->id_user, 1);
+            if($check)
+            {
+                $sql = "SELECT * FROM gestio_incidencies.users WHERE id_user = ?";
+                $statement = $connect->prepare($sql);
+                $statement->bind_param("i", $this->id_user);
+                $statement->execute();
+                $user = $statement->get_result()->fetch_assoc();
+                $this->__construct($user['id_user'], $user['name'], $user['surname'], $user['email'], $user['password'], $user['role']);
+                $connect->close();
+                return true;
+            }
+            else
+            {
+                $connect->close();
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    /**Funció Login.
+     * Aquesta funció és molt similar a la select, però aquesta
+       li paso el el password sense encriptar a la classe, i 
+       ho comproba amb el password_verify() i si és el mateix,
+       guarda a la classe el usuari amb totes les dades i el 
+       password encriptat.
+     * Retorna bool.
+     */
+    public function login(string $type) : bool
+    {
+        if(strcmp($type,'technician') == 0 || strcmp($type,'admin') == 0)
+        {
+            $connect = databaseConnect($type);
+            $check = $this->checkErrors($connect, $this->email, 2);
+            if($check)
+            {
+                $sql = "SELECT * FROM gestio_incidencies.users WHERE email = ? AND password = ?";
+                $statement = $connect->prepare($sql);
+                $statement->bind_param("ss", $this->email, $this->password);
+                $statement->execute();
+                $user = $statement->get_result()->fetch_assoc();
+                if(password_verify($this->password, $user['password']))
+                {
+                    $this->__construct($user['id_user'], $user['name'], $user['surname'], $user['email'], $user['password'], $user['role']);
+                    $connect->close();
+                    return true;
+                }
+                else
+                {
+                    $connect->close();
+                    return false;
+                }
+            }
+            else
+            {
+                $connect->close();
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+/**Funció delete
+ * Agafa el id de la classe i l'esborra.
+ * El type, serà del $_SESSION[], per així
+ * fer servir la classe per agafar la info,
+ * i executar el delete.
+ * Retorna bool.
+ */
+    public function delete(string $type) : bool
+    {
+        $connect = databaseConnect($type);
+        $check = $this->checkErrors($connect, $this->id_user);
+        if(strcmp($type, 'admin') == 0 && $check)
+        {
+            $sql = "DELETE FROM gestio_incidencies.users WHERE id_user = ?";
+            $statement = $connect->prepare($sql);
+            $statement->bind_param("i", $this->id_user);
+            if($statement->execute())
+            {
+                $connect->close();
+                return true;
+            }
+            else
+            {
+                $connect->close();
+                return false;
+            }
+        }
+        elseif(strcmp($type, 'admin') != 0)
+        {
+            $connect->close();
+            return false;
+        }
+        else
+        {
+            $connect->close();
+            return false;
+        }
+    }
+
+    /**Funció getProperties
+     * És un getter, retorna un array associatiu
+       amb els valors de la classe.
+     * Retorna un array.
+     */
+    public function getProperties() : array
+    {
+        return 
+        [
+            'id_user' => $this->id_user,
+            'name' => $this->name,
+            'surname' => $this->surname,
+            'email' => $this->email,
+            'password' => $this->password,
+            'role' => $this->role
         ];
-    }
-
-    public function insertIncidentIntoDatabase(string $type) : void // Gets the Incident object and inserts it into the DB.
-    {
-        $connect = databaseConnect($type);
-        $statement = $connect->prepare("INSERT INTO gestio_incidencies.incidents VALUES (DEFAULT,?,?,?,?)"); // Prepare and execute the insert to prevent SQL attacks.
-        $idUser = $this->user->getUserProperties('id_user');
-        $statement->bind_param('sssi',$this->description,$this->status,$this->date,$idUser);
-        $statement->execute();
-        if ($statement->execute()) {
-            echo "Data inserted successfully.";
-        } else {
-            echo "Error: " . $connect->error;
-
-        }
-
-        mysqli_close($connect);
-    }
-    public function loadIncidentFromDatabase(string $type) : void // Gets the incident from the DB with the same incident_id and updates the Incident object with the same properties.
-    {
-        $connect = databaseConnect($type);
-        $statement = $connect->prepare("SELECT * FROM gestio_incidencies.incidents WHERE id_incident = ?"); // Prepare and execute the query to prevent SQL attacks.
-        $statement->bind_param('i',$this->id_incident);
-        $statement->execute();
-        if ($statement->execute()) {
-            $incident = $statement->get_result()->fetch_assoc();
-            $user = new User($incident['id_user']); // Create a new User object associated with the user in the database entry.
-            $this->__construct($incident['id_device'], $incident['description'], $incident['status'], $incident['date'], $user->select($type,$incident['id_user']));
-            mysqli_close($connect);
-            echo "Data loaded successfully.";
-        } else {
-            echo "Error: " . $connect->error;
-        }
-    }
-
-    public function deleteIncidentFromDatabase(string $type) : void // Gets the incident from the DB with the same incident_id and deletes it from the DB.
-    {
-        $connect = databaseConnect($type);
-        $statement = $connect->prepare("DELETE FROM gestio_incidencies.incidents WHERE id_incident = ?"); // Prepare and execute the insert to prevent SQL attacks.
-        $statement->bind_param('i',$this->id_incident);
-        $statement->execute();
-        if ($statement->execute()) {
-            echo "Data deleted successfully.";
-        } else {
-            echo "Error: " . $connect->error;
-        }
-        mysqli_close($connect);
     }
 }
