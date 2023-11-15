@@ -175,12 +175,13 @@ class User
             $check = $this->checkErrors($connect, $this->email, 2);
             if($check)
             {
-                $sql = "SELECT * FROM gestio_incidencies.users WHERE email = ? AND password = ?";
+                $sql = "SELECT id_user, name, surname, email, password, role FROM gestio_incidencies.users WHERE email = ?";
                 $statement = $connect->prepare($sql);
-                $statement->bind_param("ss", $this->email, $this->password);
+                $statement->bind_param("s", $this->email);
                 $statement->execute();
                 $user = $statement->get_result()->fetch_assoc();
-                if(password_verify($this->password, $user['password']))
+
+                if(!empty($user) || password_verify($this->password, $user['password']))
                 {
                     $this->__construct($user['id_user'], $user['name'], $user['surname'], $user['email'], $user['password'], $user['role']);
                     $connect->close();
