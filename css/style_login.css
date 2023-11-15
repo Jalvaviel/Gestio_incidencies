@@ -9,8 +9,8 @@ body {
     background: rgb(165,141,181);
     background: linear-gradient(90deg, rgba(165,141,181,1) 0%, rgba(255,176,176,1) 50%, rgba(255,226,184,1) 100%);
      */
-    background: #c0c0c0;
-    background: linear-gradient(90deg, #a0a0a0 0%, #c0c0c0 50%, #a0a0a0 100%);
+    background: #ffffff;
+    background: linear-gradient(90deg, #d0d0d0 0%, #ffffff 50%, #d0d0d0 100%);
 }
 
 h1 {
@@ -55,8 +55,8 @@ li{
 
 }
 form {
-    background: #e0e0e0;
-    background: linear-gradient(90deg, #e0e0e0 0%, #ffffff 50%, #e0e0e0 100%);
+    background: #98DDFC;
+    background: linear-gradient(90deg, #98DDFC 0%, #61AFF7 33%, #3E88EF 66%, #1D6AEF 100%);
     border: solid black 1px;
     border-radius: 5px;
     padding: 20px;

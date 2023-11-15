@@ -26,22 +26,22 @@
 <nav class="menu">
     <table>
         <tr>
-            <th><strong>ID Usuari</strong></th>
-            <th><strong>Nom</strong></th>
-            <th><strong>Cognom</strong></th>
-            <th><strong>Correu</strong></th>
-            <th><strong>Contrasenya (Hash)</strong></th>
-            <th><strong>Rol</strong></th>
+            <th><strong>ID Equip</strong></th>
+            <th><strong>Sistema Operatiu</strong></th>
+            <th><strong>Codi</strong></th>
+            <th><strong>Descripció</strong></th>
+            <th><strong>Sala</strong></th>
+            <th><strong>IP</strong></th>
             <th><strong>Modificar</strong></th>
         </tr>
         <?php
-        include "../library/User.php";
+        include "../library/Device.php";
         try {
-            $all_users = loadUsers('admin', 1); // TODO change to variable in session from database
+            $all_users = loadDevices('admin', 1); // TODO change to variable in session from database
             foreach($all_users as $user) {
                 $user_assoc = $user->getProperties();
                 echo "<tr>";
-                foreach($user_assoc as $key => $value){ // TODO don't show ids and role for normal users, or at least don't let them change it.
+                foreach($user_assoc as $key => $value){ // TODO show data of the device depending on the type of user
                     echo "<td class='llista'>$value</td>";
                 }
                 echo '<td><a href=\'login.php\'><img src=\'../png/setting.png\' alt=\'configura\' width=\'25\'/></a></td>';
@@ -60,7 +60,7 @@
 </html>
 
 <?php
-function loadUsers($type, $id_user): array
+function loadDevices($type, $id_device): array
 {
 
     $connect = databaseConnect($type);
@@ -68,11 +68,11 @@ function loadUsers($type, $id_user): array
 
     switch ($type) { // Comprova el tipus d'usuari que vol fer la consulta.
         case 'admin':
-            $statement = $connect->prepare("SELECT * FROM gestio_incidencies.users");
+        case 'technician':
+            $statement = $connect->prepare("SELECT * FROM gestio_incidencies.devices");
             break;
         case 'worker':
-        case 'technician':
-            $statement = $connect->prepare("SELECT * FROM gestio_incidencies.users WHERE id_user = $id_user");
+            $statement = $connect->prepare("SELECT os,code,description,room FROM gestio_incidencies.devices");
             break;
     }
     if (!$statement) {
@@ -82,20 +82,20 @@ function loadUsers($type, $id_user): array
     if (!$result) {
         echo "<div class='error'>Error obtenint resultats.</div>";
     }
-    $users = [];
+    $devices = [];
     $row = $statement->get_result();
 
-    while ($userData = $row->fetch_assoc()) {
-        $user = new User(
-            $userData['id_user'],
-            $userData['name'],
-            $userData['surname'],
-            $userData['email'],
-            $userData['password'],
-            $userData['role']
+    while ($deviceData = $row->fetch_assoc()) {
+        $device = new Device(
+            $deviceData['id_device'],
+            $deviceData['os'],
+            $deviceData['code'],
+            $deviceData['description'],
+            $deviceData['room'],
+            $deviceData['ip']
         );
-        $users[] = $user;
+        $devices[] = $device;
     }
-    return $users;
+    return $devices;
 }
 ?>

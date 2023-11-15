@@ -30,10 +30,9 @@ session_start();
         {
             $_SESSION = array();
             SESSION_DESTROY();
-            toUrl("/Gestio_incidencies/html/login.html");
+            //toUrl("../html/login.html");
         }
 
         echo $_SESSION["id_user"] . " " . $_SESSION["email"] . " " . $_SESSION["password"] . " " . $_SESSION["role"];
-
     }
 ?>
