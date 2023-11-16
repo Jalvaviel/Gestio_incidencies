@@ -171,16 +171,18 @@ GRANT SELECT, INSERT, UPDATE, DELETE, CREATE ON `gestio_incidencies`.`incidents`
 
 GRANT USAGE ON *.* TO 'tecnic'@'127.0.0.1';
 
-GRANT SELECT(id_user, name, surname) ON `gestio_incidencies`.`users` TO 'tecnic'@'127.0.0.1';
+GRANT SELECT ON `gestio_incidencies`.`users` TO 'tecnic'@'127.0.0.1';
 
 GRANT SELECT, UPDATE ON `gestio_incidencies`.`devices` TO 'tecnic'@'127.0.0.1';
 
-GRANT SELECT, INSERT, UPDATE(status), DELETE ON `gestio_incidencies`.`incidents` TO 'tecnic'@'127.0.0.1';
+GRANT SELECT, INSERT, UPDATE, DELETE ON `gestio_incidencies`.`incidents` TO 'tecnic'@'127.0.0.1';
 
 
 -- Privilegios para `treballador`@`127.0.0.1`
 
 GRANT USAGE ON *.* TO 'treballador'@'127.0.0.1';
+
+GRANT SELECT ON ON `gestio_incidencies`.`users` TO 'treballador'@'127.0.0.1';
 
 GRANT SELECT ON `gestio_incidencies`.`devices` TO 'treballador'@'127.0.0.1';
 
@@ -190,4 +192,4 @@ GRANT SELECT, INSERT ON `gestio_incidencies`.`incidents` TO 'treballador'@'127.0
 
 GRANT USAGE ON *.* TO 'treballador'@'127.0.0.1';
 
-GRANT SELECT(id_user, email, password) ON `gestio_incidencies`.`users` TO `login`@`127.0.0.1`;
+GRANT SELECT ON `gestio_incidencies`.`users` TO `login`@`127.0.0.1`;
