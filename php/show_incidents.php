@@ -47,7 +47,7 @@
                 foreach($user_assoc as $key => $value){ // TODO don't show ids and role for normal users, or at least don't let them change it.
                     echo "<td class='llista'>$value</td>";
                 }
-                echo '<td><a href=\'login.php\'><img src=\'../png/setting.png\' alt=\'configura\' width=\'25\'/></a></td>';
+                echo '/></a></td>';
                 echo "</tr>";
             }
         }catch (Exception $e) {

@@ -74,7 +74,7 @@
             foreach ($user_assoc as $key => $value) {
                 echo "<td class='llista'>$value</td>";
             }
-            echo '<td><a href=\'login.php\'><img src=\'../png/setting.png\' alt=\'configura\' width=\'25\'/></a></td>';
+            echo '/></a></td>';
             echo "</tr>";
         }
     }
@@ -111,7 +111,7 @@
         <td class='llista'>%s",$_SESSION['surname'],"</td>
         <td class='llista'>%s",$_SESSION['email'],"</td>
         <td class='llista'>%s",$_SESSION['password'],"</td>
-        <td class='llista'>%s",$_SESSION['role'],"</td>
+        <td class='llista'>%s",$_SESSION['role'], "</td>
         <td><a href='login.php'><img src='../png/setting.png' alt='configura' width='25'/></a></td>
         </tr>");
     }

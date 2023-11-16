@@ -47,7 +47,7 @@
                 foreach($user_assoc as $key => $value){ // TODO show data of the device depending on the type of user
                     echo "<td class='llista'>$value</td>";
                 }
-                echo '<td><a href=\'login.php\'><img src=\'../png/setting.png\' alt=\'configura\' width=\'25\'/></a></td>';
+                echo '/></a></td>';
                 echo "</tr>";
             }
         }catch (Exception $e) {
