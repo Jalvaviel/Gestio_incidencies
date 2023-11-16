@@ -43,11 +43,14 @@ class Device
         $rowsSelected = $statement->get_result()->fetch_assoc();
         $count = $rowsSelected["count"];
 
-        if ($rowsSelected["count"] <= 0 || $count > 1)
+        if ($count < 1 || $count > 1)
         {
             return false;
         }
-        return true;
+        else
+        {
+            return true;
+        }
     }
 
     /**Funció insert
@@ -60,7 +63,7 @@ class Device
      */
     public function insert(string $type) : bool
     {
-        if(strcmp($type,'admin') == 0)
+        if(strcmp($type, 'admin') == 0 || strcmp($type, 'technician'))
         {
             $connect = databaseConnect($type);
             if($this->checkErrors($connect, $this->code, 2) && $this->checkErrors($connect, $this->id_device, 1))
@@ -91,17 +94,13 @@ class Device
     }
 
     /**Funció update
-     * Funció que actualitza tots el valors del dispositiu,
-       i fa servir el id per buscar-lo.
+     * Funció que actualitza tots el valors, menys la primary
+       key, i fa servir el id per buscar-lo.
      * Retorna bool.
      */
     public function update(string $type) : bool
     {
-        if(strcmp($type,'admin') != 0)
-        {
-            return false;
-        }
-        else
+        if(strcmp($type, 'admin') == 0 || strcmp($type, 'technician') == 0)
         {
             $connect = databaseConnect($type);
             $sql = "UPDATE gestio_incidencies.devices SET os = ?, code = ?, description = ?, ip = ?, room = ? WHERE id_device = ?";
@@ -118,6 +117,10 @@ class Device
                 return false;
             }
         }
+        else
+        {
+            return false;
+        }
     }
     
     /**Funció select
@@ -130,7 +133,7 @@ class Device
      */
     public function select(string $type) : bool
     {
-        if(strcmp($type,'technician') == 0 || strcmp($type,'admin') == 0)
+        if(strcmp($type, 'technician') == 0 || strcmp($type, 'admin') == 0)
         {
             $connect = databaseConnect($type);
             $check = $this->checkErrors($connect, $this->id_device, 1);
@@ -169,7 +172,7 @@ class Device
     {
         $connect = databaseConnect($type);
         $check = $this->checkErrors($connect, $this->id_device);
-        if(strcmp($type, 'admin') == 0 && $check)
+        if((strcmp($type, 'admin') == 0 || strcmp($type, 'technician') == 0) && $check)
         {
             $sql = "DELETE FROM gestio_incidencies.devices WHERE id_device = ?";
             $statement = $connect->prepare($sql);
@@ -184,11 +187,6 @@ class Device
                 $connect->close();
                 return false;
             }
-        }
-        elseif(strcmp($type, 'admin') != 0)
-        {
-            $connect->close();
-            return false;
         }
         else
         {

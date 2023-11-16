@@ -68,7 +68,7 @@ class Incident
             }
             else
             {
-                $sql = "INSERT INTO gestio_incidencies.users VALUES (DEFAULT,?,?,?,?,?)";
+                $sql = "INSERT INTO gestio_incidencies.incidents VALUES (DEFAULT,?,?,?,?,?)";
                 $statement = $connect->prepare($sql);
                 $statement->bind_param("sssi", $this->description, $this->status, $this->date, $this->id_user);
                 if($statement->execute())
@@ -96,14 +96,10 @@ class Incident
      */
     public function update(string $type) : bool
     {
-        if(strcmp($type,'admin') != 0)
-        {
-            return false;
-        }
-        else
+        if(strcmp($type, 'admin') == 0 || strcmp($type, 'technician') == 0)
         {
             $connect = databaseConnect($type);
-            $sql = "UPDATE gestio_incidencies.users SET description = ?, status = ?, date = ?, id_user = ? WHERE id_incident = ?";
+            $sql = "UPDATE gestio_incidencies.incidents SET description = ?, status = ?, date = ?, id_user = ? WHERE id_incident = ?";
             $statement = $connect->prepare($sql);
             $statement->bind_param("sssii", $this->description, $this->status, $this->date, $this->id_user, $this->id_incident);
             if($statement->execute())
@@ -167,7 +163,7 @@ class Incident
     {
         $connect = databaseConnect($type);
         $check = $this->checkErrors($connect, $this->id_incident);
-        if(strcmp($type, 'admin') == 0 && $check)
+        if((strcmp($type, 'admin') == 0 || strcmp($type, 'technician') == 0) && $check)
         {
             $sql = "DELETE FROM gestio_incidencies.incidents WHERE id_incident = ?";
             $statement = $connect->prepare($sql);
@@ -182,11 +178,6 @@ class Incident
                 $connect->close();
                 return false;
             }
-        }
-        elseif(strcmp($type, 'admin') != 0)
-        {
-            $connect->close();
-            return false;
         }
         else
         {
