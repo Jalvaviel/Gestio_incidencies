@@ -152,28 +152,21 @@
         */
         public function select(string $type) : bool
         {
-            if(strcmp($type, 'technician') == 0 || strcmp($type, 'admin') == 0)
+            $connect = databaseConnect($type);
+            if($this->checkErrors($connect, $this->id_incidents_devices, 1))
             {
-                $connect = databaseConnect($type);
-                if($this->checkErrors($connect, $this->id_incidents_devices, 1))
-                {
-                    $sql = "SELECT * FROM gestio_incidencies.incidents_devices WHERE id_incidents_devices = ?";
-                    $statement = $connect->prepare($sql);
-                    $statement->bind_param("i", $this->id_incidents_devices);
-                    $statement->execute();
-                    $result = $statement->get_result()->fetch_assoc();
-                    $this->__construct($result["id_incidents_devices"], $result["id_incidents"], $result["id_devices"]);
-                    $connect->close();
-                    return true;
-                }
-                else
-                {
-                    $connect->close();
-                    return false;
-                }
+                $sql = "SELECT * FROM gestio_incidencies.incidents_devices WHERE id_incidents_devices = ?";
+                $statement = $connect->prepare($sql);
+                $statement->bind_param("i", $this->id_incidents_devices);
+                $statement->execute();
+                $result = $statement->get_result()->fetch_assoc();
+                $this->__construct($result["id_incidents_devices"], $result["id_incidents"], $result["id_devices"]);
+                $connect->close();
+                return true;
             }
             else
             {
+                $connect->close();
                 return false;
             }
         }
@@ -215,7 +208,22 @@
 
         public function findDevices(string $type) : array
         {
-            
+            $connect = databaseConnect($type);
+            if($this->checkErrors($connect, $this->id_incidents_devices, 1))
+            {
+                $sql = "SELECT * FROM gestio_incidencies.devices WHERE id_device = ?";
+                $statement = $connect->prepare($sql);
+                $statement->bind_param("i", $this->id_device);
+                $statement->execute();
+                $result = $statement->get_result()->fetch_assoc();
+                $connect->close();
+                return $result;
+            }
+            else
+            {
+                $connect->close();
+                return false;
+            }
         }
 
         /**Funció getProperties

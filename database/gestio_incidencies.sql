@@ -144,6 +144,7 @@ DROP USER IF EXISTS 'treballador'@'127.0.0.1';
 DROP USER IF EXISTS 'tecnic'@'127.0.0.1';
 DROP USER IF EXISTS 'jalvabot'@'127.0.0.1';
 DROP USER IF EXISTS 'login'@'127.0.0.1';
+
 /*
   Hay que poner las contaseñas sin proteger(hash) al importar, o da
   problemas al iniciar sesión.
@@ -189,8 +190,8 @@ GRANT SELECT ON `gestio_incidencies`.`devices` TO 'treballador'@'127.0.0.1';
 
 GRANT SELECT, INSERT ON `gestio_incidencies`.`incidents` TO 'treballador'@'127.0.0.1';
 
--- Privilegios para `treballador`@`127.0.0.1`
+-- Privilegios para `login`@`127.0.0.1`
 
-GRANT USAGE ON *.* TO 'treballador'@'127.0.0.1';
+GRANT USAGE ON *.* TO 'login'@'127.0.0.1';
 
 GRANT SELECT ON `gestio_incidencies`.`users` TO `login`@`127.0.0.1`;
