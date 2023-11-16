@@ -2,6 +2,9 @@
 include "../library/User.php";
 
 session_start();
+$_SESSION = array();
+SESSION_DESTROY();
+session_start();
     if (isset($_POST["submit"])){
 
         $input_password = $_POST["password"];

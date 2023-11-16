@@ -213,6 +213,11 @@
             }
         }
 
+        public function findDevices(string $type) : array
+        {
+
+        }
+
         /**Funció getProperties
          * És un getter, retorna un array associatiu
          amb els valors de la classe.

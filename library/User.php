@@ -142,8 +142,16 @@ class User
                 $statement = $connect->prepare($sql);
                 $statement->bind_param("i", $this->id_user);
                 $statement->execute();
-                $user = $statement->get_result()->fetch_assoc();
-                $this->__construct($user['id_user'], $user['name'], $user['surname'], $user['email'], $user['password'], $user['role']);
+                if(strcmp($type,'admin') == 0)
+                {
+                    $user = $statement->get_result()->fetch_assoc();
+                    $this->__construct($user['id_user'], $user['name'], $user['surname'], $user['email'], $user['password'], $user['role']);
+                }
+                else
+                {
+                    $user = $statement->get_result()->fetch_assoc();
+                    $this->__construct($user['id_user'], $user['name'], $user['surname'], "null", "null", "null");
+                }
                 $connect->close();
                 return true;
             }
