@@ -182,7 +182,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON `gestio_incidencies`.`incidents` TO 'tec
 
 GRANT USAGE ON *.* TO 'treballador'@'127.0.0.1';
 
-GRANT SELECT ON ON `gestio_incidencies`.`users` TO 'treballador'@'127.0.0.1';
+GRANT SELECT ON `gestio_incidencies`.`users` TO 'treballador'@'127.0.0.1';
 
 GRANT SELECT ON `gestio_incidencies`.`devices` TO 'treballador'@'127.0.0.1';
 
