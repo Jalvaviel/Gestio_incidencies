@@ -26,7 +26,7 @@
 <nav class="menu">
 <?php
     session_start();
-    include "./library/User.php";
+    include "../library/User.php";
     if(empty($_SESSION)){
         toUrl('../html/login.html');
     }
@@ -37,6 +37,7 @@
         case 'technician':
         case 'worker':
             print_self();
+            break;
     }
 
     function show_all_users($role) : void
@@ -74,7 +75,9 @@
             foreach ($user_assoc as $key => $value) {
                 echo "<td class='llista'>$value</td>";
             }
-            echo '/></a></td>';
+            echo '<td><button><img src=\'../png/setting.png\' alt=\'configura\' width=\'25\'/></button>';
+            $current_user_id = $user_assoc['id_user'];
+            echo "<button onclick=deleteFunc('$current_user_id') id=\"deletebutton\"><img src='../png/trash.png' alt='elimina' width='25'/></button></td>";
             echo "</tr>";
         }
     }
@@ -99,22 +102,49 @@
 
     function print_self(){
         echo "<table>";
-        echo "<tr><th><strong>ID Usuari</strong></th>
+        echo "<tr>
         <th><strong>Nom</strong></th>
         <th><strong>Cognom</strong></th>
         <th><strong>Correu</strong></th>
         <th><strong>Contrasenya (Hash)</strong></th>
         <th><strong>Rol</strong></th>
         <th><strong>Modificar</strong></th></tr>";
-        echo sprintf("<tr>
-        <td class='llista'>%s",$_SESSION['name'],"</td>
-        <td class='llista'>%s",$_SESSION['surname'],"</td>
-        <td class='llista'>%s",$_SESSION['email'],"</td>
-        <td class='llista'>%s",$_SESSION['password'],"</td>
-        <td class='llista'>%s",$_SESSION['role'], "</td>
-        <td><a href='login.php'><img src='../png/setting.png' alt='configura' width='25'/></a></td>
-        </tr>");
+        $name = $_SESSION['name'];
+        $surname = $_SESSION['surname'];
+        $email = $_SESSION['email'];
+        $password_hash = $_SESSION['password'];
+        $role = $_SESSION['role'];
+        echo "<tr><td class=\'llista\'> $name </td>";
+        echo "<td class=\'llista\'> $surname </td>";
+        echo "<td class=\'llista\'> $email </td>";
+        echo "<td class=\'llista\'> $password_hash </td>";
+        echo "<td class=\'llista\'> $role </td>";
+        echo "<td><a href='login.php'><img src='../png/setting.png' alt='configura' width='25'/></a></td></tr>";
     }
 
-
+    function delete_user($id_user){
+        $user = new User($id_user);
+        $user->delete('admin');
+    }
+    ?>
+</nav>
+</body>
+<script>
+    function deleteFunc(id_user){
+        let form_del;
+        let input;
+        if (confirm("Estàs segur d'esborrar aquest usuari?")) {
+            form_del = document.createElement('form');
+            form_del.setAttribute('method', 'POST');
+            form_del.setAttribute('action', './delete_user.php');
+            input = document.createElement('input');
+            input.setAttribute('type','hidden');
+            input.setAttribute('value',id_user);
+            form_del.appendChild(input);
+            document.body.appendChild(form_del);
+            form_del.submit();
+        }
+    }
+</script>
+</html>
 

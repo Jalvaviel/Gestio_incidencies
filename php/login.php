@@ -1,6 +1,5 @@
 <?php
 include "../library/User.php";
-echo "<h1>hola</h1>";
 $_SESSION = array();
 session_start();
 if (isset($_POST["submit"])){
@@ -18,16 +17,15 @@ if (isset($_POST["submit"])){
         $_SESSION["email"] = $result["email"];
         $_SESSION["password"] = $result["password"];
         $_SESSION["role"] = $result["role"];
-        toUrl("/Gestio_incidencies/php/menu.php");
+        toUrl("./users_page.php");
     }
     else
     {
         $_SESSION = array();
         SESSION_DESTROY();
-        toUrl("../html/login.html");
+       toUrl("../html/login.html");
     }
 
-    echo $_SESSION["id_user"] . " " . $_SESSION["email"] . " " . $_SESSION["password"] . " " . $_SESSION["role"];
 }
 else{
     echo "<h1>hola</h1>";

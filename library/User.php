@@ -196,12 +196,14 @@ class User
             else
             {
                 $connect->close();
+                echo "patata1";
                 return false;
             }
         }
         else
         {
             $connect->close();
+            echo "patata2";
             return false;
         }
     }
