@@ -143,6 +143,8 @@ UNLOCK TABLES;
 DROP USER IF EXISTS 'treballador'@'127.0.0.1';
 DROP USER IF EXISTS 'tecnic'@'127.0.0.1';
 DROP USER IF EXISTS 'jalvabot'@'127.0.0.1';
+DROP USER IF EXISTS 'login'@'127.0.0.1';
+
 /*
   Hay que poner las contaseñas sin proteger(hash) al importar, o da
   problemas al iniciar sesión.
