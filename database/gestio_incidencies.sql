@@ -143,6 +143,7 @@ UNLOCK TABLES;
 DROP USER IF EXISTS 'treballador'@'127.0.0.1';
 DROP USER IF EXISTS 'tecnic'@'127.0.0.1';
 DROP USER IF EXISTS 'jalvabot'@'127.0.0.1';
+DROP USER IF EXISTS 'login'@'127.0.0.1';
 /*
   Hay que poner las contaseñas sin proteger(hash) al importar, o da
   problemas al iniciar sesión.
@@ -182,7 +183,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON `gestio_incidencies`.`incidents` TO 'tec
 
 GRANT USAGE ON *.* TO 'treballador'@'127.0.0.1';
 
-GRANT SELECT ON ON `gestio_incidencies`.`users` TO 'treballador'@'127.0.0.1';
+GRANT SELECT ON `gestio_incidencies`.`users` TO 'treballador'@'127.0.0.1';
 
 GRANT SELECT ON `gestio_incidencies`.`devices` TO 'treballador'@'127.0.0.1';
 

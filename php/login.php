@@ -1,9 +1,7 @@
 <?php
 include "../library/User.php";
 
-session_start();
 $_SESSION = array();
-SESSION_DESTROY();
 session_start();
     if (isset($_POST["submit"])){
 
@@ -12,10 +10,12 @@ session_start();
         
         $user = new User(0,"null","null",$input_email,$input_password,"null");
         
-        if($user->login("technician"))
+        if($user->login('login'))
         {
             $result = $user->getProperties();
             $_SESSION["id_user"] = $result["id_user"];
+            $_SESSION["name"] = $result["name"];
+            $_SESSION["surname"] = $result["surname"];
             $_SESSION["email"] = $result["email"];
             $_SESSION["password"] = $result["password"];
             $_SESSION["role"] = $result["role"];

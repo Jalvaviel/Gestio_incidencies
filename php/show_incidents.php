@@ -36,6 +36,9 @@
         </tr>
         <?php
         include "../library/Incident.php";
+        if(empty($_SESSION)){
+            toUrl('../html/login.html');
+        }
         try {
             $all_users = loadUsers('admin', 1); // TODO change to variable in session from database
             foreach($all_users as $user) {

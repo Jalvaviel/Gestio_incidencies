@@ -3,9 +3,9 @@ include 'helpers.php';
 
 class User
 {
-    private int $id_user = 0;
-    private string $name = "";
-    private string $surname = "";
+    public int $id_user = 0;
+    public string $name = "";
+    public string $surname = "";
     private string $email = "";
     private string $password = "";
     private string $role = "";

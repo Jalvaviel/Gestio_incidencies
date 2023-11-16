@@ -36,6 +36,9 @@
         </tr>
         <?php
         include "../library/Device.php";
+        if(empty($_SESSION)){
+            toUrl('../html/login.html');
+        }
         try {
             $all_users = loadDevices('admin', 1); // TODO change to variable in session from database
             foreach($all_users as $user) {

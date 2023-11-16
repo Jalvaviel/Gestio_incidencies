@@ -34,10 +34,14 @@
             <th><strong>Rol</strong></th>
             <th><strong>Modificar</strong></th>
         </tr>
-        <?php
+<?php
+        session_start();
         include "../library/User.php";
+        if(empty($_SESSION)){
+            toUrl('../html/login.html');
+        }
         try {
-            $all_users = loadUsers('admin', 1); // TODO change to variable in session from database
+            $all_users = loadUsers($_SESSION["role"], $_SESSION["id_user"]);
             foreach($all_users as $user) {
                 $user_assoc = $user->getProperties();
                 echo "<tr>";
@@ -70,9 +74,10 @@ function loadUsers($type, $id_user): array
         case 'admin':
             $statement = $connect->prepare("SELECT * FROM gestio_incidencies.users");
             break;
-        case 'worker':
         case 'technician':
-            $statement = $connect->prepare("SELECT * FROM gestio_incidencies.users WHERE id_user = $id_user");
+            $statement = $connect->prepare("SELECT id_user, name, surname FROM gestio_incidencies.users");
+            break;
+        case 'worker':
             break;
     }
     if (!$statement) {
@@ -86,14 +91,17 @@ function loadUsers($type, $id_user): array
     $row = $statement->get_result();
 
     while ($userData = $row->fetch_assoc()) {
-        $user = new User(
-            $userData['id_user'],
-            $userData['name'],
-            $userData['surname'],
-            $userData['email'],
-            $userData['password'],
-            $userData['role']
-        );
+        $user = new User();
+        switch ($type) { // Comprova el tipus d'usuari que vol fer la consulta.
+            case 'admin':
+                $statement = $connect->prepare("SELECT * FROM gestio_incidencies.users");
+                break;
+            case 'technician':
+                $statement = $connect->prepare("SELECT id_user, name, surname FROM gestio_incidencies.users");
+                break;
+            case 'worker':
+                break;
+        }
         $users[] = $user;
     }
     return $users;
