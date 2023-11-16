@@ -175,31 +175,23 @@ class User
        password encriptat.
      * Retorna bool.
      */
-    public function login(string $type) : bool
+    public function login() : bool
     {
-        if(strcmp($type,'technician') == 0 || strcmp($type,'admin') == 0)
+        $connect = databaseConnect('login');
+        $check = $this->checkErrors($connect, $this->email, 2);
+        if($check)
         {
-            $connect = databaseConnect($type);
-            $check = $this->checkErrors($connect, $this->email, 2);
-            if($check)
-            {
-                $sql = "SELECT id_user, name, surname, email, password, role FROM gestio_incidencies.users WHERE email = ?";
-                $statement = $connect->prepare($sql);
-                $statement->bind_param("s", $this->email);
-                $statement->execute();
-                $user = $statement->get_result()->fetch_assoc();
+            $sql = "SELECT id_user, name, surname, email, password, role FROM gestio_incidencies.users WHERE email = ?";
+            $statement = $connect->prepare($sql);
+            $statement->bind_param("s", $this->email);
+            $statement->execute();
+            $user = $statement->get_result()->fetch_assoc();
 
-                if(!empty($user) || password_verify($this->password, $user['password']))
-                {
-                    $this->__construct($user['id_user'], $user['name'], $user['surname'], $user['email'], $user['password'], $user['role']);
-                    $connect->close();
-                    return true;
-                }
-                else
-                {
-                    $connect->close();
-                    return false;
-                }
+            if(!empty($user) || password_verify($this->password, $user['password']))
+            {
+                $this->__construct($user['id_user'], $user['name'], $user['surname'], $user['email'], $user['password'], $user['role']);
+                $connect->close();
+                return true;
             }
             else
             {
@@ -209,6 +201,7 @@ class User
         }
         else
         {
+            $connect->close();
             return false;
         }
     }

@@ -215,7 +215,7 @@
 
         public function findDevices(string $type) : array
         {
-
+            
         }
 
         /**Funció getProperties

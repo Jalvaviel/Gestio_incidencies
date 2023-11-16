@@ -17,7 +17,7 @@ function toUrl($url)
  */
 function databaseConnect($type)
 {
-    assert($type == 'worker' or $type=='technician' or $type=='admin','$Error insertant dispositiu, potser no hi tens permissos?');
+    assert($type == 'login' or $type == 'worker' or $type=='technician' or $type=='admin','$Error insertant dispositiu, potser no hi tens permissos?');
     $env = parse_ini_file('.env');
     $db_user = $env[$type];
     $db_password = $env[$type . '_password'];
