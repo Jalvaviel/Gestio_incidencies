@@ -115,8 +115,9 @@
         }
 
         /**Funció update
-        * Funció que actualitza tots el valors del dispositiu,
-          i fa servir el id per buscar-lo.
+        * Funció que actualitza tots el valors de la
+          relació, i fa servir el id de la classe
+          per buscar-lo.
         * Retorna bool.
         */
         public function update(string $type) : bool
@@ -139,6 +140,92 @@
                     return false;
                 }
             }
+        }
+
+        /**Funció select
+         * Aquest funció serveix més per a buscar algúna relació en concret
+         o actualitzar els valors de la classe, fent servir el id.
+        * Crida a la funció checkErrors per veure que no hi han colisions
+        al id o codi i que només troba 1 dispositiu, i guarda els valors
+        a la classe.
+        * Retorna bool.
+        */
+        public function select(string $type) : bool
+        {
+            if(strcmp($type, 'technician') == 0 || strcmp($type, 'admin') == 0)
+            {
+                $connect = databaseConnect($type);
+                if($this->checkErrors($connect, $this->id_incidents_devices, 1))
+                {
+                    $sql = "SELECT * FROM gestio_incidencies.incidents_devices WHERE id_incidents_devices = ?";
+                    $statement = $connect->prepare($sql);
+                    $statement->bind_param("i", $this->id_incidents_devices);
+                    $statement->execute();
+                    $result = $statement->get_result()->fetch_assoc();
+                    $this->__construct($result["id_incidents_devices"], $result["id_incidents"], $result["id_devices"]);
+                    $connect->close();
+                    return true;
+                }
+                else
+                {
+                    $connect->close();
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /**Funció delete
+         * Agafa el id de la classe, i esborra amb la 
+           id de la classe.
+        * El type, serà del $_SESSION[], per així fer 
+        servir la classe per agafar la info, i 
+        executar el delete.
+        * Retorna bool.
+        */
+        public function delete(string $type) : bool
+        {
+            $connect = databaseConnect($type);
+            $check = $this->checkErrors($connect, $this->id_device);
+            if((strcmp($type, 'admin') == 0 || strcmp($type, 'technician') == 0) && $check)
+            {
+                $sql = "DELETE FROM gestio_incidencies.incidents_devices WHERE id_incidents_devices = ?";
+                $statement = $connect->prepare($sql);
+                $statement->bind_param("i", $this->id_incidents_devices);
+                if($statement->execute())
+                {
+                    $connect->close();
+                    return true;
+                }
+                else
+                {
+                    $connect->close();
+                    return false;
+                }
+            }
+            else
+            {
+                $connect->close();
+                return false;
+            }
+        }
+
+        /**Funció getProperties
+         * És un getter, retorna un array associatiu
+         amb els valors de la classe.
+        * Retorna un array.
+        */
+        public function getProperties() : array
+        {
+            return 
+            [
+                'id_incidents_devices' => $this->id_incidents_devices,
+                'id_incident' => $this->id_incident, 
+                'id_device' => $this->id_device
+            ];
         }
     }
 ?>
