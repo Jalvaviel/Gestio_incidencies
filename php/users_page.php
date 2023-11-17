@@ -5,6 +5,7 @@
     <title>Usuaris</title>
     <link rel="stylesheet" href="../css/style_users.css">
 
+    <script src="https://kit.fontawesome.com/8faa35dc4d.js" crossorigin="anonymous"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -19,8 +20,8 @@
         <a href="show_devices.php" class="mainmenu">Equips</a>
     </nav>
     <nav id="mainoptions">
-        <a href="login.php" id="profile"><img src="../png/user.png" alt="profile" width="41"/>Perfil</a>
-        <a href="../html/login.html" id="logout"><img src="../png/exit.png" alt="logout" width="41"/>Surt</a>
+        <a href="login.php" id="profile"><i class="fa-solid fa-user" style="color: #ffffff;"></i>Perfil</a>
+        <a href="../html/login.html" id="logout"><i class="fa-solid fa-right-from-bracket" style="color: #ffffff;"></i>Surt</a>
     </nav>
 </header>
 <nav class="menu">
@@ -75,9 +76,9 @@
             foreach ($user_assoc as $key => $value) {
                 echo "<td class='llista'>$value</td>";
             }
-            echo '<td><button><img src=\'../png/setting.png\' alt=\'configura\' width=\'25\'/></button>';
+            echo '<td><button><i class="fa-solid fa-gear"></i></button>';
             $current_user_id = $user_assoc['id_user'];
-            echo "<button onclick=deleteFunc('$current_user_id') id=\"deletebutton\"><img src='../png/trash.png' alt='elimina' width='25'/></button></td>";
+            echo "<button onclick=deleteFunc('$current_user_id') id=\"deletebutton\"><i class=\"fa-solid fa-trash\"></i></button></td>";
             echo "</tr>";
         }
         echo "</table>";
@@ -108,7 +109,6 @@
         <th><strong>Nom</strong></th>
         <th><strong>Cognom</strong></th>
         <th><strong>Correu</strong></th>
-        <th><strong>Contrasenya (Hash)</strong></th>
         <th><strong>Rol</strong></th>
         <th><strong>Modificar</strong></th></tr>";
         $name = $_SESSION['name'];
@@ -119,9 +119,8 @@
         echo "<tr><td class=\'llista\'> $name </td>";
         echo "<td class=\'llista\'> $surname </td>";
         echo "<td class=\'llista\'> $email </td>";
-        echo "<td class=\'llista\'> $password_hash </td>";
         echo "<td class=\'llista\'> $role </td>";
-        echo "<td><a href='login.php'><img src='../png/setting.png' alt='configura' width='25'/></a></td></tr>";
+        echo "<td><a href='login.php'><i class=\"fa-solid fa-gear\"></i></a></td></tr>";
     }
 
     ?>
@@ -133,7 +132,7 @@
         let input;
         if (confirm("Estàs segur d'esborrar aquest usuari?")) {
             form_del = document.createElement('form');
-            form_del.setAttribute('method', 'GET');
+            form_del.setAttribute('method', 'POST');
             form_del.setAttribute('action', './delete_user.php');
             input = document.createElement('input');
             input.setAttribute('name','deleteuser')
