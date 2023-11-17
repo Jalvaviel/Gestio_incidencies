@@ -187,7 +187,7 @@ class User
             $statement->execute();
             $user = $statement->get_result()->fetch_assoc();
 
-            if(!empty($user) || password_verify($this->password, $user['password']))
+            if(!empty($user) && password_verify($this->password, $user['password']))
             {
                 $this->__construct($user['id_user'], $user['name'], $user['surname'], $user['email'], $user['password'], $user['role']);
                 $connect->close();
