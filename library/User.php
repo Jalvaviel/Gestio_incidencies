@@ -64,6 +64,7 @@ class User
     {
         if(strcmp($type,'admin') == 0)
         {
+            $id = $this->max($type) + 1;
             $connect = databaseConnect($type);
             if($this->checkErrors($connect, $this->email, 2) && $this->checkErrors($connect, $this->id_user, 1))
             {
@@ -71,9 +72,9 @@ class User
             }
             else
             {
-                $sql = "INSERT INTO gestio_incidencies.users VALUES (DEFAULT,?,?,?,?,?)";
+                $sql = "INSERT INTO gestio_incidencies.users VALUES (?,?,?,?,?,?)";
                 $statement = $connect->prepare($sql);
-                $statement->bind_param("sssss", $this->name, $this->surname, $this->email, $this->password, $this->role);
+                $statement->bind_param("isssss", $id,$this->name, $this->surname, $this->email, $this->password, $this->role);
                 if($statement->execute())
                 {
                     $connect->close();
@@ -132,37 +133,30 @@ class User
      */
     public function select(string $type) : bool
     {
-        if(strcmp($type,'technician') == 0 || strcmp($type,'admin') == 0)
+        $connect = databaseConnect($type);
+        $check = $this->checkErrors($connect, $this->id_user, 1);
+        if($check)
         {
-            $connect = databaseConnect($type);
-            $check = $this->checkErrors($connect, $this->id_user, 1);
-            if($check)
+            $sql = "SELECT * FROM gestio_incidencies.users WHERE id_user = ?";
+            $statement = $connect->prepare($sql);
+            $statement->bind_param("i", $this->id_user);
+            $statement->execute();
+            if(strcmp($type,'admin') == 0)
             {
-                $sql = "SELECT * FROM gestio_incidencies.users WHERE id_user = ?";
-                $statement = $connect->prepare($sql);
-                $statement->bind_param("i", $this->id_user);
-                $statement->execute();
-                if(strcmp($type,'admin') == 0)
-                {
-                    $user = $statement->get_result()->fetch_assoc();
-                    $this->__construct($user['id_user'], $user['name'], $user['surname'], $user['email'], $user['password'], $user['role']);
-                }
-                else
-                {
-                    $user = $statement->get_result()->fetch_assoc();
-                    $this->__construct($user['id_user'], $user['name'], $user['surname'], "null", "null", "null");
-                }
-                $connect->close();
-                return true;
+                $user = $statement->get_result()->fetch_assoc();
+                $this->__construct($user['id_user'], $user['name'], $user['surname'], $user['email'], $user['password'], $user['role']);
             }
             else
             {
-                $connect->close();
-                return false;
+                $user = $statement->get_result()->fetch_assoc();
+                $this->__construct($user['id_user'], $user['name'], $user['surname'], "null", "null", "null");
             }
+            $connect->close();
+            return true;
         }
         else
         {
+            $connect->close();
             return false;
         }
     }
@@ -244,6 +238,23 @@ class User
         {
             $connect->close();
             return false;
+        }
+    }
+
+    public function max($type) : int
+    {
+        $connect = databaseConnect($type);
+        $sql = "SELECT MAX(id_user) AS 'max' FROM gestio_incidencies.users";
+        $statement = $connect->prepare($sql);
+        if($statement->execute())
+        {
+            $result = $statement->get_result()->fetch_assoc();
+            $connect->close();
+            return $result['max'];
+        }
+        else
+        {
+            return 0;
         }
     }
 
