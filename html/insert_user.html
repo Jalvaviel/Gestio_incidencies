@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+  <link rel="stylesheet" href="../css/style_users.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header>
+    <img id="logo" src="../png/logo-no-background.png" alt="logo" width="200"/>
+    <nav id="mainmenu">
+      <a href="show_users.php" class="mainmenu">Usuaris</a>
+      <a href="show_incidents.php" class="mainmenu">Incidències</a>
+      <a href="show_devices.php" class="mainmenu">Equips</a>
+    </nav>
+    <nav id="mainoptions">
+      <a href="login.php" id="profile"><img src="../png/user.png" alt="profile" width="41"/>Perfil</a>
+      <a href="../html/login.html" id="logout"><img src="../png/exit.png" alt="logout" width="41"/>Surt</a>
+    </nav>
+  </header>
+
+  <form name="inset" method="post" action="../php/insert_user.php" enctype="multipart/form-data">
+    <table>
+      <tr>
+        <th>Nom</th>
+        <th>Cognom</th>
+        <th>Correu</th>
+        <th>Contrasenya</th>
+        <th>Rol</th>
+      </tr>
+      <tr>
+        <td><input name="name" type="text" required="required"/></td>
+        <td><input name="surname" type="text" required="required"/></td>
+        <td><input name="email" type="email" required="required"/></td>
+        <td><input name="password" type="password" required="required"/></td>
+        <td><input name="role" type="text" required="required"/></td>
+      </tr>
+    </table>
+    <input id="insert_user" class="button" type="submit" name="submit" value="Inserta"/>
+  </form>
+</body>
+<footer>
+  Copyright lolololololol - Javier Castelblanque Iñigo - Gerard Puig Ortega.
+</footer>
+</body>
+</html>

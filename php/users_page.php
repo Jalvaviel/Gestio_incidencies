@@ -80,6 +80,8 @@
             echo "<button onclick=deleteFunc('$current_user_id') id=\"deletebutton\"><img src='../png/trash.png' alt='elimina' width='25'/></button></td>";
             echo "</tr>";
         }
+        echo "</table>";
+        echo "<a href='../html/insert_user.html' id='insert'>Inserta un nou usuari</a>";
     }
 
     function get_all_users($statement) : array
@@ -122,24 +124,21 @@
         echo "<td><a href='login.php'><img src='../png/setting.png' alt='configura' width='25'/></a></td></tr>";
     }
 
-    function delete_user($id_user){
-        $user = new User($id_user);
-        $user->delete('admin');
-    }
     ?>
 </nav>
 </body>
 <script>
-    function deleteFunc(id_user){
+    function deleteFunc(id_useri){
         let form_del;
         let input;
         if (confirm("Estàs segur d'esborrar aquest usuari?")) {
             form_del = document.createElement('form');
-            form_del.setAttribute('method', 'POST');
+            form_del.setAttribute('method', 'GET');
             form_del.setAttribute('action', './delete_user.php');
             input = document.createElement('input');
+            input.setAttribute('name','deleteuser')
             input.setAttribute('type','hidden');
-            input.setAttribute('value',id_user);
+            input.setAttribute('value',id_useri);
             form_del.appendChild(input);
             document.body.appendChild(form_del);
             form_del.submit();
