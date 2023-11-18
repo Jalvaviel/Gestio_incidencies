@@ -15,7 +15,7 @@
 <header>
     <img id="logo" src="../png/logo-no-background.png" alt="logo" width="200"/>
     <nav id="mainmenu">
-        <a href="show_users.php" class="mainmenu">Usuaris</a>
+        <a href="users_page.php" class="mainmenu">Usuaris</a>
         <a href="show_incidents.php" class="mainmenu">Incidències</a>
         <a href="show_devices.php" class="mainmenu">Equips</a>
     </nav>
@@ -76,9 +76,16 @@
             foreach ($user_assoc as $key => $value) {
                 echo "<td class='llista'>$value</td>";
             }
-            echo '<td><button><i class="fa-solid fa-gear"></i></button>';
             $current_user_id = $user_assoc['id_user'];
-            echo "<button onclick=deleteFunc('$current_user_id') id=\"deletebutton\"><i class=\"fa-solid fa-trash\"></i></button></td>";
+            $current_user_name = $user_assoc['name'];
+            $current_user_surname = $user_assoc['surname'];
+            $current_user_email = $user_assoc['email'];
+            $current_user_role = $user_assoc['role'];
+
+            echo "<td>";
+            echo "<button onclick=deleteFunc('$current_user_id') id=\"deletebutton\"><i class=\"fa-solid fa-trash\"></i></button>";
+            echo "<button onclick=updateFunc('$current_user_id','$current_user_name','$current_user_surname','$current_user_email','$current_user_role') id=\"updatebutton\"><i class=\"fa-solid fa-gear\"></i></button>";
+            echo "</td>";
             echo "</tr>";
         }
         echo "</table>";
@@ -143,6 +150,31 @@
             form_del.submit();
         }
     }
+    function updateFunc(id_useri,namei,surnamei,emaili,rolei){
+        const form_upd = document.createElement('form');
+        form_upd.setAttribute('method', 'POST');
+        form_upd.setAttribute('action', './update_user_form.php');
+
+        const inputs = {
+            id_useri,
+            namei,
+            surnamei,
+            emaili,
+            rolei
+        };
+
+        for (const [key, value] of Object.entries(inputs)) {
+            const input = document.createElement('input');
+            input.setAttribute('name', key);
+            input.setAttribute('type', 'hidden');
+            input.setAttribute('value', value);
+            form_upd.appendChild(input);
+        }
+
+        document.body.appendChild(form_upd);
+        form_upd.submit();
+    }
+
 </script>
 </html>
 
