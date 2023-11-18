@@ -1,5 +1,5 @@
 <?php
-    include "../library/User.php";
+    include "../../library/User.php";
     session_start();
     if($_SESSION['role']=='admin') {
         $user = new User($_POST['deleteuser'],"","","","","");

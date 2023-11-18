@@ -14,7 +14,7 @@
 <header>
     <img id="logo" src="../png/logo-no-background.png" alt="logo" width="200"/>
     <nav id="mainmenu">
-        <a href="users_page.php" class="mainmenu">Usuaris</a>
+        <a href="user_pages/users_page.php" class="mainmenu">Usuaris</a>
         <a href="show_incidents.php" class="mainmenu">Incidències</a>
         <a href="show_devices.php" class="mainmenu">Equips</a>
     </nav>

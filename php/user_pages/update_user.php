@@ -1,5 +1,5 @@
 <?php
-include "../library/User.php";
+include "../../library/User.php";
 session_start();
 $user = new User($_POST['id_user'],$_POST['name'],$_POST['surname'],$_POST['email'],hashPasswords($_POST['password']),$_POST['role']);
 if (!empty($_POST['password'])){
@@ -10,5 +10,5 @@ else{
 }
 echo "<script>
           alert(\"Usuari actualitzat correctament!\")
-          window.location.replace(\"./users_page.php\");
+          window.location.replace(\"./devices_page.php\");
           </script>";

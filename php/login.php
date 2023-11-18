@@ -17,7 +17,7 @@ if (isset($_POST["submit"])){
         $_SESSION["email"] = $result["email"];
         $_SESSION["password"] = $result["password"];
         $_SESSION["role"] = $result["role"];
-        toUrl("./users_page.php");
+        toUrl("./user_pages/users_page.php");
     }
     else
     {

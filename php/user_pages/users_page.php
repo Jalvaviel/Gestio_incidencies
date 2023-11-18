@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Usuaris</title>
-    <link rel="stylesheet" href="../css/style_users.css">
+    <link rel="stylesheet" href="../../css/style_users.css">
 
     <script src="https://kit.fontawesome.com/8faa35dc4d.js" crossorigin="anonymous"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,23 +13,23 @@
 </head>
 <body>
 <header>
-    <img id="logo" src="../png/logo-no-background.png" alt="logo" width="200"/>
+    <img id="logo" src="../../png/logo-no-background.png" alt="logo" width="200"/>
     <nav id="mainmenu">
-        <a href="users_page.php" class="mainmenu">Usuaris</a>
+        <a href="./users_page.php" class="mainmenu">Usuaris</a>
         <a href="show_incidents.php" class="mainmenu">Incidències</a>
-        <a href="show_devices.php" class="mainmenu">Equips</a>
+        <a href="../device_pages/devices_page.php" class="mainmenu">Equips</a>
     </nav>
     <nav id="mainoptions">
-        <a href="login.php" id="profile"><i class="fa-solid fa-user" style="color: #ffffff;"></i>Perfil</a>
-        <a href="../html/login.html" id="logout"><i class="fa-solid fa-right-from-bracket" style="color: #ffffff;"></i>Surt</a>
+        <a href="../login.php" id="profile"><i class="fa-solid fa-user" style="color: #ffffff;"></i>Perfil</a>
+        <a href="../../html/login.html" id="logout"><i class="fa-solid fa-right-from-bracket" style="color: #ffffff;"></i>Surt</a>
     </nav>
 </header>
 <nav class="menu">
 <?php
     session_start();
-    include "../library/User.php";
+    include "../../library/User.php";
     if(empty($_SESSION)){
-        toUrl('../html/login.html');
+        toUrl('../../html/login.html');
     }
     switch($_SESSION['role']){
         case 'admin':
@@ -89,7 +89,7 @@
             echo "</tr>";
         }
         echo "</table>";
-        echo "<a href='../html/insert_user.html' id='insert'>Inserta un nou usuari</a>";
+        echo "<a href='./insert_device.html' id='insert'>Inserta un nou usuari</a>";
     }
 
     function get_all_users($statement) : array
@@ -127,7 +127,7 @@
         echo "<td class=\'llista\'> $surname </td>";
         echo "<td class=\'llista\'> $email </td>";
         echo "<td class=\'llista\'> $role </td>";
-        echo "<td><a href='login.php'><i class=\"fa-solid fa-gear\"></i></a></td></tr>";
+        echo "</i></a></td></tr>";
     }
 
     ?>
