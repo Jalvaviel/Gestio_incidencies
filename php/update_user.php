@@ -8,4 +8,7 @@ if (!empty($_POST['password'])){
 else{
     $user->update($_SESSION['role'],true);
 }
-toUrl("./users_page");
+echo "<script>
+          alert(\"Usuari actualitzat correctament!\")
+          window.location.replace(\"./users_page.php\");
+          </script>";
