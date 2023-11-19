@@ -241,6 +241,12 @@ class User
         }
     }
 
+    /**Funció max
+     * Retorna el id més gran que hi ha a la 
+       base de dades, l'utilitza el insert
+       i està pensat per fer-ho servir en
+       un for()
+     */
     public function max($type) : int
     {
         $connect = databaseConnect($type);
@@ -254,7 +260,7 @@ class User
         }
         else
         {
-            return 0;
+            return -1;
         }
     }
 

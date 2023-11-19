@@ -68,7 +68,8 @@ class Incident
             }
             else
             {
-                $sql = "INSERT INTO gestio_incidencies.incidents VALUES (DEFAULT,?,?,?,?,?)";
+                $id = $this->max($type) + 1;
+                $sql = "INSERT INTO gestio_incidencies.incidents VALUES ($id, ?, ?, ?, ?, ?)";
                 $statement = $connect->prepare($sql);
                 $statement->bind_param("sssi", $this->description, $this->status, $this->date, $this->id_user);
                 if($statement->execute())
@@ -183,6 +184,29 @@ class Incident
         {
             $connect->close();
             return false;
+        }
+    }
+
+    /**Funció max
+     * Retorna el id més gran que hi ha a la 
+       base de dades, l'utilitza el insert
+       i està pensat per fer-ho servir en
+       un for()
+     */
+    public function max($type) : int
+    {
+        $connect = databaseConnect($type);
+        $sql = "SELECT MAX(id_incident) AS 'max' FROM gestio_incidencies.incidents";
+        $statement = $connect->prepare($sql);
+        if($statement->execute())
+        {
+            $result = $statement->get_result()->fetch_assoc();
+            $connect->close();
+            return $result['max'];
+        }
+        else
+        {
+            return -1;
         }
     }
 

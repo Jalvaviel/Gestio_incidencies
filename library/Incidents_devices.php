@@ -226,6 +226,29 @@
             }
         }
 
+    /**Funció max
+     * Retorna el id més gran que hi ha a la 
+       base de dades, l'utilitza el insert
+       i està pensat per fer-ho servir en
+       un for()
+    */
+    public function max($type) : int
+    {
+        $connect = databaseConnect($type);
+        $sql = "SELECT MAX(id_incidents_devices) AS 'max' FROM gestio_incidencies.incidents_devices";
+        $statement = $connect->prepare($sql);
+        if($statement->execute())
+        {
+            $result = $statement->get_result()->fetch_assoc();
+            $connect->close();
+            return $result['max'];
+        }
+        else
+        {
+            return -1;
+        }
+    }
+
         /**Funció getProperties
          * És un getter, retorna un array associatiu
          amb els valors de la classe.
