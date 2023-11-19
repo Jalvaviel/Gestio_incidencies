@@ -96,9 +96,10 @@ class User
     /**Funció update
      * Funció que actualitza tots el valors del usuari,
        i fa servir el id per buscar-lo.
+       el noPassword si està a true manté l'antic password de l'usuari.
      * Retorna bool.
      */
-    public function update(string $type) : bool
+    public function update(string $type, bool $noPassword) : bool
     {
         if(strcmp($type,'admin') != 0)
         {
@@ -107,19 +108,19 @@ class User
         else
         {
             $connect = databaseConnect($type);
-            $sql = "UPDATE gestio_incidencies.users SET name = ?, surname = ?, email = ?, password = ?, role = ? WHERE id_user = ?";
-            $statement = $connect->prepare($sql);
-            $statement->bind_param("sssssi", $this->name, $this->surname, $this->email, $this->password, $this->role, $this->id_user);
-            if($statement->execute())
+            if ($noPassword)
             {
-                $connect->close();
-                return true;
+                $sql = "UPDATE gestio_incidencies.users SET name = ?, surname = ?, email = ?, role = ? WHERE id_user = ?";
+                $statement = $connect->prepare($sql);
+                $statement->bind_param("ssssi", $this->name, $this->surname, $this->email, $this->role, $this->id_user);
             }
-            else
+            else if (!$noPassword)
             {
-                $connect->close();
-                return false;
+                $sql = "UPDATE gestio_incidencies.users SET name = ?, surname = ?, email = ?, password = ?, role = ? WHERE id_user = ?";
+                $statement = $connect->prepare($sql);
+                $statement->bind_param("sssssi", $this->name, $this->surname, $this->email, $this->password, $this->role, $this->id_user);
             }
+            return $statement->execute() ? $connect->close() || true : $connect->close() || false;
         }
     }
 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Usuaris</title>
-    <link rel="stylesheet" href="../css/style_users.css">
+    <link rel="stylesheet" href="../../css/style_users.css">
 
     <script src="https://kit.fontawesome.com/8faa35dc4d.js" crossorigin="anonymous"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,23 +13,23 @@
 </head>
 <body>
 <header>
-    <img id="logo" src="../png/logo-no-background.png" alt="logo" width="200"/>
+    <img id="logo" src="../../png/logo-no-background.png" alt="logo" width="200"/>
     <nav id="mainmenu">
-        <a href="show_users.php" class="mainmenu">Usuaris</a>
+        <a href="./users_page.php" class="mainmenu">Usuaris</a>
         <a href="show_incidents.php" class="mainmenu">Incidències</a>
-        <a href="show_devices.php" class="mainmenu">Equips</a>
+        <a href="../device_pages/devices_page.php" class="mainmenu">Equips</a>
     </nav>
     <nav id="mainoptions">
-        <a href="login.php" id="profile"><i class="fa-solid fa-user" style="color: #ffffff;"></i>Perfil</a>
-        <a href="../html/login.html" id="logout"><i class="fa-solid fa-right-from-bracket" style="color: #ffffff;"></i>Surt</a>
+        <a href="../login.php" id="profile"><i class="fa-solid fa-user" style="color: #ffffff;"></i>Perfil</a>
+        <a href="../../html/login.html" id="logout"><i class="fa-solid fa-right-from-bracket" style="color: #ffffff;"></i>Surt</a>
     </nav>
 </header>
 <nav class="menu">
 <?php
     session_start();
-    include "../library/User.php";
+    include "../../library/User.php";
     if(empty($_SESSION)){
-        toUrl('../html/login.html');
+        toUrl('../../html/login.html');
     }
     switch($_SESSION['role']){
         case 'admin':
@@ -76,13 +76,20 @@
             foreach ($user_assoc as $key => $value) {
                 echo "<td class='llista'>$value</td>";
             }
-            echo '<td><button><i class="fa-solid fa-gear"></i></button>';
             $current_user_id = $user_assoc['id_user'];
-            echo "<button onclick=deleteFunc('$current_user_id') id=\"deletebutton\"><i class=\"fa-solid fa-trash\"></i></button></td>";
+            $current_user_name = $user_assoc['name'];
+            $current_user_surname = $user_assoc['surname'];
+            $current_user_email = $user_assoc['email'];
+            $current_user_role = $user_assoc['role'];
+
+            echo "<td>";
+            echo "<button onclick=deleteFunc('$current_user_id') id=\"deletebutton\"><i class=\"fa-solid fa-trash\"></i></button>";
+            echo "<button onclick=updateFunc('$current_user_id','$current_user_name','$current_user_surname','$current_user_email','$current_user_role') id=\"updatebutton\"><i class=\"fa-solid fa-gear\"></i></button>";
+            echo "</td>";
             echo "</tr>";
         }
         echo "</table>";
-        echo "<a href='../html/insert_user.html' id='insert'>Inserta un nou usuari</a>";
+        echo "<a href='./insert_device.html' id='insert'>Inserta un nou usuari</a>";
     }
 
     function get_all_users($statement) : array
@@ -120,7 +127,7 @@
         echo "<td class=\'llista\'> $surname </td>";
         echo "<td class=\'llista\'> $email </td>";
         echo "<td class=\'llista\'> $role </td>";
-        echo "<td><a href='login.php'><i class=\"fa-solid fa-gear\"></i></a></td></tr>";
+        echo "</i></a></td></tr>";
     }
 
     ?>
@@ -143,6 +150,31 @@
             form_del.submit();
         }
     }
+    function updateFunc(id_useri,namei,surnamei,emaili,rolei){
+        const form_upd = document.createElement('form');
+        form_upd.setAttribute('method', 'POST');
+        form_upd.setAttribute('action', './update_user_form.php');
+
+        const inputs = {
+            id_useri,
+            namei,
+            surnamei,
+            emaili,
+            rolei
+        };
+
+        for (const [key, value] of Object.entries(inputs)) {
+            const input = document.createElement('input');
+            input.setAttribute('name', key);
+            input.setAttribute('type', 'hidden');
+            input.setAttribute('value', value);
+            form_upd.appendChild(input);
+        }
+
+        document.body.appendChild(form_upd);
+        form_upd.submit();
+    }
+
 </script>
 </html>
 
