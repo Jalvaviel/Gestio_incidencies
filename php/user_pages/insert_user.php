@@ -1,5 +1,6 @@
 <?php
     session_start();
+    include "../../library/helpers.php";
     include "../../library/User.php";
     if(empty($_SESSION)){
         toUrl('../../html/login.html');

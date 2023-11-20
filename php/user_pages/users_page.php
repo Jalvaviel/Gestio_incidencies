@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <?php
+    include "../../library/helpers.php";
     include "../../library/User.php";
     session_start();
     if(empty($_SESSION['email']) || empty($_SESSION['id_user']) || !isset($_SESSION['id_user']) || !isset($_SESSION['email'])){
