@@ -1,5 +1,7 @@
 <?php
 include "../library/User.php";
+include "../library/helpers.php";
+
 $_SESSION = array(0);
 session_destroy();
 session_start();

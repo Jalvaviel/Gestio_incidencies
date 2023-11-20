@@ -1,5 +1,4 @@
 <?php
-include 'helpers.php';
 
 class User
 {
