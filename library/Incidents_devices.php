@@ -226,6 +226,26 @@
             }
         }
 
+        public function findIncidents(string $type) : array
+        {
+            $connect = databaseConnect($type);
+            if($this->checkErrors($connect, $this->id_incidents_devices, 1))
+            {
+                $sql = "SELECT * FROM gestio_incidencies.incidents WHERE id_device = ?";
+                $statement = $connect->prepare($sql);
+                $statement->bind_param("i", $this->id_incident);
+                $statement->execute();
+                $result = $statement->get_result()->fetch_assoc();
+                $connect->close();
+                return $result;
+            }
+            else
+            {
+                $connect->close();
+                return false;
+            }
+        }
+
     /**Funció max
      * Retorna el id més gran que hi ha a la 
        base de dades, l'utilitza el insert
