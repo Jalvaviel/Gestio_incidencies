@@ -130,9 +130,9 @@ class Device
         if(strcmp($type, 'admin') == 0 || strcmp($type, 'technician') == 0)
         {
             $connect = databaseConnect($type);
-            $sql = "UPDATE gestio_incidencies.devices SET os = ?, code = ?, description = ?, ip = ?, room = ?, id_incident = ? WHERE id_device = ?";
+            $sql = "UPDATE gestio_incidencies.devices SET os = ?, code = ?, description = ?, room = ?, ip = ?, id_incident = ? WHERE id_device = ?";
             $statement = $connect->prepare($sql);
-            $statement->bind_param("ssssiii", $this->os, $this->code, $this->description, $this->ip, $this->room, $this->id_incident, $this->id_device);
+            $statement->bind_param("ssssiii", $this->os, $this->code, $this->description, $this->room, $this->ip, $this->id_incident, $this->id_device);
             if($statement->execute())
             {
                 $connect->close();
@@ -171,7 +171,7 @@ class Device
                 $statement->bind_param("i", $this->id_device);
                 $statement->execute();
                 $device = $statement->get_result()->fetch_assoc();
-                $this->__construct($device['id_device'], $device['os'], $device['code'], $device['description'], $device['ip'], $device['room'], $device['id_incident']);
+                $this->__construct($device['id_device'], $device['os'], $device['code'], $device['description'], $device['room'], $device['ip'], $device['id_incident']);
                 $connect->close();
                 return true;
             }
@@ -276,8 +276,8 @@ class Device
             'os' => $this->os,
             'code' => $this->code,
             'description' => $this->description,
-            'ip' => $this->ip,
             'room' => $this->room,
+            'ip' => $this->ip,
             'id_incident' => $this->id_incident
         ];
     }
