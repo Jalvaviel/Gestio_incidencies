@@ -9,8 +9,9 @@ class Device
     private string $description = "";
     private string $ip = "";
     private string $room = "";
+    private int $id_incident = 0;
 
-    public function __construct(int $id_device, string $os, string $code, string $description, string $ip, string $room)
+    public function __construct(int $id_device, string $os, string $code, string $description, string $ip, string $room, $id_incident)
     {
         $this->id_device = $id_device;
         $this->os = $os;
@@ -18,6 +19,7 @@ class Device
         $this->description = $description;
         $this->ip = $ip;
         $this->room = $room;
+        $this->id_incident = $id_incident;
     }
 
     /** Funció checkErrors
@@ -43,6 +45,10 @@ class Device
                 $column = "ip";
                 $varType = "s";
                 break;
+            
+            case 4:
+                $column = "id_incident";
+                $varType = "i";
 
             default:
                 $column = "id_device";
@@ -91,17 +97,25 @@ class Device
             }
             else
             {
-                $sql = "INSERT INTO gestio_incidencies.devices VALUES (DEFAULT,?,?,?,?,?)";
-                $statement = $connect->prepare($sql);
-                $statement->bind_param("sssss", $this->os, $this->code, $this->description, $this->ip, $this->room);
-                if($statement->execute())
+                if($this->checkErrors($connect, $this->id_incident, 4))
                 {
-                    $connect->close();
-                    return true;
+                    $id = $this->max($type) + 1;
+                    $sql = "INSERT INTO gestio_incidencies.devices VALUES ($id,?,?,?,?,?,?)";
+                    $statement = $connect->prepare($sql);
+                    $statement->bind_param("sssss", $this->os, $this->code, $this->description, $this->ip, $this->room, $this->id_incident);
+                    if($statement->execute())
+                    {
+                        $connect->close();
+                        return true;
+                    }
+                    else
+                    {
+                        $connect->close();
+                        return false;
+                    }
                 }
                 else
                 {
-                    $connect->close();
                     return false;
                 }
             }
@@ -122,9 +136,9 @@ class Device
         if(strcmp($type, 'admin') == 0 || strcmp($type, 'technician') == 0)
         {
             $connect = databaseConnect($type);
-            $sql = "UPDATE gestio_incidencies.devices SET os = ?, code = ?, description = ?, ip = ?, room = ? WHERE id_device = ?";
+            $sql = "UPDATE gestio_incidencies.devices SET os = ?, code = ?, description = ?, ip = ?, room = ?, id_incident = ? WHERE id_device = ?";
             $statement = $connect->prepare($sql);
-            $statement->bind_param("sssssi", $this->os, $this->code, $this->description, $this->ip, $this->room, $this->id_device);
+            $statement->bind_param("sssssii", $this->os, $this->code, $this->description, $this->ip, $this->room, $this->id_incident, $this->id_device);
             if($statement->execute())
             {
                 $connect->close();
@@ -163,7 +177,7 @@ class Device
                 $statement->bind_param("i", $this->id_device);
                 $statement->execute();
                 $device = $statement->get_result()->fetch_assoc();
-                $this->__construct($device['id_device'], $device['os'], $device['code'], $device['description'], $device['ip'], $device['room']);
+                $this->__construct($device['id_device'], $device['os'], $device['code'], $device['description'], $device['ip'], $device['room'], $device['id_incident']);
                 $connect->close();
                 return true;
             }
@@ -251,7 +265,8 @@ class Device
             'code' => $this->code,
             'description' => $this->description,
             'ip' => $this->ip,
-            'room' => $this->room
+            'room' => $this->room,
+            'id_incident' => $this->id_incident
         ];
     }
 }
