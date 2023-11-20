@@ -29,9 +29,11 @@ CREATE TABLE `devices` (
   `description` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci DEFAULT NULL,
   `room` int DEFAULT NULL,
   `ip` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci DEFAULT NULL COMMENT 'internet protocol v4',
+  `id_incident` int,
   PRIMARY KEY (`id_device`),
   UNIQUE KEY `ip` (`ip`),
-  UNIQUE KEY `code` (`code`)
+  UNIQUE KEY `code` (`code`),
+  KEY `id_incident` (`id_incident`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

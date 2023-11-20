@@ -27,39 +27,37 @@
 <nav class="menu">
 <?php
     session_start();
+    include "../../library/helpers.php";
     include "../../library/Device.php";
-    if(empty($_SESSION)){
+    if(empty($_SESSION['role']) || !isset($_SESSION['role']))
+    {
         toUrl('../../html/login.html');
     }
-    switch($_SESSION['role']){
-        case 'admin':
-            break;
-        case 'technician':
-            show_all_devices($_SESSION['role']);
-            break;
-        case 'worker':
-            show_all_devices($_SESSION['role']);
-            break;
-    }
+
+    show_all_devices($_SESSION['role']);
 
     function show_all_devices($role) : void
     {
         $connect = databaseConnect($role);
         $statement = $connect->prepare("SELECT * FROM gestio_incidencies.devices");
         // Control de consultes
-        if (!$statement) {
+        if (!$statement) 
+        {
             echo "Error preparant consulta.";
         }
         $result = $statement->execute();
-        if (!$result) {
+        if (!$result) 
+        {
             echo "Error obtenint resultats.";
         }
         $devices = get_all_devices($statement);
-        if($role == 'admin' || $role == 'technician'){
+        if($role == 'admin' || $role == 'technician')
+        {
             print_admin_table($devices);
         }
         // Resultat i llista d'usuaris
-        else{
+        else
+        {
             print_table($devices);
         }
         $connect->close();
@@ -74,6 +72,7 @@
         <th><strong>Descripció</strong></th>
         <th><strong>Sala</strong></th>
         <th><strong>IP</strong></th>
+        <th><strong>Incident</strong></th>
         <th><strong>Modificar</strong></th></tr>";
 
         foreach ($devices as $device) {
@@ -110,10 +109,9 @@
                 $deviceData['os'],
                 $deviceData['code'],
                 $deviceData['description'],
-                $deviceData['ip'],
                 $deviceData['room'],
+                $deviceData['ip'],
                 $deviceData['id_incident']
-                
             );
             $devices[] = $device;
         }
@@ -134,7 +132,8 @@
             $device_assoc = $device->getProperties();
             echo "<tr>";
             foreach ($device_assoc as $key => $value) {
-                if ($key == 'os' || $key == 'code' || $key == 'description' || $key == 'room'){
+                if ($key == 'os' || $key == 'code' || $key == 'description' || $key == 'room' || $key == 'id_incident')
+                {
                     echo "<td class='llista'>$value</td>";
                 }
             }
@@ -146,10 +145,12 @@
 </nav>
 </body>
 <script>
-    function deleteFunc(id_devicei){
+    function deleteFunc(id_devicei)
+    {
         let form_del;
         let input;
-        if (confirm("Estàs segur d'esborrar aquest dispositiu?")) {
+        if (confirm("Estàs segur d'esborrar aquest dispositiu?")) 
+        {
             form_del = document.createElement('form');
             form_del.setAttribute('method', 'POST');
             form_del.setAttribute('action', './delete_device.php');
@@ -162,16 +163,25 @@
             form_del.submit();
         }
     }
-    function updateFunc(id_devicei,osi,codei,descriptioni,roomi,ipi){
+    function updateFunc(id_devicei,osi,codei,descriptioni,roomi,ipi,id_incidenti)
+    {
         const form_upd = document.createElement('form');
         form_upd.setAttribute('method', 'POST');
         form_upd.setAttribute('action', './update_device_form.php');
 
-        const inputs = {
-            id_devicei,osi,codei,descriptioni,roomi,ipi
+        const inputs = 
+        {
+            id_devicei,
+            osi,
+            codei,
+            descriptioni,
+            roomi,
+            ipi,
+            id_incidenti
         };
 
-        for (const [key, value] of Object.entries(inputs)) {
+        for (const [key, value] of Object.entries(inputs)) 
+        {
             const input = document.createElement('input');
             input.setAttribute('name', key);
             input.setAttribute('type', 'hidden');
@@ -182,7 +192,8 @@
         document.body.appendChild(form_upd);
         form_upd.submit();
     }
-    function showIncidentsFunc(id_devicei){
+    function showIncidentsFunc(id_devicei)
+    { // Falta añadir el id_incident
         let form_del;
         let input;
         form_del = document.createElement('form');

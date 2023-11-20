@@ -6,18 +6,18 @@ class Device
     private string $os = "";
     private string $code = "";
     private string $description = "";
+    private int $room = 0;
     private string $ip = "";
-    private string $room = "";
     private int $id_incident = 0;
 
-    public function __construct(int $id_device, string $os, string $code, string $description, string $ip, string $room, $id_incident)
+    public function __construct(int $id_device, string $os, string $code, string $description, int $room, string $ip, int $id_incident)
     {
         $this->id_device = $id_device;
         $this->os = $os;
         $this->code = $code;
         $this->description = $description;
-        $this->ip = $ip;
         $this->room = $room;
+        $this->ip = $ip;
         $this->id_incident = $id_incident;
     }
 
@@ -96,25 +96,20 @@ class Device
             }
             else
             {
-                if($this->checkErrors($connect, $this->id_incident, 4))
+                $id = $this->max($type) + 1;
+                $sql = "INSERT INTO gestio_incidencies.devices VALUES ($id, ?, ?, ?, ?, ?, 0)";
+                $statement = $connect->prepare($sql);
+                $statement->bind_param("sssis", $this->os, $this->code, $this->description, $this->room, $this->ip);
+                $statement->execute();
+
+                if($statement->execute())
                 {
-                    $id = $this->max($type) + 1;
-                    $sql = "INSERT INTO gestio_incidencies.devices VALUES ($id,?,?,?,?,?,?)";
-                    $statement = $connect->prepare($sql);
-                    $statement->bind_param("sssss", $this->os, $this->code, $this->description, $this->ip, $this->room, $this->id_incident);
-                    if($statement->execute())
-                    {
-                        $connect->close();
-                        return true;
-                    }
-                    else
-                    {
-                        $connect->close();
-                        return false;
-                    }
+                    $connect->close();
+                    return true;
                 }
                 else
                 {
+                    $connect->close();
                     return false;
                 }
             }
@@ -137,7 +132,7 @@ class Device
             $connect = databaseConnect($type);
             $sql = "UPDATE gestio_incidencies.devices SET os = ?, code = ?, description = ?, ip = ?, room = ?, id_incident = ? WHERE id_device = ?";
             $statement = $connect->prepare($sql);
-            $statement->bind_param("sssssii", $this->os, $this->code, $this->description, $this->ip, $this->room, $this->id_incident, $this->id_device);
+            $statement->bind_param("ssssiii", $this->os, $this->code, $this->description, $this->ip, $this->room, $this->id_incident, $this->id_device);
             if($statement->execute())
             {
                 $connect->close();
@@ -236,17 +231,35 @@ class Device
     public function max($type) : int
     {
         $connect = databaseConnect($type);
-        $sql = "SELECT MAX(id_device) AS 'max' FROM gestio_incidencies.devices";
+        $sql = "SELECT COUNT(id_device) AS 'count' FROM gestio_incidencies.devices";
         $statement = $connect->prepare($sql);
-        if($statement->execute())
+        $statement->execute();
+        $count = $statement->get_result()->fetch_assoc();
+        if($count['count'] > 0)
         {
-            $result = $statement->get_result()->fetch_assoc();
-            $connect->close();
-            return $result['max'];
+            $sql = "SELECT MAX(id_device) AS 'max' FROM gestio_incidencies.devices";
+            $statement = $connect->prepare($sql);
+            if($statement->execute())
+            {
+                $result = $statement->get_result()->fetch_assoc();
+                $connect->close();
+                if(!isset($result['max']) || empty($result['max']))
+                {
+                    return false;
+                }
+                else
+                {
+                    return $result['max'];
+                }
+            }
+            else
+            {
+                return false;
+            }
         }
         else
         {
-            return -1;
+            return 0;
         }
     }
 
