@@ -10,5 +10,5 @@ else{
 }
 echo "<script>
           alert(\"Usuari actualitzat correctament!\")
-          window.location.replace(\"./devices_page.php\");
+          window.location.replace(\"./users_page.php\");
           </script>";

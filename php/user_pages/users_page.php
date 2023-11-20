@@ -91,7 +91,7 @@
             echo "</tr>";
         }
         echo "</table>";
-        echo "<a href='./insert_device.html' id='insert'>Inserta un nou usuari</a>";
+        echo "<a href='./insert_user.html' id='insert'>Inserta un nou usuari</a>";
     }
 
     function get_all_users($statement) : array
