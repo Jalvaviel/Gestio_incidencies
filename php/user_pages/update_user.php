@@ -1,4 +1,5 @@
 <?php
+include "../../library/helpers.php";
 include "../../library/User.php";
 session_start();
 $user = new User($_POST['id_user'],$_POST['name'],$_POST['surname'],$_POST['email'],hashPasswords($_POST['password']),$_POST['role']);
