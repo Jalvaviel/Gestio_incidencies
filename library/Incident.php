@@ -222,8 +222,8 @@ class Incident
             'id_incident' => $this->id_incident,
             'description' => $this->description,
             'surname' => $this->status,
-            'email' => $this->date,
-            'password' => $this->id_user
+            'date' => $this->date,
+            'id_user' => $this->id_user
         ];
     }
 }

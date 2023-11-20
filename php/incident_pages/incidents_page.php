@@ -27,17 +27,18 @@
 <nav class="menu">
 <?php
 session_start();
-include "../../library/Device.php";
+include "../../library/Incident.php";
+include "../../library/helpers.php";
 if(empty($_SESSION)){
     toUrl('../../html/login.html');
 }
 switch($_SESSION['role']){
     case 'admin':
     case 'technician':
-        show_all_incidents($_SESSION['role'],$_SESSION['show_incidents_device']);
+        show_all_incidents($_SESSION['role']);
         break;
     case 'worker':
-        show_all_incidents($_SESSION['role'],$_SESSION['show_incidents_device']);
+        show_all_incidents($_SESSION['role']);
 }
 function show_all_incidents($role) : void
 {
@@ -51,7 +52,7 @@ function show_all_incidents($role) : void
     if (!$result) {
         echo "Error obtenint resultats.";
     }
-    $incidents = get_all_devices($statement);
+    $incidents = get_all_incidents($statement);
     if($role == 'admin' || $role == 'technician'){
         print_admin_table($incidents);
     }
@@ -68,7 +69,7 @@ function print_admin_table($incidents) : void
         <th><strong>Descripció</strong></th>
         <th><strong>Estat</strong></th>
         <th><strong>Data</strong></th>
-        <th><strong>Modificar</strong></th></tr>";
+        <th><strong>ID Usuari</strong></th></tr>";
 
     foreach ($incidents as $incident) {
         $incident_assoc = $incident->getProperties();
@@ -76,10 +77,6 @@ function print_admin_table($incidents) : void
         foreach ($incident_assoc as $key => $value) {
             echo "<td class='llista'>$value</td>";
         }
-        $current_incident_id = $incident_assoc['id_incident'];
-        $current_incident_description = $incident_assoc['description'];
-        $current_incident_status = $incident_assoc['status'];
-        $current_incident_date = $incident_assoc['date'];
         echo "</tr>";
     }
     echo "</table>";
