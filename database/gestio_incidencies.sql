@@ -72,34 +72,6 @@ LOCK TABLES `incidents` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `incidents_devices`
---
-
-DROP TABLE IF EXISTS `incidents_devices`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `incidents_devices` (
-  `id_incidents_devices` int NOT NULL AUTO_INCREMENT,
-  `id_incident` int NOT NULL,
-  `id_device` int NOT NULL,
-  PRIMARY KEY (`id_incidents_devices`),
-  KEY `id_incident` (`id_incident`),
-  KEY `id_device` (`id_device`),
-  CONSTRAINT `id_device` FOREIGN KEY (`id_device`) REFERENCES `devices` (`id_device`),
-  CONSTRAINT `id_incident` FOREIGN KEY (`id_incident`) REFERENCES `incidents` (`id_incident`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `incidents_devices`
---
-
-LOCK TABLES `incidents_devices` WRITE;
-/*!40000 ALTER TABLE `incidents_devices` DISABLE KEYS */;
-/*!40000 ALTER TABLE `incidents_devices` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `users`
 --
 
