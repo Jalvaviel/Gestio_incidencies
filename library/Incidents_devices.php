@@ -140,6 +140,11 @@
                     return false;
                 }
             }
+            else 
+            {
+                $connect->close();
+                return false;
+            }
         }
 
         /**Funció select
@@ -231,7 +236,7 @@
             $connect = databaseConnect($type);
             if($this->checkErrors($connect, $this->id_incidents_devices, 1))
             {
-                $sql = "SELECT * FROM gestio_incidencies.incidents WHERE id_device = ?";
+                $sql = "SELECT * FROM gestio_incidencies.incidents WHERE id_incident = ?";
                 $statement = $connect->prepare($sql);
                 $statement->bind_param("i", $this->id_incident);
                 $statement->execute();

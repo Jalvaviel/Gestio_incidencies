@@ -8,7 +8,7 @@
     $user->insert($_SESSION['role']);
     echo "<script>
           alert(\"Usuari insertat correctament!\")
-          window.location.replace(\"./devices_page.php\");
+          window.location.replace(\"./users_page.php\");
           </script>";
 ?>
 

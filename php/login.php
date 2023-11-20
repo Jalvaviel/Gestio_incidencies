@@ -1,6 +1,7 @@
 <?php
 include "../library/User.php";
-$_SESSION = array();
+$_SESSION = array(0);
+session_destroy();
 session_start();
 if (isset($_POST["submit"])){
     $input_password = $_POST["password"];
