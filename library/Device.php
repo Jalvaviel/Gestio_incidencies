@@ -28,8 +28,27 @@ class Device
     */
     private function checkErrors($connect, string $condition, int $mode=1) : bool
     {
-        $column = ($mode == 1) ? "id_device" : "code";
-        $varType = ($mode == 1) ? "i" : "s";
+        switch ($mode) {
+            case 1:
+                $column = "id_device";
+                $varType = "i";
+                break;
+            
+            case 2:
+                $column = "code";
+                $varType = "s";
+                break;
+
+            case 3:
+                $column = "ip";
+                $varType = "s";
+                break;
+
+            default:
+                $column = "id_device";
+                $varType = "i";
+                break;
+        }
 
         $sql = "SELECT COUNT($column) AS 'count' FROM gestio_incidencies.devices WHERE $column = ?";
         $statement = $connect->prepare($sql);
@@ -66,7 +85,7 @@ class Device
         if(strcmp($type, 'admin') == 0 || strcmp($type, 'technician'))
         {
             $connect = databaseConnect($type);
-            if($this->checkErrors($connect, $this->code, 2) && $this->checkErrors($connect, $this->id_device, 1))
+            if($this->checkErrors($connect, $this->id_device, 1) || $this->checkErrors($connect, $this->code, 2) || $this->checkErrors($connect, $this->ip, 3))
             {
                 return false;
             }
