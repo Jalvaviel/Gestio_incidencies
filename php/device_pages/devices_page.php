@@ -34,16 +34,16 @@
     switch($_SESSION['role']){
         case 'admin':
         case 'technician':
-        case 'worker':
-            show_all_devices('admin');
+            show_all_devices($_SESSION['role']);
             break;
+        case 'worker':
+            show_all_devices($_SESSION['role']);
     }
 
     function show_all_devices($role) : void
     {
         $connect = databaseConnect($role);
         $statement = $connect->prepare("SELECT * FROM gestio_incidencies.devices");
-
         // Control de consultes
         if (!$statement) {
             echo "Error preparant consulta.";
@@ -52,11 +52,17 @@
         if (!$result) {
             echo "Error obtenint resultats.";
         }
-        // Resultat i llista d'usuaris
         $devices = get_all_devices($statement);
-        print_admin_table($devices);
+        if($role == 'admin' || $role == 'technician'){
+            print_admin_table($devices);
+        }
+        // Resultat i llista d'usuaris
+        else{
+            print_table($devices);
+        }
         $connect->close();
     }
+
     function print_admin_table($devices) : void
     {
         echo "<table>";
@@ -82,8 +88,9 @@
             $current_device_ip = $device_assoc['ip'];
 
             echo "<td>";
-            echo "<button onclick=deleteFunc('$current_device_id') id=\"deletebutton\"><i class=\"fa-solid fa-trash\"></i></button>";
-            echo "<button onclick=updateFunc('$current_device_id','$current_device_os','$current_device_code','$current_device_description','$current_device_room','$current_device_ip') id=\"updatebutton\"><i class=\"fa-solid fa-gear\"></i></button>";
+            echo "<button onclick=deleteFunc('$current_device_id') id=\"deletebuttona\"><i class=\"fa-solid fa-trash\"></i></button>";
+            echo "<button onclick=updateFunc('$current_device_id','$current_device_os','$current_device_code','$current_device_description','$current_device_room','$current_device_ip') id=\"updatebuttona\"><i class=\"fa-solid fa-gear\"></i></button>";
+            echo "<button onclick=showIncidentsFunc('$current_device_id') id=\"showincidentbuttona\"><i class=\"fa-solid fa-circle-exclamation\"></i></button>";
             echo "</td>";
             echo "</tr>";
         }
@@ -109,24 +116,26 @@
         return $devices;
     }
 
-    function print_self(){ // Change for workers so they can't update/delete devices
+    function print_table($devices)
+    {
         echo "<table>";
         echo "<tr>
-        <th><strong>Nom</strong></th>
-        <th><strong>Cognom</strong></th>
-        <th><strong>Correu</strong></th>
-        <th><strong>Rol</strong></th>
-        <th><strong>Modificar</strong></th></tr>";
-        $name = $_SESSION['name'];
-        $surname = $_SESSION['surname'];
-        $email = $_SESSION['email'];
-        $password_hash = $_SESSION['password'];
-        $role = $_SESSION['role'];
-        echo "<tr><td class=\'llista\'> $name </td>";
-        echo "<td class=\'llista\'> $surname </td>";
-        echo "<td class=\'llista\'> $email </td>";
-        echo "<td class=\'llista\'> $role </td>";
-        echo "</i></a></td></tr>";
+            <th><strong>Sistema Operatiu</strong></th>
+            <th><strong>Codi</strong></th>
+            <th><strong>Descripció</strong></th>
+            <th><strong>Sala</strong></th>
+            </tr>";
+
+        foreach ($devices as $device) {
+            $device_assoc = $device->getProperties();
+            echo "<tr>";
+            foreach ($device_assoc as $key => $value) {
+                if ($key == 'os' || $key == 'code' || $key == 'description' || $key == 'room'){
+                    echo "<td class='llista'>$value</td>";
+                }
+            }
+            echo "</tr>";
+        }
     }
 
     ?>
@@ -169,7 +178,20 @@
         document.body.appendChild(form_upd);
         form_upd.submit();
     }
+    function showIncidentsFunc(id_devicei){
+        let form_del;
+        let input;
+        form_del = document.createElement('form');
+        form_del.setAttribute('method', 'POST');
+        form_del.setAttribute('action', './show_incidents_device.php');
+        input = document.createElement('input');
+        input.setAttribute('name','show_incidents_device')
+        input.setAttribute('type','hidden');
+        input.setAttribute('value',id_devicei);
+        form_del.appendChild(input);
+        document.body.appendChild(form_del);
+        form_del.submit();
+    }
 
 </script>
 </html>
-
