@@ -33,11 +33,13 @@
     }
     switch($_SESSION['role']){
         case 'admin':
+            break;
         case 'technician':
             show_all_devices($_SESSION['role']);
             break;
         case 'worker':
             show_all_devices($_SESSION['role']);
+            break;
     }
 
     function show_all_devices($role) : void
@@ -108,8 +110,10 @@
                 $deviceData['os'],
                 $deviceData['code'],
                 $deviceData['description'],
+                $deviceData['ip'],
                 $deviceData['room'],
-                $deviceData['ip']
+                $deviceData['id_incident']
+                
             );
             $devices[] = $device;
         }
