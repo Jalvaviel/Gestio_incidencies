@@ -153,7 +153,7 @@ class Incident
             else
             {
                 $id = $this->max($type) + 1;
-                $sql = "INSERT INTO gestio_incidencies.incidents VALUES ($id, ?, ?, ?, ?, ?)";
+                $sql = "INSERT INTO gestio_incidencies.incidents VALUES ($id, ?, ?, ?, ?)";
                 $statement = $connect->prepare($sql);
                 $statement->bind_param("sssi", $this->description, $this->status, $this->date, $this->id_user);
                 if($statement->execute())
@@ -198,6 +198,7 @@ class Incident
                 return false;
             }
         }
+        return false;
     }
 
     /**Funció select

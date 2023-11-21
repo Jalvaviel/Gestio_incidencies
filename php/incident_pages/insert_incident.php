@@ -6,7 +6,7 @@ include "../../library/Incident.php";
 if(empty($_SESSION['role'])){
     toUrl('../../html/login.html');
 }
-$incident = new Incident(0, $_POST['description'], 'unresolved', date('d/m/Y'), $_SESSION['id_user']);
+$incident = new Incident(0, $_POST['description'], 'unresolved', date('Y-m-d'), $_SESSION['id_user']);
 if($incident->insert($_SESSION['role']))
 {
     echo "<script>
