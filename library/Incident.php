@@ -306,13 +306,13 @@ class Incident
     public function max($type) : int
     {
         $connect = databaseConnect($type);
-        $sql = "SELECT COUNT(id_incidents) AS 'count' FROM gestio_incidencies.incidents";
+        $sql = "SELECT COUNT(id_incident) AS 'count' FROM gestio_incidencies.incidents";
         $statement = $connect->prepare($sql);
         $statement->execute();
         $count = $statement->get_result()->fetch_assoc();
         if($count['count'] > 0)
         {
-            $sql = "SELECT MAX(id_incidents) AS 'max' FROM gestio_incidencies.incidents";
+            $sql = "SELECT MAX(id_incident) AS 'max' FROM gestio_incidencies.incidents";
             $statement = $connect->prepare($sql);
             $statement->execute();
 
