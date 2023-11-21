@@ -96,7 +96,10 @@
             echo "</tr>";
         }
         echo "</table>";
-        echo "<a href='insert_device.html' id='insert'>Inserta un nou equip</a>";
+        if($_SESSION['role'] == 'admin')
+        {
+            echo "<a href='insert_device.html' id='insert'>Inserta un nou equip</a>";
+        }
     }
 
     function get_all_devices($statement) : array
