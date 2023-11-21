@@ -96,10 +96,16 @@
                         $sql = "SELECT * FROM gestio_incidencies.incidents WHERE id_incident = ?";
                         $query = $bd->prepare($sql);
                         $query->bind_param("i", $device_assoc['id_incident']);
-                        $query->execute();
-                        $res = $query->get_result()->fetch_assoc();
-                        $incident = $res['status'];
-                        echo "<td class='llista'>$incident</td>";
+                        if($query->execute())
+                        {
+                            $res = $query->get_result()->fetch_assoc();
+                            $incident = $res['status'];
+                            echo "<td class='llista'>$incident</td>";
+                        }
+                        else
+                        {
+                            echo "<td class='llista'>N/A</td>";
+                        }
                     }
                 }
                 else

@@ -114,6 +114,7 @@ class Incident
             if($statement->execute())
             {
                 $device_incident = $statement->get_result()->fetch_assoc();
+                echo "$statement->error";
                 $status = $device_incident['status'];
                 if(strcmp($status, 'resolved') == 0)
                 {
@@ -348,4 +349,10 @@ class Incident
             'id_user' => $this->id_user
         ];
     }
+
+    public function setIdIncident(int $id_incident): void
+    {
+        $this->id_incident = $id_incident;
+    }
+
 }
