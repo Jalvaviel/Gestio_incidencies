@@ -53,8 +53,9 @@ class Incident
      */
     private function findDevice($connect, string $code)
     {
-        $sql = "SELECT COUNT(*) AS count FROM gestio_incidencies.devices WHERE code = $code";
+        $sql = "SELECT COUNT(*) AS count FROM gestio_incidencies.devices WHERE code = ?";
         $statement = $connect->prepare($sql);
+        $statement->bind_param("s", $code);
         $statement->execute();
 
         $result = $statement->get_result()->fetch_assoc();
