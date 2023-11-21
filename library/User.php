@@ -250,17 +250,35 @@ class User
     public function max($type) : int
     {
         $connect = databaseConnect($type);
-        $sql = "SELECT MAX(id_user) AS 'max' FROM gestio_incidencies.users";
+        $sql = "SELECT COUNT(id_user) AS 'count' FROM gestio_incidencies.users";
         $statement = $connect->prepare($sql);
-        if($statement->execute())
+        $statement->execute();
+        $count = $statement->get_result()->fetch_assoc();
+        if($count['count'] > 0)
         {
-            $result = $statement->get_result()->fetch_assoc();
-            $connect->close();
-            return $result['max'];
+            $sql = "SELECT MAX(id_user) AS 'max' FROM gestio_incidencies.users";
+            $statement = $connect->prepare($sql);
+            if($statement->execute())
+            {
+                $result = $statement->get_result()->fetch_assoc();
+                $connect->close();
+                if(!isset($result['max']) || empty($result['max']))
+                {
+                    return false;
+                }
+                else
+                {
+                    return $result['max'];
+                }
+            }
+            else
+            {
+                return false;
+            }
         }
         else
         {
-            return -1;
+            return 0;
         }
     }
 
