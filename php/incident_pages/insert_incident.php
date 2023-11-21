@@ -7,6 +7,7 @@ if(empty($_SESSION['role'])){
     toUrl('../../html/login.html');
 }
 $incident = new Incident(0, $_POST['description'], 'unresolved', date('Y-m-d'), $_SESSION['id_user']);
+$incident->updateDevice($_SESSION['role'],$_POST['code']);
 if($incident->insert($_SESSION['role']))
 {
     echo "<script>
