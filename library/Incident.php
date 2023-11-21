@@ -89,41 +89,40 @@ class Incident
     public function updateDevice($type, string $code) : bool
     {
         $connect = databaseConnect($type);
-        if($device_info = $this->findDevice($connect, $code))
+        $device_info = $this->findDevice($connect, $code);
+
+        $id = $device_info['id_incident'];
+        if($id == 0)
         {
-            $id = $device_info['id_incident'];
-            if($id == 0)
+            $sql = "UPDATE gestio_incidencies.devices SET id_incident = ? WHERE code = ?";
+            $statement = $connect->prepare($sql);
+            $statement->bind_param("is", $this->id_incident, $code);
+            if($statement->execute())
             {
-                $sql = "UPDATE gestio_incidencies.devices SET id_incident = ? WHERE code = ?";
-                $statement = $connect->prepare($sql);
-                $statement->bind_param("is", $this->id_incident, $code);
-                if($statement->execute())
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return true;
             }
             else
             {
-                $sql = "SELECT status FROM gestio_incidencies.incidents WHERE id_incident = ?";
-                $statement = $connect->prepare($sql);
-                $statement->bind_param("i", $id);
-                if($statement->execute())
+                return false;
+            }
+        }
+        else
+        {
+            $sql = "SELECT status FROM gestio_incidencies.incidents WHERE id_incident = ?";
+            $statement = $connect->prepare($sql);
+            $statement->bind_param("i", $id);
+            if($statement->execute())
+            {
+                $device_incident = $statement->get_result()->fetch_assoc();
+                $status = $device_incident['status'];
+                if(strcmp($status, 'resolved') == 0)
                 {
-                    $device_incident = $statement->get_result()->fetch_assoc();
-                    $status = $device_incident['status'];
-                    if(strcmp($status, 'resolved') == 0)
+                    $sql = "UPDATE gestio_incidencies.devices SET id_incident = ? WHERE code = ?";
+                    $statement = $connect->prepare($sql);
+                    $statement->bind_param("is", $this->id_incident, $code);
+                    if($statement->execute())
                     {
-                        $sql = "UPDATE gestio_incidencies.devices SET id_incident = ? WHERE code = ?";
-                        $statement = $connect->prepare($sql);
-                        $statement->bind_param("is", $this->id_incident, $code);
-                        if($statement->execute())
-                        {
-                            return true;
-                        }
+                        return true;
                     }
                 }
             }
