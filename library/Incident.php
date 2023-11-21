@@ -4,15 +4,15 @@ class Incident
 {
     private int $id_incident = 0;
     private string $description = "";
-    private string $status = "";
+    private string $stat = "";
     private string $date = "";
     private int $id_user = 0;
 
-    public function __construct($id_incident, $description, $status, $date, $id_user)
+    public function __construct($id_incident, $description, $stat, $date, $id_user)
     {
         $this->id_incident = $id_incident;
         $this->description = $description;
-        $this->status = $status;
+        $this->stat = $stat;
         $this->date = $date;
         $this->id_user = $id_user;
     }
@@ -53,13 +53,14 @@ class Incident
      */
     private function findDevice($connect, string $code)
     {
-        $sql = "SELECT COUNT(*) AS count FROM gestio_incidencies.devices WHERE code = ?";
+        $sql = "SELECT COUNT(id_device) AS count FROM gestio_incidencies.devices WHERE code = ?";
         $statement = $connect->prepare($sql);
         $statement->bind_param("s", $code);
         $statement->execute();
 
         $result = $statement->get_result()->fetch_assoc();
         $count = $result['count'];
+
         if($count > 0 && $count < 2)
         {
             $sql = "SELECT * FROM gestio_incidencies.devices WHERE code = ?";
@@ -73,13 +74,13 @@ class Incident
         {
             return false;
         }
-        return false;
+
     }
 
     /**Funcio updateDevice
      * Aquesta funció fa servir la findDevice
        per actualitzar comprobar si es pot actualitzar o no,
-       només es pot actualitzar si el status està com arreglat
+       només es pot actualitzar si el stat està com arreglat
        o si el id_incidents = 0 ja que es un placeholder i
        es mostra com N/A
      * Només necesita el code del device i el type del usuari 
@@ -97,26 +98,21 @@ class Incident
             $sql = "UPDATE gestio_incidencies.devices SET id_incident = ? WHERE code = ?";
             $statement = $connect->prepare($sql);
             $statement->bind_param("is", $this->id_incident, $code);
-            if($statement->execute())
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            $statement->execute();
         }
         else
         {
-            $sql = "SELECT status FROM gestio_incidencies.incidents WHERE id_incident = ?";
+            $sql = "SELECT * FROM gestio_incidencies.incidents WHERE id_incident = ?";
             $statement = $connect->prepare($sql);
             $statement->bind_param("i", $id);
-            if($statement->execute())
-            {
-                $device_incident = $statement->get_result()->fetch_assoc();
-                echo "$statement->error";
-                $status = $device_incident['status'];
-                if(strcmp($status, 'resolved') == 0)
+            echo $id;
+            $statement->execute();
+            $device_incident = $statement->get_result()->fetch_assoc(); //TODO Problema
+                foreach($device_incident as $key => $value){
+                    echo "KEY: $key, VALUE: $value";
+                }
+                $stat = $device_incident['stat'];
+                if(strcmp($stat, 'resolved') == 0)
                 {
                     $sql = "UPDATE gestio_incidencies.devices SET id_incident = ? WHERE code = ?";
                     $statement = $connect->prepare($sql);
@@ -127,7 +123,6 @@ class Incident
                     }
                 }
             }
-        }
         return false;
     }
 
@@ -172,8 +167,9 @@ class Incident
         if(strcmp($type,'admin') == 0)
         {
             $connect = databaseConnect($type);
-            if(!$this->checkErrors($connect, $this->id_incident, 1) || $this->checkErrors($connect, $this->id_user, 2))
+            if($this->checkErrors($connect, $this->id_incident, 1) || $this->checkErrors($connect, $this->id_user, 2))
             {
+                echo "sex1";
                 return false;
             }
             else
@@ -181,14 +177,16 @@ class Incident
                 $id = $this->max($type) + 1;
                 $sql = "INSERT INTO gestio_incidencies.incidents VALUES ($id, ?, ?, ?, ?)";
                 $statement = $connect->prepare($sql);
-                $statement->bind_param("sssi", $this->description, $this->status, $this->date, $this->id_user);
+                $statement->bind_param("sssi", $this->description, $this->stat, $this->date, $this->id_user);
                 if($statement->execute())
                 {
+                    echo "sex2";
                     $connect->close();
                     return true;
                 }
                 else
                 {
+                    echo "sex4";
                     $connect->close();
                     return false;
                 }
@@ -210,9 +208,9 @@ class Incident
         if(strcmp($type, 'admin') == 0 || strcmp($type, 'technician') == 0)
         {
             $connect = databaseConnect($type);
-            $sql = "UPDATE gestio_incidencies.incidents SET description = ?, status = ?, date = ?, id_user = ? WHERE id_incident = ?";
+            $sql = "UPDATE gestio_incidencies.incidents SET description = ?, stat = ?, date = ?, id_user = ? WHERE id_incident = ?";
             $statement = $connect->prepare($sql);
-            $statement->bind_param("sssii", $this->description, $this->status, $this->date, $this->id_user, $this->id_incident);
+            $statement->bind_param("sssii", $this->description, $this->stat, $this->date, $this->id_user, $this->id_incident);
             if($statement->execute())
             {
                 $connect->close();
@@ -248,7 +246,7 @@ class Incident
                 $statement->bind_param("i", $this->id_incident);
                 $statement->execute();
                 $incident = $statement->get_result()->fetch_assoc();
-                $this->__construct($incident['id_incident'], $incident['description'], $incident['status'], $incident['date'], $incident['id_user']);
+                $this->__construct($incident['id_incident'], $incident['description'], $incident['stat'], $incident['date'], $incident['id_user']);
                 $connect->close();
                 return true;
             }
@@ -344,7 +342,7 @@ class Incident
         [
             'id_incident' => $this->id_incident,
             'description' => $this->description,
-            'status' => $this->status,
+            'stat' => $this->stat,
             'date' => $this->date,
             'id_user' => $this->id_user
         ];

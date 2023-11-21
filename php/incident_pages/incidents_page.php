@@ -80,12 +80,12 @@ function print_admin_table($incidents) : void
         }
         $current_incident_id = $incident_assoc['id_incident'];
         $current_incident_description = $incident_assoc['description'];
-        $current_incident_status = $incident_assoc['status'];
+        $current_incident_stat = $incident_assoc['stat'];
         $current_incident_date = $incident_assoc['date'];
         $current_incident_user = $incident_assoc['id_user'];
         echo "<td>";
         echo "<button onclick=deleteFunc('$current_incident_id') id=\"deletebuttona\"><i class=\"fa-solid fa-trash\"></i></button>";
-        echo "<button onclick=updateFunc('$current_incident_id','$current_incident_description','$current_incident_status','$current_incident_date','$current_incident_user') id=\"updatebuttona\"><i class=\"fa-solid fa-gear\"></i></button>";
+        echo "<button onclick=updateFunc('$current_incident_id','$current_incident_description','$current_incident_stat','$current_incident_date','$current_incident_user') id=\"updatebuttona\"><i class=\"fa-solid fa-gear\"></i></button>";
         echo "</td>";
         echo "</tr>";
     }
@@ -100,7 +100,7 @@ function get_all_incidents($statement) : array
         $incident = new Incident(
             $incidentData['id_incident'],
             $incidentData['description'],
-            $incidentData['status'],
+            $incidentData['stat'],
             $incidentData['date'],
             $incidentData['id_user'],
         );

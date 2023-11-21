@@ -3,15 +3,15 @@ session_start();
 include "../../library/helpers.php";
 include "../../library/Device.php";
 include "../../library/Incident.php";
-if(empty($_SESSION['role'])){
+if(empty($_SESSION['role']))
+{
     toUrl('../../html/login.html');
 }
 $incident = new Incident(0, $_POST['description'], 'unresolved', date('Y-m-d'), $_SESSION['id_user']);
-$numa = $incident->max($_SESSION['role'])+1;
-$incident->setIdIncident($numa);
-$incident->updateDevice($_SESSION['role'],$_POST['code']);
 if($incident->insert($_SESSION['role']))
 {
+    $incident->select($_SESSION['role']);
+    $incident->updateDevice($_SESSION['role'],$_POST['code']);
     echo "<script>
             alert(\"Incident inserit correctament!\")
             window.location.replace(\"./incidents_page.php\");
