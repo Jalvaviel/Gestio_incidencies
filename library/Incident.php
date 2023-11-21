@@ -49,6 +49,33 @@ class Incident
         return $check;
     }
 
+    public function findDevice($connect, string $code)
+    {
+        $sql = "SELECT COUNT(*) AS count FROM gestio_incidencies.devices WHERE code = $code";
+        $statement = $connect->prepare($sql);
+        if($statement->execute())
+        {
+            $result = $statement->get_result()->fetch_assoc();
+            $count = $result['count'];
+            if($count > 0 && $count < 2)
+            {
+                $sql = "SELECT * AS count FROM gestio_incidencies.devices WHERE code = $code";
+                $statement = $connect->prepare($sql);
+                $statement->execute();
+                $device_info = $statement->get_result()->fetch_assoc();
+                return $device_info;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     /**Funció insert
      * Serveix per insertar un usuari amb les variables de la classe,
        pots fer servir el constructor per omplir els valors a la classe
