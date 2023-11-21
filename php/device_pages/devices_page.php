@@ -39,28 +39,32 @@
     function show_all_devices($role) : void
     {
         $connect = databaseConnect($role);
-        $statement = $connect->prepare("SELECT * FROM gestio_incidencies.devices");
+        $sql = "SELECT * FROM gestio_incidencies.devices";
+        $statement = $connect->prepare($sql);
         // Control de consultes
         if (!$statement) 
         {
             echo "Error preparant consulta.";
         }
-        $result = $statement->execute();
-        if (!$result) 
-        {
-            echo "Error obtenint resultats.";
-        }
-        $devices = get_all_devices($statement);
-        if($role == 'admin' || $role == 'technician')
-        {
-            print_admin_table($devices);
-        }
-        // Resultat i llista d'usuaris
         else
         {
-            print_table($devices);
+            $result = $statement->execute();
+            if (!$result) 
+            {
+                echo "Error obtenint resultats.";
+            }
+            $devices = get_all_devices($statement);
+            if($role == 'admin' || $role == 'technician')
+            {
+                print_admin_table($devices);
+            }
+            // Resultat i llista d'usuaris
+            else
+            {
+                print_table($devices);
+            }
+            $connect->close();
         }
-        $connect->close();
     }
 
     function print_admin_table($devices) : void
@@ -87,10 +91,31 @@
             $current_device_description = $device_assoc['description'];
             $current_device_room = $device_assoc['room'];
             $current_device_ip = $device_assoc['ip'];
+            if($device_assoc['id_incident'] == 0)
+            {
+                $current_device_incident = 'N/A'; 
+            }
+            else
+            {
+                $bd = databaseConnect($_SESSION['role']);
+                $sql = "SELECT * FROM gestio_incidencies.incidents WHERE id_incident = ?";
+                $query = $bd->prepare($sql);
+                $query->bind_param("i", $device_assoc['id_incident']);
+                if($query->execute())
+                {
+                    $res = $query->get_result()->fetch_assoc();
+                    $current_device_incident = $res['status'];
+                }
+                else
+                {
+                    $current_device_incident = "Error";
+                }
+            }
+            
 
             echo "<td>";
             echo "<button onclick=deleteFunc('$current_device_id') id=\"deletebuttona\"><i class=\"fa-solid fa-trash\"></i></button>";
-            echo "<button onclick=updateFunc('$current_device_id','$current_device_os','$current_device_code','$current_device_description','$current_device_room','$current_device_ip') id=\"updatebuttona\"><i class=\"fa-solid fa-gear\"></i></button>";
+            echo "<button onclick=updateFunc('$current_device_id', '$current_device_os', '$current_device_code', '$current_device_description', '$current_device_room', '$current_device_ip', '$current_device_incident') id=\"updatebuttona\"><i class=\"fa-solid fa-gear\"></i></button>";
             echo "<button onclick=showIncidentsFunc('$current_device_id') id=\"showincidentbuttona\"><i class=\"fa-solid fa-circle-exclamation\"></i></button>";
             echo "</td>";
             echo "</tr>";
