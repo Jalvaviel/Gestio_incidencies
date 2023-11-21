@@ -49,8 +49,8 @@ class Incident
         return $check;
     }
 
-    /**Función FindDevice
-     * 
+    /**Funcio FindDevice
+     * Serveix per trobar la informació associada a un codi
      */
     private function findDevice($connect, string $code)
     {
