@@ -80,6 +80,7 @@ function print_admin_table($incidents) : void
         echo "</tr>";
     }
     echo "</table>";
+    echo "<a href='insert_incident.html' id='insert'>Inserta un nou incident</a>";
 }
 function get_all_incidents($statement) : array
 {
