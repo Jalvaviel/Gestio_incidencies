@@ -49,6 +49,9 @@ class Incident
         return $check;
     }
 
+    /**Función FindDevice
+     * 
+     */
     private function findDevice($connect, string $code)
     {
         $sql = "SELECT COUNT(*) AS count FROM gestio_incidencies.devices WHERE code = $code";
@@ -302,7 +305,7 @@ class Incident
         [
             'id_incident' => $this->id_incident,
             'description' => $this->description,
-            'surname' => $this->status,
+            'status' => $this->status,
             'date' => $this->date,
             'id_user' => $this->id_user
         ];
