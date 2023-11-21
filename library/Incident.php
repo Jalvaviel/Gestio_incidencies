@@ -26,16 +26,15 @@ class Incident
     private function checkErrors($connect, string $condition, int $mode=1) : bool
     {
         $check = true;
-
         $column = ($mode == 1) ? "id_incident" : "id_user";
         $table = ($mode == 1) ? "incidents" : "users";
         
         $sql = "SELECT COUNT(?) AS 'count' FROM gestio_incidencies.$table WHERE ? = ?";
         $statement = $connect->prepare($sql);
         $statement->bind_param('ssi', $column, $column,$condition);
-        
         if (!$statement->execute())
         {
+            echo $statement->error;
             $check = false;
         }
 
@@ -276,8 +275,7 @@ class Incident
     public function delete(string $type) : bool
     {
         $connect = databaseConnect($type);
-        $check = $this->checkErrors($connect, $this->id_incident);
-        if((strcmp($type, 'admin') == 0 || strcmp($type, 'technician') == 0) && $check)
+        if((strcmp($type, 'admin') == 0 || strcmp($type, 'technician') == 0)) // $check no te cap valor
         {
             $sql = "DELETE FROM gestio_incidencies.incidents WHERE id_incident = ?";
             $statement = $connect->prepare($sql);

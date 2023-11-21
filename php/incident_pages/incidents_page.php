@@ -69,7 +69,8 @@ function print_admin_table($incidents) : void
         <th><strong>Descripció</strong></th>
         <th><strong>Estat</strong></th>
         <th><strong>Data</strong></th>
-        <th><strong>ID Usuari</strong></th></tr>";
+        <th><strong>ID Usuari</strong></th>
+        <th><strong>Modificar</strong></th></tr>";
 
     foreach ($incidents as $incident) {
         $incident_assoc = $incident->getProperties();
@@ -77,6 +78,15 @@ function print_admin_table($incidents) : void
         foreach ($incident_assoc as $key => $value) {
             echo "<td class='llista'>$value</td>";
         }
+        $current_incident_id = $incident_assoc['id_incident'];
+        $current_incident_description = $incident_assoc['description'];
+        $current_incident_status = $incident_assoc['status'];
+        $current_incident_date = $incident_assoc['date'];
+        $current_incident_user = $incident_assoc['id_user'];
+        echo "<td>";
+        echo "<button onclick=deleteFunc('$current_incident_id') id=\"deletebuttona\"><i class=\"fa-solid fa-trash\"></i></button>";
+        echo "<button onclick=updateFunc('$current_incident_id','$current_incident_description','$current_incident_status','$current_incident_date','$current_incident_user') id=\"updatebuttona\"><i class=\"fa-solid fa-gear\"></i></button>";
+        echo "</td>";
         echo "</tr>";
     }
     echo "</table>";
@@ -98,6 +108,75 @@ function get_all_incidents($statement) : array
     }
     return $incidents;
 }
+?>
+</nav>
+</body>
+<script>
+    function deleteFunc(id_incidenti)
+    {
+        let form_del;
+        let input;
+        if (confirm("Estàs segur d'esborrar aquest incident?"))
+        {
+            form_del = document.createElement('form');
+            form_del.setAttribute('method', 'POST');
+            form_del.setAttribute('action', './delete_incident.php');
+            input = document.createElement('input');
+            input.setAttribute('name','deleteincident')
+            input.setAttribute('type','hidden');
+            input.setAttribute('value',id_incidenti);
+            form_del.appendChild(input);
+            document.body.appendChild(form_del);
+            form_del.submit();
+        }
+    }
+    function updateFunc(id_devicei,osi,codei,descriptioni,roomi,ipi,id_incidenti)
+    {
+        const form_upd = document.createElement('form');
+        form_upd.setAttribute('method', 'POST');
+        form_upd.setAttribute('action', './update_device_form.php');
+
+        const inputs =
+            {
+                id_devicei,
+                osi,
+                codei,
+                descriptioni,
+                roomi,
+                ipi,
+                id_incidenti
+            };
+
+        for (const [key, value] of Object.entries(inputs))
+        {
+            const input = document.createElement('input');
+            input.setAttribute('name', key);
+            input.setAttribute('type', 'hidden');
+            input.setAttribute('value', value);
+            form_upd.appendChild(input);
+        }
+
+        document.body.appendChild(form_upd);
+        form_upd.submit();
+    }
+    function showIncidentsFunc(id_devicei)
+    { // Falta añadir el id_incident
+        let form_del;
+        let input;
+        form_del = document.createElement('form');
+        form_del.setAttribute('method', 'POST');
+        form_del.setAttribute('action', './show_incidents_device.php');
+        input = document.createElement('input');
+        input.setAttribute('name','show_incidents_device')
+        input.setAttribute('type','hidden');
+        input.setAttribute('value',id_devicei);
+        form_del.appendChild(input);
+        document.body.appendChild(form_del);
+        form_del.submit();
+    }
+
+</script>
+</html>
 
 
 
