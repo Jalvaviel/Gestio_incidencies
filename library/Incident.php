@@ -62,8 +62,9 @@ class Incident
         $count = $result['count'];
         if($count > 0 && $count < 2)
         {
-            $sql = "SELECT * FROM gestio_incidencies.devices WHERE code = $code";
+            $sql = "SELECT * FROM gestio_incidencies.devices WHERE code = ?";
             $statement = $connect->prepare($sql);
+            $statement->bind_param("s", $code);
             $statement->execute();
             $device_info = $statement->get_result()->fetch_assoc();
             return $device_info;
