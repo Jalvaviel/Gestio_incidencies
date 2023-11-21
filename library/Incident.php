@@ -55,27 +55,23 @@ class Incident
     {
         $sql = "SELECT COUNT(*) AS count FROM gestio_incidencies.devices WHERE code = $code";
         $statement = $connect->prepare($sql);
-        if($statement->execute())
+        $statement->execute();
+
+        $result = $statement->get_result()->fetch_assoc();
+        $count = $result['count'];
+        if($count > 0 && $count < 2)
         {
-            $result = $statement->get_result()->fetch_assoc();
-            $count = $result['count'];
-            if($count > 0 && $count < 2)
-            {
-                $sql = "SELECT * FROM gestio_incidencies.devices WHERE code = $code";
-                $statement = $connect->prepare($sql);
-                $statement->execute();
-                $device_info = $statement->get_result()->fetch_assoc();
-                return $device_info;
-            }
-            else
-            {
-                return false;
-            }
+            $sql = "SELECT * FROM gestio_incidencies.devices WHERE code = $code";
+            $statement = $connect->prepare($sql);
+            $statement->execute();
+            $device_info = $statement->get_result()->fetch_assoc();
+            return $device_info;
         }
         else
         {
             return false;
         }
+        return false;
     }
 
     /**Funcio updateDevice
@@ -84,8 +80,9 @@ class Incident
        només es pot actualitzar si el status està com arreglat
        o si el id_incidents = 0 ja que es un placeholder i
        es mostra com N/A
-     * Només necesita que li pasis el code del device i el type
-       del usuari que ho inserta. 
+     * Només necesita el code del device i el type del usuari 
+       que ho inserta. 
+     * Retorna un booleà si funciona o no.
      */
     public function updateDevice($type, string $code) : bool
     {
