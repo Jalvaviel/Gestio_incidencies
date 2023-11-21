@@ -82,8 +82,36 @@
         foreach ($devices as $device) {
             $device_assoc = $device->getProperties();
             echo "<tr>";
-            foreach ($device_assoc as $key => $value) {
-                echo "<td class='llista'>$value</td>";
+            foreach ($device_assoc as $key => $value) 
+            {
+                if($key == 'id_incident')
+                {
+                    if($value == 0)
+                    {
+                        echo "<td class='llista'>N/A</td>";
+                    }
+                    else
+                    {
+                        $bd = databaseConnect($_SESSION['role']);
+                        $sql = "SELECT * FROM gestio_incidencies.incidents WHERE id_incident = ?";
+                        $query = $bd->prepare($sql);
+                        $query->bind_param("i", $device_assoc['id_incident']);
+                        if($query->execute())
+                        {
+                            $res = $query->get_result()->fetch_assoc();
+                            $incident = $res['status'];
+                            echo "<td class='llista'>$incident</td>";
+                        }
+                        else
+                        {
+                            echo "<td class='llista'>N/A</td>";
+                        }
+                    }
+                }
+                else
+                {
+                    echo "<td class='llista'>$value</td>";
+                }
             }
             $current_device_id = $device_assoc['id_device'];
             $current_device_os = $device_assoc['os'];
@@ -91,27 +119,7 @@
             $current_device_description = $device_assoc['description'];
             $current_device_room = $device_assoc['room'];
             $current_device_ip = $device_assoc['ip'];
-            if($device_assoc['id_incident'] == 0)
-            {
-                $current_device_incident = 'N/A'; 
-            }
-            else
-            {
-                $bd = databaseConnect($_SESSION['role']);
-                $sql = "SELECT * FROM gestio_incidencies.incidents WHERE id_incident = ?";
-                $query = $bd->prepare($sql);
-                $query->bind_param("i", $device_assoc['id_incident']);
-                if($query->execute())
-                {
-                    $res = $query->get_result()->fetch_assoc();
-                    $current_device_incident = $res['status'];
-                }
-                else
-                {
-                    $current_device_incident = "Error";
-                }
-            }
-            
+            $current_device_incident = $device_assoc['id_incident'];
 
             echo "<td>";
             echo "<button onclick=deleteFunc('$current_device_id') id=\"deletebuttona\"><i class=\"fa-solid fa-trash\"></i></button>";
