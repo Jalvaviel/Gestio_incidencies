@@ -133,6 +133,34 @@ class Incident
         return false;
     }
 
+    /**Funció findUser
+     * Serveix per retornar un array associatiu d'un usuari
+       amb el id de la clase.
+       Retorna un array si troba 1 usuari.
+       Retorna fals si no troba o troba més d'un usuari.
+     */
+    public function findUser($type)
+    {
+        $connect = databaseConnect($type);
+        $id_user = $this->id_user;
+        $sql = "SELECT COUNT(*) AS count FROM gestio_incidencies.users WHERE id_user = $id_user";
+        $statement = $connect->prepare($sql);
+        if($statement->execute())
+        {
+            $result = $statement->get_result()->fetch_assoc();
+            $count = $result['count'];
+            if($count > 0 && $count < 2)
+            {
+                $sql = "SELECT * FROM gestio_incidencies.users WHERE id_user = $id_user";
+                $statement = $connect->prepare($sql);
+                $statement->execute();
+                $user_info = $statement->get_result()->fetch_assoc();
+                return $user_info;
+            }
+        }
+        return false;
+    }
+
     /**Funció insert
      * Serveix per insertar un usuari amb les variables de la classe,
        pots fer servir el constructor per omplir els valors a la classe
