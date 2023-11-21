@@ -314,22 +314,17 @@ class Incident
         {
             $sql = "SELECT MAX(id_incidents) AS 'max' FROM gestio_incidencies.incidents";
             $statement = $connect->prepare($sql);
-            if($statement->execute())
+            $statement->execute();
+
+            $result = $statement->get_result()->fetch_assoc();
+            $connect->close();
+            if(!isset($result['max']) || empty($result['max']))
             {
-                $result = $statement->get_result()->fetch_assoc();
-                $connect->close();
-                if(!isset($result['max']) || empty($result['max']))
-                {
-                    return false;
-                }
-                else
-                {
-                    return $result['max'];
-                }
+                return false;
             }
             else
             {
-                return false;
+                return $result['max'];
             }
         }
         else
