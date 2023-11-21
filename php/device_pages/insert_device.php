@@ -5,7 +5,7 @@
     if(empty($_SESSION['role'])){
         toUrl('../../html/login.html');
     }
-    $device = new Device(0, $_POST['os'], $_POST['code'], $_POST['description'], $_POST['ip'], $_POST['room'], 0);
+    $device = new Device(0, $_POST['os'], $_POST['code'], $_POST['description'], $_POST['room'], $_POST['ip'], 0);
     if($device->insert($_SESSION['role']))
     {
         echo "<script>
