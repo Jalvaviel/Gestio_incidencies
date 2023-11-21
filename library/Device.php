@@ -101,17 +101,8 @@ class Device
                 $statement = $connect->prepare($sql);
                 $statement->bind_param("sssis", $this->os, $this->code, $this->description, $this->room, $this->ip);
                 $statement->execute();
-
-                if($statement->execute())
-                {
-                    $connect->close();
-                    return true;
-                }
-                else
-                {
-                    $connect->close();
-                    return false;
-                }
+                $connect->close();
+                return true;
             }
         }
         else
