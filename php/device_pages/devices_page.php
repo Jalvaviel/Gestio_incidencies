@@ -168,7 +168,7 @@
             $device_assoc = $device->getProperties();
             echo "<tr>";
             foreach ($device_assoc as $key => $value) {
-                if ($key == 'os' || $key == 'code' || $key == 'description' || $key == 'room' || $key == 'id_incident')
+                if ($key == 'os' || $key == 'code' || $key == 'description' || $key == 'room')
                 {
                     echo "<td class='llista'>$value</td>";
                 }
