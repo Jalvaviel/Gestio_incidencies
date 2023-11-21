@@ -79,47 +79,29 @@ class Incident
         }
     }
 
+    /**Funcio updateDevice
+     * Aquesta funció fa servir la findDevice
+       per actualitzar comprobar si es pot actualitzar o no,
+       només es pot actualitzar si el status està com arreglat
+       o si el id_incidents = 0 ja que es un placeholder i
+       es mostra com N/A
+     * Només necesita que li pasis el code del device i el type
+       del usuari que ho inserta. 
+     */
     public function updateDevice($type, string $code) : bool
     {
         $connect = databaseConnect($type);
-        $device_info = $this->findDevice($connect, $code);
-        $id = $device_info['id_incident'];
-        if($id == 0)
+        if($device_info = $this->findDevice($connect, $code))
         {
-            $sql = "UPDATE gestio_incidencies.devices SET id_incident = ? WHERE code = ?";
-            $statement = $connect->prepare($sql);
-            $statement->bind_param("is", $this->id_incident, $code);
-            if($statement->execute())
+            $id = $device_info['id_incident'];
+            if($id == 0)
             {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        else
-        {
-            $sql = "SELECT status FROM gestio_incidencies.incidents WHERE id_incident = ?";
-            $statement = $connect->prepare($sql);
-            $statement->bind_param("i", $id);
-            if($statement->execute())
-            {
-                $device_incident = $statement->get_result()->fetch_assoc();
-                $status = $device_incident['status'];
-                if(strcmp($status, 'resolved') == 0)
+                $sql = "UPDATE gestio_incidencies.devices SET id_incident = ? WHERE code = ?";
+                $statement = $connect->prepare($sql);
+                $statement->bind_param("is", $this->id_incident, $code);
+                if($statement->execute())
                 {
-                    $sql = "UPDATE gestio_incidencies.devices SET id_incident = ? WHERE code = ?";
-                    $statement = $connect->prepare($sql);
-                    $statement->bind_param("is", $this->id_incident, $code);
-                    if($statement->execute())
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
+                    return true;
                 }
                 else
                 {
@@ -128,9 +110,27 @@ class Incident
             }
             else
             {
-                return false;
+                $sql = "SELECT status FROM gestio_incidencies.incidents WHERE id_incident = ?";
+                $statement = $connect->prepare($sql);
+                $statement->bind_param("i", $id);
+                if($statement->execute())
+                {
+                    $device_incident = $statement->get_result()->fetch_assoc();
+                    $status = $device_incident['status'];
+                    if(strcmp($status, 'resolved') == 0)
+                    {
+                        $sql = "UPDATE gestio_incidencies.devices SET id_incident = ? WHERE code = ?";
+                        $statement = $connect->prepare($sql);
+                        $statement->bind_param("is", $this->id_incident, $code);
+                        if($statement->execute())
+                        {
+                            return true;
+                        }
+                    }
+                }
             }
         }
+        return false;
     }
 
     /**Funció insert
