@@ -24,11 +24,12 @@ if (isset($_POST["submit"])){
     }
     else
     {
-        $_SESSION = array();
-        SESSION_DESTROY();
-       toUrl("../html/login.html");
+        echo "<script>
+        if(confirm(\"Credencials incorrectes!\")){
+            window.location.replace(\"../html/login.html\")
+        }
+        </script>";
     }
-
 }
 else{
     echo "<h1>hola</h1>";

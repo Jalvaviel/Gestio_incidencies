@@ -71,23 +71,27 @@ function print_admin_table($incidents) : void
         <th><strong>Descripció</strong></th>
         <th><strong>Estat</strong></th>
         <th><strong>Data</strong></th>
-        <th><strong>ID Usuari</strong></th>
+        <th><strong>Usuari</strong></th>
         <th><strong>Modificar</strong></th></tr>";
 
     foreach ($incidents as $incident) {
         $incident_assoc = $incident->getProperties();
         echo "<tr>";
         foreach ($incident_assoc as $key => $value) {
-            echo "<td class='llista'>$value</td>";
+            if($key=='id_user'){
+                $user->__construct($incident_assoc['id_user'], "null", "null", "null", "null", "worker");
+                $user->select($_SESSION['role']);
+                $email_result = $user->getProperties()['email'];
+                echo "<td class='llista'>$email_result</td>";
+            }else{
+                echo "<td class='llista'>$value</td>";
+            }
         }
         $current_incident_id = $incident_assoc['id_incident'];
         $current_incident_description = $incident_assoc['description'];
         $current_incident_stat = $incident_assoc['stat'];
         $current_incident_date = $incident_assoc['date'];
-        $user->__construct($incident_assoc['id_user'], "null", "null", "null", "null", "worker");
-        $user->select($_SESSION['role']);
-        $result = $user->getProperties();
-        $current_incident_user = $result['email'];
+        $current_incident_user = $incident_assoc['id_user'];
         echo "<td>";
         echo "<button onclick=deleteFunc('$current_incident_id') id=\"deletebuttona\"><i class=\"fa-solid fa-trash\"></i></button>";
         echo "<button onclick=updateFunc('$current_incident_id','$current_incident_description','$current_incident_stat','$current_incident_date','$current_incident_user') id=\"updatebuttona\"><i class=\"fa-solid fa-gear\"></i></button>";
