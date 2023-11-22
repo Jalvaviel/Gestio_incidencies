@@ -95,13 +95,15 @@ class Incident
         $id = $device_info['id_incident'];
         if($id == 0)
         {
-            $sql = "UPDATE gestio_incidencies.devices SET id_incident = ? WHERE code = ?";
+            echo "id 0";
+            $sql = "UPDATE gestio_incidencies.devices SET id_incident = ? WHERE id_device = ?";
             $statement = $connect->prepare($sql);
-            $statement->bind_param("is", $this->id_incident, $code);
+            $statement->bind_param("is", $this->id_incident, $id);
             $statement->execute();
         }
         else
         {
+            echo "id 1";
             $sql = "SELECT * FROM gestio_incidencies.incidents WHERE id_incident = ?";
             $statement = $connect->prepare($sql);
             $statement->bind_param("i", $id);
@@ -114,9 +116,9 @@ class Incident
                 $stat = $device_incident['stat'];
                 if(strcmp($stat, 'resolved') == 0)
                 {
-                    $sql = "UPDATE gestio_incidencies.devices SET id_incident = ? WHERE code = ?";
+                    $sql = "UPDATE gestio_incidencies.devices SET id_incident = ? WHERE id_device = ?";
                     $statement = $connect->prepare($sql);
-                    $statement->bind_param("is", $this->id_incident, $code);
+                    $statement->bind_param("is", $this->id_incident, $id);
                     if($statement->execute())
                     {
                         return true;
@@ -235,32 +237,27 @@ class Incident
      */
     public function select(string $type) : bool
     {
-        if(strcmp($type,'technician') == 0 || strcmp($type,'admin') == 0)
+        $connect = databaseConnect($type);
+        $check = $this->checkErrors($connect, $this->id_incident, 1);
+        if($check)
         {
-            $connect = databaseConnect($type);
-            $check = $this->checkErrors($connect, $this->id_incident, 1);
-            if($check)
-            {
-                $sql = "SELECT * FROM gestio_incidencies.incidents WHERE id_incident = ?";
-                $statement = $connect->prepare($sql);
-                $statement->bind_param("i", $this->id_incident);
-                $statement->execute();
-                $incident = $statement->get_result()->fetch_assoc();
-                $this->__construct($incident['id_incident'], $incident['description'], $incident['stat'], $incident['date'], $incident['id_user']);
-                $connect->close();
-                return true;
-            }
-            else
-            {
-                $connect->close();
-                return false;
-            }
+            $sql = "SELECT * FROM gestio_incidencies.incidents WHERE id_incident = ?";
+            $statement = $connect->prepare($sql);
+            $statement->bind_param("i", $this->id_incident);
+            $statement->execute();
+            $incident = $statement->get_result()->fetch_assoc();
+            $this->__construct($incident['id_incident'], $incident['description'], $incident['stat'], $incident['date'], $incident['id_user']);
+            $connect->close();
+            return true;
         }
         else
         {
+            $connect->close();
             return false;
         }
     }
+
+
 
 /**Funció delete
  * Agafa el id de la classe i l'esborra.

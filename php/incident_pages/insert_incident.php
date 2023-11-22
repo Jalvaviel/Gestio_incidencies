@@ -11,6 +11,7 @@ $incident = new Incident(0, $_POST['description'], 'unresolved', date('Y-m-d'), 
 if($incident->insert($_SESSION['role']))
 {
     $incident->select($_SESSION['role']);
+    echo "niga<br/>";
     $incident->updateDevice($_SESSION['role'],$_POST['code']);
     echo "<script>
             alert(\"Incident inserit correctament!\")
