@@ -27,6 +27,7 @@
 <nav class="menu">
 <?php
 session_start();
+include "../../library/User.php";
 include "../../library/Incident.php";
 include "../../library/helpers.php";
 if(empty($_SESSION)){
@@ -64,6 +65,7 @@ function show_all_incidents($role) : void
 }
 function print_admin_table($incidents) : void
 {
+    $user = new User(0, "null", "null", "null", "null", "worker");
     echo "<table>";
     echo "<tr><th><strong>ID Incident</strong></th>
         <th><strong>Descripció</strong></th>
@@ -82,7 +84,10 @@ function print_admin_table($incidents) : void
         $current_incident_description = $incident_assoc['description'];
         $current_incident_stat = $incident_assoc['stat'];
         $current_incident_date = $incident_assoc['date'];
-        $current_incident_user = $incident_assoc['id_user'];
+        $user->__construct($incident_assoc['id_user'], "null", "null", "null", "null", "worker");
+        $user->select($_SESSION['role']);
+        $result = $user->getProperties();
+        $current_incident_user = $result['email'];
         echo "<td>";
         echo "<button onclick=deleteFunc('$current_incident_id') id=\"deletebuttona\"><i class=\"fa-solid fa-trash\"></i></button>";
         echo "<button onclick=updateFunc('$current_incident_id','$current_incident_description','$current_incident_stat','$current_incident_date','$current_incident_user') id=\"updatebuttona\"><i class=\"fa-solid fa-gear\"></i></button>";
