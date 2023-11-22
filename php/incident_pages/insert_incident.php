@@ -11,12 +11,20 @@ $incident = new Incident(0, $_POST['description'], 'unresolved', date('Y-m-d'), 
 if($incident->insert($_SESSION['role']))
 {
     $incident->select($_SESSION['role']);
-    echo "niga<br/>";
-    $incident->updateDevice($_SESSION['role'],$_POST['code']);
-    echo "<script>
-            alert(\"Incident inserit correctament!\")
-            window.location.replace(\"./incidents_page.php\");
-            </script>";
+    if($incident->updateDevice($_SESSION['role'],$_POST['code']))
+    {
+        echo "<script>
+        alert(\"Incident inserit correctament!\")
+        window.location.replace(\"./incidents_page.php\");
+        </script>";
+    }
+    else
+    {
+        echo "<script>
+        alert(\"S'ha inserit, pero no ha actualitzat el device\")
+        window.location.replace(\"./incidents_page.php\");
+        </script>";
+    }
 }
 else
 {

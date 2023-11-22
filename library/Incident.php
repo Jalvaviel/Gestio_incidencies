@@ -53,7 +53,7 @@ class Incident
      */
     private function findDevice($connect, string $code)
     {
-        $sql = "SELECT COUNT(id_device) AS count FROM gestio_incidencies.devices WHERE code = ?";
+        $sql = "SELECT COUNT(id_device) AS count FROM gestio_incidencies.devices WHERE code LIKE ?";
         $statement = $connect->prepare($sql);
         $statement->bind_param("s", $code);
         $statement->execute();
@@ -91,40 +91,53 @@ class Incident
     {
         $connect = databaseConnect($type);
         $device_info = $this->findDevice($connect, $code);
-
-        $id = $device_info['id_incident'];
-        if($id == 0)
+        /*
+        foreach($device_info as $KEY => $VALUE)
         {
-            echo "id 0";
+            echo "$KEY $VALUE ";
+        }*/
+
+        $check = $device_info['id_incident'];
+        $id = $device_info['id_device'];
+
+        if($check == 0)
+        {
             $sql = "UPDATE gestio_incidencies.devices SET id_incident = ? WHERE id_device = ?";
             $statement = $connect->prepare($sql);
-            $statement->bind_param("is", $this->id_incident, $id);
-            $statement->execute();
+            $statement->bind_param("ii", $this->id_incident, $id);
+            if($statement->execute())
+            {
+                $connect->close();
+                return true;
+            }
+            else
+            {
+                $connect->close();
+                return false;
+            }
         }
         else
         {
-            echo "id 1";
             $sql = "SELECT * FROM gestio_incidencies.incidents WHERE id_incident = ?";
             $statement = $connect->prepare($sql);
             $statement->bind_param("i", $id);
             echo $id;
             $statement->execute();
             $device_incident = $statement->get_result()->fetch_assoc(); //TODO Problema
-                foreach($device_incident as $key => $value){
-                    echo "KEY: $key, VALUE: $value";
-                }
-                $stat = $device_incident['stat'];
-                if(strcmp($stat, 'resolved') == 0)
+            $stat = $device_incident['stat'];
+            if(strcmp($stat, 'resolved') == 0)
+            {
+                $sql = "UPDATE gestio_incidencies.devices SET id_incident = ? WHERE id_device = ?";
+                $statement = $connect->prepare($sql);
+                $statement->bind_param("is", $this->id_incident, $id);
+                if($statement->execute())
                 {
-                    $sql = "UPDATE gestio_incidencies.devices SET id_incident = ? WHERE id_device = ?";
-                    $statement = $connect->prepare($sql);
-                    $statement->bind_param("is", $this->id_incident, $id);
-                    if($statement->execute())
-                    {
-                        return true;
-                    }
+                    $connect->close();
+                    return true;
                 }
             }
+        }
+        $connect->close();
         return false;
     }
 
@@ -171,7 +184,6 @@ class Incident
             $connect = databaseConnect($type);
             if($this->checkErrors($connect, $this->id_incident, 1) || $this->checkErrors($connect, $this->id_user, 2))
             {
-                echo "sex1";
                 return false;
             }
             else
@@ -182,13 +194,12 @@ class Incident
                 $statement->bind_param("sssi", $this->description, $this->stat, $this->date, $this->id_user);
                 if($statement->execute())
                 {
-                    echo "sex2";
+                    $this->__construct($id, $this->description, $this->stat, $this->date, $this->id_user);
                     $connect->close();
                     return true;
                 }
                 else
                 {
-                    echo "sex4";
                     $connect->close();
                     return false;
                 }
