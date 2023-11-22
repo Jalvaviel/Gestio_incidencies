@@ -79,7 +79,7 @@ function print_admin_table($incidents) : void
         echo "<tr>";
         foreach ($incident_assoc as $key => $value) {
             if($key=='id_user'){
-                $user->__construct($incident_assoc['id_user'], "null", "null", "null", "null", "worker");
+                $user->__construct($incident_assoc['id_user'], "null", "null", "NIGERIA", "null", "worker");
                 $user->select($_SESSION['role']);
                 $email_result = $user->getProperties()['email'];
                 echo "<td class='llista'>$email_result</td>";
@@ -139,21 +139,15 @@ function get_all_incidents($statement) : array
             form_del.submit();
         }
     }
-    function updateFunc(id_devicei,osi,codei,descriptioni,roomi,ipi,id_incidenti)
+    function updateFunc(id_incidenti,descriptioni,stati,datei,id_useri)
     {
         const form_upd = document.createElement('form');
         form_upd.setAttribute('method', 'POST');
-        form_upd.setAttribute('action', './update_device_form.php');
+        form_upd.setAttribute('action', './update_incident_form.php');
 
         const inputs =
             {
-                id_devicei,
-                osi,
-                codei,
-                descriptioni,
-                roomi,
-                ipi,
-                id_incidenti
+                id_incidenti,descriptioni,stati,datei,id_useri
             };
 
         for (const [key, value] of Object.entries(inputs))
@@ -167,21 +161,6 @@ function get_all_incidents($statement) : array
 
         document.body.appendChild(form_upd);
         form_upd.submit();
-    }
-    function showIncidentsFunc(id_devicei)
-    { // Falta añadir el id_incident
-        let form_del;
-        let input;
-        form_del = document.createElement('form');
-        form_del.setAttribute('method', 'POST');
-        form_del.setAttribute('action', './show_incidents_device.php');
-        input = document.createElement('input');
-        input.setAttribute('name','show_incidents_device')
-        input.setAttribute('type','hidden');
-        input.setAttribute('value',id_devicei);
-        form_del.appendChild(input);
-        document.body.appendChild(form_del);
-        form_del.submit();
     }
 
 </script>

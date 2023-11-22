@@ -212,7 +212,7 @@ class Incident
     }
 
     /**Funció update
-     * Funció que actualitza tots el valors del usuari,
+     * Funció que actualitza tots el valors del incident,
        i fa servir el id per buscar-lo.
      * Retorna bool.
      */

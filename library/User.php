@@ -143,7 +143,7 @@ class User
             else
             {
                 $user = $statement->get_result()->fetch_assoc();
-                $this->__construct($user['id_user'], $user['name'], $user['surname'], "null", "null", "null");
+                $this->__construct($user['id_user'], $user['name'], $user['surname'], $user['email'], "null", "null");
             }
             $connect->close();
             return true;
