@@ -21,7 +21,7 @@ if($incident->insert($_SESSION['role']))
     else
     {
         echo "<script>
-        alert(\"S'ha inserit, pero no ha actualitzat el device\")
+        alert(\"No s'ha inserit, ja te una incidencia sense resoldre.\")
         window.location.replace(\"./incidents_page.php\");
         </script>";
     }
