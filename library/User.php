@@ -100,28 +100,22 @@ class User
      */
     public function update(string $type, bool $noPassword) : bool
     {
-        if(strcmp($type,'admin') != 0)
+        $connect = databaseConnect($type);
+        if ($noPassword)
         {
-            return false;
+            $sql = "UPDATE gestio_incidencies.users SET name = ?, surname = ?, email = ?, role = ? WHERE id_user = ?";
+            $statement = $connect->prepare($sql);
+            $statement->bind_param("ssssi", $this->name, $this->surname, $this->email, $this->role, $this->id_user);
         }
-        else
+        else if (!$noPassword)
         {
-            $connect = databaseConnect($type);
-            if ($noPassword)
-            {
-                $sql = "UPDATE gestio_incidencies.users SET name = ?, surname = ?, email = ?, role = ? WHERE id_user = ?";
-                $statement = $connect->prepare($sql);
-                $statement->bind_param("ssssi", $this->name, $this->surname, $this->email, $this->role, $this->id_user);
-            }
-            else if (!$noPassword)
-            {
-                $sql = "UPDATE gestio_incidencies.users SET name = ?, surname = ?, email = ?, password = ?, role = ? WHERE id_user = ?";
-                $statement = $connect->prepare($sql);
-                $statement->bind_param("sssssi", $this->name, $this->surname, $this->email, $this->password, $this->role, $this->id_user);
-            }
-            return $statement->execute() ? $connect->close() || true : $connect->close() || false;
+            $sql = "UPDATE gestio_incidencies.users SET name = ?, surname = ?, email = ?, password = ?, role = ? WHERE id_user = ?";
+            $statement = $connect->prepare($sql);
+            $statement->bind_param("sssssi", $this->name, $this->surname, $this->email, $this->password, $this->role, $this->id_user);
         }
+        return $statement->execute() ? $connect->close() || true : $connect->close() || false;
     }
+
 
     /**Funció select
      * Aquest funció serveix més per a buscar algún usuari en concret
