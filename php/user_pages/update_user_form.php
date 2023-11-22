@@ -31,11 +31,15 @@
             <th>Cognom</th>
             <th>Correu</th>
             <th>Contrasenya</th>
-            <th>Rol</th>
+            <?php
+            session_start();
+            if($_SESSION['role']=='admin'){
+               echo "<th>Rol</th>";
+            }
+            ?>
         </tr>
         <tr>
             <?php
-            session_start();
             $id_user = $_POST['id_useri'];
             $name = $_POST['namei'];
             $surname = $_POST['surnamei'];
@@ -45,7 +49,9 @@
             echo "<td><input name='surname' type='text' required='required' value='$surname' /></td>";
             echo "<td><input name='email' type='email' required='required' value='$email' /></td>";
             echo "<td><input name='password' type='password'/></td>";
-            echo "<td><input name='role' type='text' required='required' value='$role' /></td>";
+            if($_SESSION['role']=='admin'){
+                echo "<td><input name='role' type='text' required='required' value='$role' /></td>";
+            }
             ?>
         </tr>
     </table>

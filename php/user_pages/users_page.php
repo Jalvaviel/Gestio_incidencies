@@ -121,6 +121,7 @@
         <th><strong>Correu</strong></th>
         <th><strong>Rol</strong></th>
         <th><strong>Modificar</strong></th></tr>";
+        $id_user = $_SESSION['id_user'];
         $name = $_SESSION['name'];
         $surname = $_SESSION['surname'];
         $email = $_SESSION['email'];
@@ -130,6 +131,9 @@
         echo "<td class=\'llista\'> $surname </td>";
         echo "<td class=\'llista\'> $email </td>";
         echo "<td class=\'llista\'> $role </td>";
+        echo "<td class=\'llista\'><button onclick=updateFunc('$id_user','$name','$surname','$email','$role') id=\"updatebutton\"><i class=\"fa-solid fa-gear\"></i></button></td>";
+        echo "</tr>";
+
         echo "</i></a></td></tr>";
     }
 
