@@ -21,7 +21,7 @@ function databaseConnect($type)
     $env = parse_ini_file('.env');
     $db_user = $env[$type];
     $db_password = $env[$type . '_password'];
-    return mysqli_connect("127.0.0.1", $db_user, $db_password, "gestio_incidencies");;    
+    return mysqli_connect("localhost", $db_user, $db_password, "gestio_incidencies");;    
 }   
 
 /**Funció testDatabaseConnection
@@ -57,23 +57,4 @@ function hashPasswords($password)
     return password_hash($password,PASSWORD_BCRYPT);
 }
 
-/**
- * @throws Exception
- */
-function checkStatement($statement, $connect): void
-{
-    if (!$statement) throw new Exception("Error preparant query: " . $connect->error);
-}
-
-/**
- * @throws Exception
- */
-function checkResult($result, $statement): void
-{
-    if ($result) {
-        echo "Data insertada correctament";
-    } else {
-        throw new Exception("Error executant query: " . $statement->error);
-    }
-}
 ?>
