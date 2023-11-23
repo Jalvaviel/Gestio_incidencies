@@ -212,9 +212,9 @@ class Incident
     public function update(string $type) : bool
     {
         $connect = databaseConnect($type);
-        $sql = "UPDATE gestio_incidencies.incidents SET description = ?, stat = ?, date = ?, id_user = ? WHERE id_incident = ?";
+        $sql = "UPDATE gestio_incidencies.incidents SET description = ?, stat = ? WHERE id_incident = ?";
         $statement = $connect->prepare($sql);
-        $statement->bind_param("sssii", $this->description, $this->stat, $this->date, $this->id_user, $this->id_incident);
+        $statement->bind_param("ssi", $this->description, $this->stat, $this->id_incident);
         if($statement->execute())
         {
             $connect->close();
