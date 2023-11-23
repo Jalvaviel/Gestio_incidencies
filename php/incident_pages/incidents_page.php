@@ -79,7 +79,7 @@ function print_admin_table($incidents) : void
         echo "<tr>";
         foreach ($incident_assoc as $key => $value) {
             if($key=='id_user'){
-                $user->__construct($incident_assoc['id_user'], "null", "null", "NIGERIA", "null", "worker");
+                $user->__construct($incident_assoc['id_user'], "null", "null", "null", "null", "worker");
                 $user->select($_SESSION['role']);
                 $email_result = $user->getProperties()['email'];
                 echo "<td class='llista'>$email_result</td>";
@@ -93,11 +93,42 @@ function print_admin_table($incidents) : void
         $current_incident_date = $incident_assoc['date'];
         $current_incident_user = $incident_assoc['id_user'];
         echo "<td>";
-        echo "<button onclick=deleteFunc('$current_incident_id') id=\"deletebuttona\"><i class=\"fa-solid fa-trash\"></i></button>";
+        if ($_SESSION['role']=='admin'){
+            echo "<button onclick=deleteFunc('$current_incident_id') id=\"deletebuttona\"><i class=\"fa-solid fa-trash\"></i></button>";
+        }
         echo "<button onclick=updateFunc('$current_incident_id','$current_incident_description','$current_incident_stat','$current_incident_date','$current_incident_user') id=\"updatebuttona\"><i class=\"fa-solid fa-gear\"></i></button>";
         echo "</td>";
         echo "</tr>";
     }
+    echo "</table>";
+    echo "<a href='insert_incident.html' id='insert'>Inserta un nou incident</a>";
+}
+
+function print_table($incidents) : void
+{
+    echo "<table>";
+    echo "<tr>
+        <th><strong>Descripció</strong></th>
+        <th><strong>Estat</strong></th>
+        <th><strong>Data</strong></th>
+        <th><strong>Usuari</strong></th></tr>";
+        foreach ($incidents as $incident) {
+            $incident_assoc = $incident->getProperties();
+            foreach ($incident_assoc as $key => $value) {
+                if($key == 'id_user' && $value == $_SESSION['id_user']){
+                    $current_incident_description = $incident_assoc['description'];
+                    $current_incident_stat = $incident_assoc['stat'];
+                    $current_incident_date = $incident_assoc['date'];
+                    $current_incident_user = $incident_assoc['id_user'];
+                    echo "<tr>";
+                    echo "<td>$current_incident_description</td>";
+                    echo "<td>$current_incident_stat</td>";
+                    echo "<td>$current_incident_date</td>";
+                    echo "<td>$current_incident_user</td>";
+                    echo "</tr>";
+                }
+            }
+        }
     echo "</table>";
     echo "<a href='insert_incident.html' id='insert'>Inserta un nou incident</a>";
 }

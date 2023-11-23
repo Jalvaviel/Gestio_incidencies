@@ -91,11 +91,6 @@ class Incident
     {
         $connect = databaseConnect($type);
         $device_info = $this->findDevice($connect, $code);
-        /*
-        foreach($device_info as $KEY => $VALUE)
-        {
-            echo "$KEY $VALUE ";
-        }*/
 
         $check = $device_info['id_incident'];
         $id = $device_info['id_device'];
@@ -179,28 +174,21 @@ class Incident
      */
     public function insert(string $type) : bool
     {
-        $connect = databaseConnect($type);
-        if($this->checkErrors($connect, $this->id_incident, 1) || $this->checkErrors($connect, $this->id_user, 2))
+    $connect = databaseConnect($type);
+        $id = $this->max($type) + 1;
+        $sql = "INSERT INTO gestio_incidencies.incidents VALUES ($id, ?, ?, ?, ?)";
+        $statement = $connect->prepare($sql);
+        $statement->bind_param("sssi", $this->description, $this->stat, $this->date, $this->id_user);
+        if($statement->execute())
         {
-            return false;
+            $this->__construct($id, $this->description, $this->stat, $this->date, $this->id_user);
+            $connect->close();
+            return true;
         }
         else
         {
-            $id = $this->max($type) + 1;
-            $sql = "INSERT INTO gestio_incidencies.incidents VALUES ($id, ?, ?, ?, ?)";
-            $statement = $connect->prepare($sql);
-            $statement->bind_param("sssi", $this->description, $this->stat, $this->date, $this->id_user);
-            if($statement->execute())
-            {
-                $this->__construct($id, $this->description, $this->stat, $this->date, $this->id_user);
-                $connect->close();
-                return true;
-            }
-            else
-            {
-                $connect->close();
-                return false;
-            }
+            $connect->close();
+            return false;
         }
     }
 
@@ -303,15 +291,18 @@ class Incident
             $sql = "SELECT MAX(id_incident) AS 'max' FROM gestio_incidencies.incidents";
             $statement = $connect->prepare($sql);
             $statement->execute();
+            echo 1;
 
             $result = $statement->get_result()->fetch_assoc();
             $connect->close();
             if(!isset($result['max']) || empty($result['max']))
             {
+                echo 2;
                 return false;
             }
             else
             {
+                echo 3;
                 return $result['max'];
             }
         }
