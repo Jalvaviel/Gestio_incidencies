@@ -1,7 +1,7 @@
 <?php
 include "../../library/Device.php";
 session_start();
-$device = new Device($_POST['id_device'],$_POST['os'],$_POST['code'],$_POST['description'],$_POST['room'],$_POST['ip']);
+$device = new Device($_POST['id_device'],$_POST['os'],$_POST['code'],$_POST['description'],$_POST['ip'],$_POST['room'],$_POST['id_incident']);
 if (!empty($_POST['password'])){
     $device->update($_SESSION['role']);
 }

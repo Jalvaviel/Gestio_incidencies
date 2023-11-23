@@ -37,16 +37,18 @@
             <?php
             session_start();
             $id_device = $_POST['id_devicei'];
-            $os = $_POST['osi'];
+            $os = str_replace('_',' ',$_POST['osi']);
             $code = $_POST['codei'];
-            $description = $_POST['descriptioni'];
+            $description = str_replace('_',' ',$_POST['descriptioni']);
             $room = $_POST['roomi'];
             $ip = $_POST['ipi'];
+            $id_incident = $_POST['id_incidenti'];
             echo "<td><input name='os' type='text' required='required' value='$os' /></td>";
             echo "<td><input name='code' type='text' required='required' value='$code' /></td>";
             echo "<td><input name='description' type='text' required='required' value='$description' /></td>";
             echo "<td><input name='room' type='text' required='required' value='$ip' /></td>"; // NIGGERLICIOUS TODO
             echo "<td><input name='ip' type='text' required='required' value='$room' /></td>";
+            echo "<td><input name='id_incident' type='hidden' value='$id_incident' /></td>";
             ?>
         </tr>
     </table>

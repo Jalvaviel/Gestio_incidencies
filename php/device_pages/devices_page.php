@@ -82,6 +82,20 @@
         foreach ($devices as $device) {
             $device_assoc = $device->getProperties();
             echo "<tr>";
+            $test = $device_assoc['id_incident'];
+            $connect = databaseConnect($_SESSION['role']);
+            $sql = "SELECT count(*) as count FROM gestio_incidencies.incidents WHERE id_incident = ?";
+            $statement = $connect->prepare($sql);
+            $statement->bind_param("i",$test);
+            $statement->execute();
+            $count = $statement->get_result()->fetch_assoc();
+            if($count['count'] == 0)
+            {
+                $sql = "UPDATE gestio_incidencies.devices SET id_incident = 0 WHERE id_device = ?";
+                $statement = $connect->prepare($sql);
+                $statement->bind_param("i",$device_assoc['id_device']);
+                $statement->execute();
+            }
             foreach ($device_assoc as $key => $value) 
             {
                 if($key == 'id_incident')
@@ -101,7 +115,8 @@
                         {
                             $res = $query->get_result()->fetch_assoc();
                             $incident = $res['stat'];
-                            echo "<td class='llista'>$incident</td>";
+                            $incident2 = $res['description'];
+                            echo "<td class='llista'>$incident, $incident2</td>";
                         }
                         else
                         {
@@ -115,9 +130,9 @@
                 }
             }
             $current_device_id = $device_assoc['id_device'];
-            $current_device_os = $device_assoc['os'];
+            $current_device_os = str_replace(' ','_',$device_assoc['os']);
             $current_device_code = $device_assoc['code'];
-            $current_device_description = $device_assoc['description'];
+            $current_device_description = str_replace(' ','_',$device_assoc["description"]);
             $current_device_room = $device_assoc['room'];
             $current_device_ip = $device_assoc['ip'];
             $current_device_incident = $device_assoc['id_incident'];
