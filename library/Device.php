@@ -87,27 +87,20 @@ class Device
      */
     public function insert(string $type) : bool
     {
-        if(strcmp($type, 'admin') == 0 || strcmp($type, 'technician'))
+        $connect = databaseConnect($type);
+        if($this->checkErrors($connect, $this->id_device, 1) || $this->checkErrors($connect, $this->code, 2) || $this->checkErrors($connect, $this->ip, 3))
         {
-            $connect = databaseConnect($type);
-            if($this->checkErrors($connect, $this->id_device, 1) || $this->checkErrors($connect, $this->code, 2) || $this->checkErrors($connect, $this->ip, 3))
-            {
-                return false;
-            }
-            else
-            {
-                $id = $this->max($type) + 1;
-                $sql = "INSERT INTO gestio_incidencies.devices VALUES ($id, ?, ?, ?, ?, ?, 0)";
-                $statement = $connect->prepare($sql);
-                $statement->bind_param("sssis", $this->os, $this->code, $this->description, $this->room, $this->ip);
-                $statement->execute();
-                $connect->close();
-                return true;
-            }
+            return false;
         }
         else
         {
-            return false;
+            $id = $this->max($type) + 1;
+            $sql = "INSERT INTO gestio_incidencies.devices VALUES ($id, ?, ?, ?, ?, ?, 0)";
+            $statement = $connect->prepare($sql);
+            $statement->bind_param("sssis", $this->os, $this->code, $this->description, $this->room, $this->ip);
+            $statement->execute();
+            $connect->close();
+            return true;
         }
     }
 
@@ -118,25 +111,18 @@ class Device
      */
     public function update(string $type) : bool
     {
-        if(strcmp($type, 'admin') == 0 || strcmp($type, 'technician') == 0)
+        $connect = databaseConnect($type);
+        $sql = "UPDATE gestio_incidencies.devices SET os = ?, code = ?, description = ?, room = ?, ip = ?, id_incident = ? WHERE id_device = ?";
+        $statement = $connect->prepare($sql);
+        $statement->bind_param("ssssiii", $this->os, $this->code, $this->description, $this->room, $this->ip, $this->id_incident, $this->id_device);
+        if($statement->execute())
         {
-            $connect = databaseConnect($type);
-            $sql = "UPDATE gestio_incidencies.devices SET os = ?, code = ?, description = ?, room = ?, ip = ?, id_incident = ? WHERE id_device = ?";
-            $statement = $connect->prepare($sql);
-            $statement->bind_param("ssssiii", $this->os, $this->code, $this->description, $this->room, $this->ip, $this->id_incident, $this->id_device);
-            if($statement->execute())
-            {
-                $connect->close();
-                return true;
-            }
-            else
-            {
-                $connect->close();
-                return false;
-            }
+            $connect->close();
+            return true;
         }
         else
         {
+            $connect->close();
             return false;
         }
     }
@@ -151,29 +137,22 @@ class Device
      */
     public function select(string $type) : bool
     {
-        if(strcmp($type, 'technician') == 0 || strcmp($type, 'admin') == 0)
+        $connect = databaseConnect($type);
+        $check = $this->checkErrors($connect, $this->id_device, 1);
+        if($check)
         {
-            $connect = databaseConnect($type);
-            $check = $this->checkErrors($connect, $this->id_device, 1);
-            if($check)
-            {
-                $sql = "SELECT * FROM gestio_incidencies.devices WHERE id_device = ?";
-                $statement = $connect->prepare($sql);
-                $statement->bind_param("i", $this->id_device);
-                $statement->execute();
-                $device = $statement->get_result()->fetch_assoc();
-                $this->__construct($device['id_device'], $device['os'], $device['code'], $device['description'], $device['room'], $device['ip'], $device['id_incident']);
-                $connect->close();
-                return true;
-            }
-            else
-            {
-                $connect->close();
-                return false;
-            }
+            $sql = "SELECT * FROM gestio_incidencies.devices WHERE id_device = ?";
+            $statement = $connect->prepare($sql);
+            $statement->bind_param("i", $this->id_device);
+            $statement->execute();
+            $device = $statement->get_result()->fetch_assoc();
+            $this->__construct($device['id_device'], $device['os'], $device['code'], $device['description'], $device['room'], $device['ip'], $device['id_incident']);
+            $connect->close();
+            return true;
         }
         else
         {
+            $connect->close();
             return false;
         }
     }

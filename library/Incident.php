@@ -179,35 +179,28 @@ class Incident
      */
     public function insert(string $type) : bool
     {
-        if(strcmp($type,'admin') == 0)
+        $connect = databaseConnect($type);
+        if($this->checkErrors($connect, $this->id_incident, 1) || $this->checkErrors($connect, $this->id_user, 2))
         {
-            $connect = databaseConnect($type);
-            if($this->checkErrors($connect, $this->id_incident, 1) || $this->checkErrors($connect, $this->id_user, 2))
-            {
-                return false;
-            }
-            else
-            {
-                $id = $this->max($type) + 1;
-                $sql = "INSERT INTO gestio_incidencies.incidents VALUES ($id, ?, ?, ?, ?)";
-                $statement = $connect->prepare($sql);
-                $statement->bind_param("sssi", $this->description, $this->stat, $this->date, $this->id_user);
-                if($statement->execute())
-                {
-                    $this->__construct($id, $this->description, $this->stat, $this->date, $this->id_user);
-                    $connect->close();
-                    return true;
-                }
-                else
-                {
-                    $connect->close();
-                    return false;
-                }
-            }
+            return false;
         }
         else
         {
-            return false;
+            $id = $this->max($type) + 1;
+            $sql = "INSERT INTO gestio_incidencies.incidents VALUES ($id, ?, ?, ?, ?)";
+            $statement = $connect->prepare($sql);
+            $statement->bind_param("sssi", $this->description, $this->stat, $this->date, $this->id_user);
+            if($statement->execute())
+            {
+                $this->__construct($id, $this->description, $this->stat, $this->date, $this->id_user);
+                $connect->close();
+                return true;
+            }
+            else
+            {
+                $connect->close();
+                return false;
+            }
         }
     }
 
@@ -218,24 +211,20 @@ class Incident
      */
     public function update(string $type) : bool
     {
-        if(strcmp($type, 'admin') == 0 || strcmp($type, 'technician') == 0)
+        $connect = databaseConnect($type);
+        $sql = "UPDATE gestio_incidencies.incidents SET description = ?, stat = ?, date = ?, id_user = ? WHERE id_incident = ?";
+        $statement = $connect->prepare($sql);
+        $statement->bind_param("sssii", $this->description, $this->stat, $this->date, $this->id_user, $this->id_incident);
+        if($statement->execute())
         {
-            $connect = databaseConnect($type);
-            $sql = "UPDATE gestio_incidencies.incidents SET description = ?, stat = ?, date = ?, id_user = ? WHERE id_incident = ?";
-            $statement = $connect->prepare($sql);
-            $statement->bind_param("sssii", $this->description, $this->stat, $this->date, $this->id_user, $this->id_incident);
-            if($statement->execute())
-            {
-                $connect->close();
-                return true;
-            }
-            else
-            {
-                $connect->close();
-                return false;
-            }
+            $connect->close();
+            return true;
         }
-        return false;
+        else
+        {
+            $connect->close();
+            return false;
+        }
     }
 
     /**Funció select
@@ -280,21 +269,14 @@ class Incident
     public function delete(string $type) : bool
     {
         $connect = databaseConnect($type);
-        if((strcmp($type, 'admin') == 0 || strcmp($type, 'technician') == 0)) // $check no te cap valor
+
+        $sql = "DELETE FROM gestio_incidencies.incidents WHERE id_incident = ?";
+        $statement = $connect->prepare($sql);
+        $statement->bind_param("i", $this->id_incident);
+        if($statement->execute())
         {
-            $sql = "DELETE FROM gestio_incidencies.incidents WHERE id_incident = ?";
-            $statement = $connect->prepare($sql);
-            $statement->bind_param("i", $this->id_incident);
-            if($statement->execute())
-            {
-                $connect->close();
-                return true;
-            }
-            else
-            {
-                $connect->close();
-                return false;
-            }
+            $connect->close();
+            return true;
         }
         else
         {
