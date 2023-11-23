@@ -57,23 +57,4 @@ function hashPasswords($password)
     return password_hash($password,PASSWORD_BCRYPT);
 }
 
-/**
- * @throws Exception
- */
-function checkStatement($statement, $connect): void
-{
-    if (!$statement) throw new Exception("Error preparant query: " . $connect->error);
-}
-
-/**
- * @throws Exception
- */
-function checkResult($result, $statement): void
-{
-    if ($result) {
-        echo "Data insertada correctament";
-    } else {
-        throw new Exception("Error executant query: " . $statement->error);
-    }
-}
 ?>
