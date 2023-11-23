@@ -21,7 +21,7 @@ function databaseConnect($type)
     $env = parse_ini_file('.env');
     $db_user = $env[$type];
     $db_password = $env[$type . '_password'];
-    return mysqli_connect("127.0.0.1", $db_user, $db_password, "gestio_incidencies");;    
+    return mysqli_connect("localhost", $db_user, $db_password, "gestio_incidencies");;    
 }   
 
 /**Funció testDatabaseConnection
