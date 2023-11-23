@@ -118,7 +118,7 @@ class Incident
             $statement->bind_param("i", $id);
             echo $id;
             $statement->execute();
-            $device_incident = $statement->get_result()->fetch_assoc(); //TODO Problema
+            $device_incident = $statement->get_result()->fetch_assoc();
             $stat = $device_incident['stat'];
             if(strcmp($stat, 'resolved') == 0)
             {
