@@ -1,5 +1,4 @@
 <?php
-
 class Device
 {
     private int $id_device = 0;
@@ -114,7 +113,7 @@ class Device
         $connect = databaseConnect($type);
         $sql = "UPDATE gestio_incidencies.devices SET os = ?, code = ?, description = ?, room = ?, ip = ?, id_incident = ? WHERE id_device = ?";
         $statement = $connect->prepare($sql);
-        $statement->bind_param("ssssiii", $this->os, $this->code, $this->description, $this->room, $this->ip, $this->id_incident, $this->id_device);
+        $statement->bind_param("sssssii", $this->os, $this->code, $this->description, $this->room, $this->ip, $this->id_incident, $this->id_device);
         if($statement->execute())
         {
             $connect->close();

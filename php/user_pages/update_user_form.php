@@ -19,7 +19,7 @@
         <a href="../device_pages/devices_page.php" class="mainmenu">Equips</a>
     </nav>
     <nav id="mainoptions">
-        <a href="../login.php" id="profile"><i class="fa-solid fa-user" style="color: #ffffff;"></i>Perfil</a>
+        <a href="../user_pages/users_page.php" id="profile"><i class="fa-solid fa-user" style="color: #ffffff;"></i>Perfil</a>
         <a href="../../html/login.html" id="logout"><i class="fa-solid fa-right-from-bracket" style="color: #ffffff;"></i>Surt</a>
     </nav>
 </header>

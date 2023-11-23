@@ -20,7 +20,7 @@
         <a href="../device_pages/devices_page.php" class="mainmenu">Equips</a>
     </nav>
     <nav id="mainoptions">
-        <a href="../login.php" id="profile"><i class="fa-solid fa-user" style="color: #ffffff;"></i>Perfil</a>
+        <a href="../user_pages/users_page.php" id="profile"><i class="fa-solid fa-user" style="color: #ffffff;"></i>Perfil</a>
         <a href="../../html/login.html" id="logout"><i class="fa-solid fa-right-from-bracket" style="color: #ffffff;"></i>Surt</a>
     </nav>
 </header>
@@ -92,7 +92,7 @@ function print_admin_table($incidents) : void
             }
         }
         $current_incident_id = $incident_assoc['id_incident'];
-        $current_incident_description = $incident_assoc['description'];
+        $current_incident_description = str_replace(' ','_',$incident_assoc['description']);
         $current_incident_stat = $incident_assoc['stat'];
         $current_incident_date = $incident_assoc['date'];
         $current_incident_user = $incident_assoc['id_user'];

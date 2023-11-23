@@ -19,7 +19,7 @@
         <a href="./devices_page.php" class="mainmenu">Equips</a>
     </nav>
     <nav id="mainoptions">
-        <a href="../login.php" id="profile"><i class="fa-solid fa-user" style="color: #ffffff;"></i>Perfil</a>
+        <a href="../user_pages/users_page.php" id="profile"><i class="fa-solid fa-user" style="color: #ffffff;"></i>Perfil</a>
         <a href="../../html/login.html" id="logout"><i class="fa-solid fa-right-from-bracket" style="color: #ffffff;"></i>Surt</a>
     </nav>
 </header>
@@ -46,8 +46,8 @@
             echo "<td><input name='os' type='text' required='required' value='$os' /></td>";
             echo "<td><input name='code' type='text' required='required' value='$code' /></td>";
             echo "<td><input name='description' type='text' required='required' value='$description' /></td>";
-            echo "<td><input name='room' type='text' required='required' value='$ip' /></td>"; // NIGGERLICIOUS TODO
-            echo "<td><input name='ip' type='text' required='required' value='$room' /></td>";
+            echo "<td><input name='room' type='text' required='required' value='$room' /></td>"; // NIGGERLICIOUS TODO
+            echo "<td><input name='ip' type='text' required='required' value='$ip' /></td>";
             echo "<td><input name='id_incident' type='hidden' value='$id_incident' /></td>";
             ?>
         </tr>
