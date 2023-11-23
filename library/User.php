@@ -293,5 +293,26 @@ class User
             'role' => $this->role
         ];
     }
+
+    public function incidentsFromUser($type) : array
+    {
+        $connect = databaseConnect($type);
+        $check = $this->checkErrors($connect, $this->id_user, 1);
+        if($check)
+        {
+            $sql = "SELECT * FROM gestio_incidencies.incidents WHERE id_user = ?";
+            $statement = $connect->prepare($sql);
+            $statement->bind_param("i", $this->id_user);
+            $statement->execute();
+            $incident = $statement->get_result()->fetch_assoc();
+            $connect->close();
+            return $incident;
+        }
+        else
+        {
+            echo "Error al check";
+            return false;
+        }
+    }
 }
 ?>

@@ -10,7 +10,6 @@ if(empty($_SESSION['role']))
 $incident = new Incident(0, $_POST['description'], 'unresolved', date('Y-m-d'), $_SESSION['id_user']);
 if($incident->insert($_SESSION['role']))
 {
-    $incident->select($_SESSION['role']);
     if($incident->updateDevice($_SESSION['role'],$_POST['code']))
     {
         echo "<script>
@@ -28,13 +27,9 @@ if($incident->insert($_SESSION['role']))
 }
 else
 {
-    foreach($incident->getProperties() as $key => $value){
-        echo "KEY: $key, VALUE: $value";
-        echo "<br>";
-    }
     /*
     echo "<script>
-            alert(\"Error a l'inserir l'incident\") // TODO FALLA
+            alert(\"Error a l'inserir l'incident\") 
             window.location.replace(\"./incidents_page.php\");
             </script>";
     */

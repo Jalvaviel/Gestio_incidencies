@@ -123,9 +123,10 @@
             $current_device_incident = $device_assoc['id_incident'];
 
             echo "<td>";
+            if($_SESSION['role']=='admin'){
             echo "<button onclick=deleteFunc('$current_device_id') id=\"deletebuttona\"><i class=\"fa-solid fa-trash\"></i></button>";
-            echo "<button onclick=updateFunc('$current_device_id', '$current_device_os', '$current_device_code', '$current_device_description', '$current_device_room', '$current_device_ip', '$current_device_incident') id=\"updatebuttona\"><i class=\"fa-solid fa-gear\"></i></button>";
-            echo "<button onclick=showIncidentsFunc('$current_device_id') id=\"showincidentbuttona\"><i class=\"fa-solid fa-circle-exclamation\"></i></button>";
+            }
+            echo "<button onclick=updateFunc('$current_device_id','$current_device_os','$current_device_code','$current_device_description','$current_device_room','$current_device_ip','$current_device_incident') id=\"updatebuttona\"><i class=\"fa-solid fa-gear\"></i></button>";
             echo "</td>";
             echo "</tr>";
         }
