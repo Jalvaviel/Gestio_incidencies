@@ -160,7 +160,7 @@ GRANT USAGE ON *.* TO 'treballador'@'localhost';
 
 GRANT SELECT, UPDATE ON `gestio_incidencies`.`users` TO 'treballador'@'localhost';
 
-GRANT SELECT ON `gestio_incidencies`.`devices` TO 'treballador'@'localhost';
+GRANT SELECT, UPDATE(id_incident) ON `gestio_incidencies`.`devices` TO 'treballador'@'localhost';
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON `gestio_incidencies`.`incidents` TO 'treballador'@'localhost';
 
