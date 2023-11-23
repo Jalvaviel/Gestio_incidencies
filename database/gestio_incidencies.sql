@@ -56,7 +56,7 @@ DROP TABLE IF EXISTS `incidents`;
 CREATE TABLE `incidents` (
   `id_incident` int NOT NULL AUTO_INCREMENT,
   `description` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci DEFAULT NULL,
-  `status` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci DEFAULT NULL COMMENT 'resolved/unresolved',
+  `stat` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci DEFAULT NULL COMMENT 'resolved/unresolved',
   `date` date DEFAULT NULL,
   `id_user` int NOT NULL,
   PRIMARY KEY (`id_incident`),

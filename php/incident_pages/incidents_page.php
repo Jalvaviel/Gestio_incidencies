@@ -46,19 +46,23 @@ function show_all_incidents($role) : void
     $connect = databaseConnect($role);
     $statement = $connect->prepare("SELECT * FROM gestio_incidencies.incidents");
     // Control de consultes
-    if (!$statement) {
+    if (!$statement) 
+    {
         echo "Error preparant consulta.";
     }
     $result = $statement->execute();
-    if (!$result) {
+    if (!$result) 
+    {
         echo "Error obtenint resultats.";
     }
     $incidents = get_all_incidents($statement);
-    if($role == 'admin' || $role == 'technician'){
+    if($role == 'admin' || $role == 'technician')
+    {
         print_admin_table($incidents);
     }
     // Resultat i llista d'usuaris
-    else{
+    else
+    {
         print_table($incidents);
     }
     $connect->close();
@@ -136,7 +140,8 @@ function get_all_incidents($statement) : array
 {
     $incidents = [];
     $row = $statement->get_result();
-    while ($incidentData = $row->fetch_assoc()) {
+    while ($incidentData = $row->fetch_assoc()) 
+    {
         $incident = new Incident(
             $incidentData['id_incident'],
             $incidentData['description'],
