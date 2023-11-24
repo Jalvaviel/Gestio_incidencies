@@ -2,3 +2,4 @@
 order allow,deny
 Deny from all
 </Files>
+php_flag display_errors off
