@@ -21,7 +21,7 @@ function databaseConnect($type)
     $env = parse_ini_file('.env');
     $db_user = $env[$type];
     $db_password = $env[$type . '_password'];
-    return mysqli_connect("localhost", $db_user, $db_password, "gestio_incidencies");;    
+    return mysqli_connect("mysql", $db_user, $db_password, "gestio_incidencies");;    
 }   
 
 /**Funció testDatabaseConnection
@@ -33,7 +33,8 @@ function testDatabaseConnection()
     $env = parse_ini_file('.env');
     $db_user = $env['admin'];
     $db_password = $env['admin_password'];
-    $connect = databaseConnect($db_user, $db_password);
+    $port= "3306";
+    $connect = databaseConnect("mysql-1",$db_user, $db_password,"gestio_incidencies",$port);
     if (!$connect) 
     { 
         echo "Error: No s'ha pogut connectar a MySQL" . PHP_EOL;

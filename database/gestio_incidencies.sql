@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.31, for Win64 (x86_64)
 --
--- Host: localhost    Database: gestio_incidencies
+-- Host: mysql    Database: gestio_incidencies
 -- ------------------------------------------------------
 -- Server version	8.0.31
 
@@ -114,58 +114,58 @@ UNLOCK TABLES;
 
 -- Creación de usuarios
 
-DROP USER IF EXISTS 'treballador'@'localhost';
-DROP USER IF EXISTS 'tecnic'@'localhost';
-DROP USER IF EXISTS 'jalvabot'@'localhost';
-DROP USER IF EXISTS 'login'@'localhost';
+DROP USER IF EXISTS 'treballador'@'mysql';
+DROP USER IF EXISTS 'tecnic'@'mysql';
+DROP USER IF EXISTS 'jalvabot'@'mysql';
+DROP USER IF EXISTS 'login'@'mysql';
 
 /*
   Hay que poner las contaseñas sin proteger(hash) al importar, o da
   problemas al iniciar sesión.
 */
 
-CREATE USER 'jalvabot'@'localhost' IDENTIFIED BY 'c0Oku)44:jV^|X}bv1O@£o?n)';
+CREATE USER 'jalvabot'@'mysql' IDENTIFIED BY 'c0Oku)44:jV^|X}bv1O@£o?n)';
 
-CREATE USER 'tecnic'@'localhost' IDENTIFIED BY 'H9t#11B}<$?0~>';
+CREATE USER 'tecnic'@'mysql' IDENTIFIED BY 'H9t#11B}<$?0~>';
 
-CREATE USER 'treballador'@'localhost' IDENTIFIED BY 'Xf4,5iB8£9q3%';
+CREATE USER 'treballador'@'mysql' IDENTIFIED BY 'Xf4,5iB8£9q3%';
 
-CREATE USER 'login'@'localhost' IDENTIFIED BY '63Gg.j9~LI|l4Q{APws'; 
+CREATE USER 'login'@'mysql' IDENTIFIED BY '63Gg.j9~LI|l4Q{APws'; 
 
--- Privilegios para `jalvabot`@`localhost`
+-- Privilegios para `jalvabot`@`mysql`
 
-GRANT USAGE ON *.* TO 'jalvabot'@'localhost';
+GRANT USAGE ON *.* TO 'jalvabot'@'mysql';
 
-GRANT SELECT, INSERT, UPDATE, DELETE, CREATE ON `gestio_incidencies`.`users` TO 'jalvabot'@'localhost';
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE ON `gestio_incidencies`.`users` TO 'jalvabot'@'mysql';
 
-GRANT SELECT, INSERT, UPDATE, DELETE, CREATE ON `gestio_incidencies`.`devices` TO 'jalvabot'@'localhost';
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE ON `gestio_incidencies`.`devices` TO 'jalvabot'@'mysql';
 
-GRANT SELECT, INSERT, UPDATE, DELETE, CREATE ON `gestio_incidencies`.`incidents` TO 'jalvabot'@'localhost';
-
-
--- Privilegios para `tecnic`@`localhost`
-
-GRANT USAGE ON *.* TO 'tecnic'@'localhost';
-
-GRANT SELECT, UPDATE ON `gestio_incidencies`.`users` TO 'tecnic'@'localhost';
-
-GRANT SELECT, UPDATE ON `gestio_incidencies`.`devices` TO 'tecnic'@'localhost';
-
-GRANT SELECT, INSERT, UPDATE, DELETE ON `gestio_incidencies`.`incidents` TO 'tecnic'@'localhost';
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE ON `gestio_incidencies`.`incidents` TO 'jalvabot'@'mysql';
 
 
--- Privilegios para `treballador`@`localhost`
+-- Privilegios para `tecnic`@`mysql`
 
-GRANT USAGE ON *.* TO 'treballador'@'localhost';
+GRANT USAGE ON *.* TO 'tecnic'@'mysql';
 
-GRANT SELECT, UPDATE ON `gestio_incidencies`.`users` TO 'treballador'@'localhost';
+GRANT SELECT, UPDATE ON `gestio_incidencies`.`users` TO 'tecnic'@'mysql';
 
-GRANT SELECT, UPDATE(id_incident) ON `gestio_incidencies`.`devices` TO 'treballador'@'localhost';
+GRANT SELECT, UPDATE ON `gestio_incidencies`.`devices` TO 'tecnic'@'mysql';
 
-GRANT SELECT, INSERT, UPDATE, DELETE ON `gestio_incidencies`.`incidents` TO 'treballador'@'localhost';
+GRANT SELECT, INSERT, UPDATE, DELETE ON `gestio_incidencies`.`incidents` TO 'tecnic'@'mysql';
 
--- Privilegios para `login`@`localhost`
 
-GRANT USAGE ON *.* TO 'login'@'localhost';
+-- Privilegios para `treballador`@`mysql`
 
-GRANT SELECT ON `gestio_incidencies`.`users` TO `login`@`localhost`;
+GRANT USAGE ON *.* TO 'treballador'@'mysql';
+
+GRANT SELECT, UPDATE ON `gestio_incidencies`.`users` TO 'treballador'@'mysql';
+
+GRANT SELECT, UPDATE(id_incident) ON `gestio_incidencies`.`devices` TO 'treballador'@'mysql';
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON `gestio_incidencies`.`incidents` TO 'treballador'@'mysql';
+
+-- Privilegios para `login`@`mysql`
+
+GRANT USAGE ON *.* TO 'login'@'mysql';
+
+GRANT SELECT ON `gestio_incidencies`.`users` TO `login`@`mysql`;

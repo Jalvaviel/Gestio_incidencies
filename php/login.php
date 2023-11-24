@@ -2,8 +2,6 @@
 include "../library/User.php";
 include "../library/helpers.php";
 
-$_SESSION = array(0);
-session_destroy();
 session_start();
 if (isset($_POST["submit"])){
     $input_password = $_POST["password"];
@@ -31,7 +29,9 @@ if (isset($_POST["submit"])){
         </script>";
     }
 }
-else{
+else
+{
+    testDatabaseConnection();
     echo "<h1>hola</h1>";
 }
 ?>
