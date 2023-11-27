@@ -2,7 +2,8 @@
     session_start();
     include "../../library/helpers.php";
     include "../../library/Device.php";
-    if(empty($_SESSION['role'])){
+    if(empty($_SESSION['role']) || $_SESSION['role'] != "admin")
+    {
         toUrl('../../html/login.html');
     }
     $device = new Device(0, $_POST['os'], $_POST['code'], $_POST['description'], $_POST['room'], $_POST['ip'], 0);
