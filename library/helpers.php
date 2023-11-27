@@ -5,7 +5,7 @@
  */
 function toUrl($url)
 {    
-    header("Location: $url");
+    echo "<script> location.href = '$url'</script>";
     die();
 }
 
@@ -19,9 +19,12 @@ function databaseConnect($type)
 {
     assert($type == 'login' or $type == 'worker' or $type=='technician' or $type=='admin','$Error insertant dispositiu, potser no hi tens permissos?');
     $env = parse_ini_file('.env');
+    $host = "mysql";
     $db_user = $env[$type];
     $db_password = $env[$type . '_password'];
-    return mysqli_connect("mysql", $db_user, $db_password, "gestio_incidencies");;    
+    $db_name = "gestio_incidencies";
+    $db_port = 3306;
+    return mysqli_connect($host, "root", "javierCastelblanqueGerardPuigOrtega", $db_name, $db_port);
 }   
 
 /**Funció testDatabaseConnection
@@ -33,8 +36,8 @@ function testDatabaseConnection()
     $env = parse_ini_file('.env');
     $db_user = $env['admin'];
     $db_password = $env['admin_password'];
-    $port= "3306";
-    $connect = databaseConnect("mysql-1",$db_user, $db_password,"gestio_incidencies",$port);
+    echo $db_user . " " . $db_password;
+    $connect = mysqli_connect("172.18.0.2", "root", "javierCastelblanqueGerardPuigOrtega");    
     if (!$connect) 
     { 
         echo "Error: No s'ha pogut connectar a MySQL" . PHP_EOL;

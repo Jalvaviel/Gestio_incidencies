@@ -1,3 +1,12 @@
+<?php
+session_start();
+include "../../library/helpers.php";
+include "../../library/Device.php";
+if(empty($_SESSION['role']) || !isset($_SESSION['role']))
+{
+    toUrl('../../html/login.html');
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -26,14 +35,6 @@
 </header>
 <nav class="menu">
 <?php
-    session_start();
-    include "../../library/helpers.php";
-    include "../../library/Device.php";
-    if(empty($_SESSION['role']) || !isset($_SESSION['role']))
-    {
-        toUrl('../../html/login.html');
-    }
-
     show_all_devices($_SESSION['role']);
 
     function show_all_devices($role) : void

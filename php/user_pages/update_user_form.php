@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,7 +35,6 @@
             <th>Correu</th>
             <th>Contrasenya</th>
             <?php
-            session_start();
             if($_SESSION['role']=='admin'){
                echo "<th>Rol</th>";
             }

@@ -1,12 +1,13 @@
-<!DOCTYPE html>
 <?php
+    session_start();
     include "../../library/helpers.php";
     include "../../library/User.php";
-    session_start();
-    if(empty($_SESSION['email']) || empty($_SESSION['id_user']) || !isset($_SESSION['id_user']) || !isset($_SESSION['email'])){
+    if(empty($_SESSION['email']) || empty($_SESSION['id_user']) || !isset($_SESSION['id_user']) || !isset($_SESSION['email']))
+    {
         toUrl('../../html/login.html');
     }
 ?>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">

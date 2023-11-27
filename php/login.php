@@ -1,8 +1,7 @@
 <?php
+session_start();
 include "../library/User.php";
 include "../library/helpers.php";
-
-session_start();
 if (isset($_POST["submit"])){
     $input_password = $_POST["password"];
     $input_email = $_POST["email"];
@@ -18,6 +17,7 @@ if (isset($_POST["submit"])){
         $_SESSION["email"] = $result["email"];
         $_SESSION["password"] = $result["password"];
         $_SESSION["role"] = $result["role"];
+        echo $result["name"];
         toUrl("./user_pages/users_page.php");
     }
     else
@@ -31,7 +31,7 @@ if (isset($_POST["submit"])){
 }
 else
 {
-    testDatabaseConnection();
+    // testDatabaseConnection();
     echo "<h1>hola</h1>";
 }
 ?>

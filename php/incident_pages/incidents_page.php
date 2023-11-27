@@ -1,3 +1,12 @@
+<?php
+session_start();
+include "../../library/User.php";
+include "../../library/Incident.php";
+include "../../library/helpers.php";
+if(empty($_SESSION)){
+    toUrl('../../html/login.html');
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -26,13 +35,6 @@
 </header>
 <nav class="menu">
 <?php
-session_start();
-include "../../library/User.php";
-include "../../library/Incident.php";
-include "../../library/helpers.php";
-if(empty($_SESSION)){
-    toUrl('../../html/login.html');
-}
 switch($_SESSION['role']){
     case 'admin':
     case 'technician':

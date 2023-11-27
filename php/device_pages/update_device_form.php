@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -35,7 +38,6 @@
         </tr>
         <tr>
             <?php
-            session_start();
             $id_device = $_POST['id_devicei'];
             $os = str_replace('_',' ',$_POST['osi']);
             $code = $_POST['codei'];

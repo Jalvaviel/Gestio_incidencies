@@ -106,7 +106,7 @@ UNLOCK TABLES;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!4010 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
@@ -114,58 +114,210 @@ UNLOCK TABLES;
 
 -- CreaciÃ³n de usuarios
 
-DROP USER IF EXISTS 'treballador'@'mysql';
-DROP USER IF EXISTS 'tecnic'@'mysql';
-DROP USER IF EXISTS 'jalvabot'@'mysql';
-DROP USER IF EXISTS 'login'@'mysql';
+DROP USER IF EXISTS 'treballador'@'172.18.0.2';
+DROP USER IF EXISTS 'tecnic'@'172.18.0.2';
+DROP USER IF EXISTS 'jalvabot'@'172.18.0.2';
+DROP USER IF EXISTS 'login'@'172.18.0.2';
 
-/*
-  Hay que poner las contaseÃ±as sin proteger(hash) al importar, o da
-  problemas al iniciar sesiÃ³n.
-*/
+DROP USER IF EXISTS 'treballador'@'172.18.0.3';
+DROP USER IF EXISTS 'tecnic'@'172.18.0.3';
+DROP USER IF EXISTS 'jalvabot'@'172.18.0.3';
+DROP USER IF EXISTS 'login'@'172.18.0.3';
 
-CREATE USER 'jalvabot'@'mysql' IDENTIFIED BY 'c0Oku)44:jV^|X}bv1O@Â£o?n)';
+DROP USER IF EXISTS 'treballador'@'localhost';
+DROP USER IF EXISTS 'tecnic'@'localhost';
+DROP USER IF EXISTS 'jalvabot'@'localhost';
+DROP USER IF EXISTS 'login'@'localhost';
 
-CREATE USER 'tecnic'@'mysql' IDENTIFIED BY 'H9t#11B}<$?0~>';
+DROP USER IF EXISTS 'treballador'@'%';
+DROP USER IF EXISTS 'tecnic'@'%';
+DROP USER IF EXISTS 'jalvabot'@'%';
+DROP USER IF EXISTS 'login'@'%';
 
-CREATE USER 'treballador'@'mysql' IDENTIFIED BY 'Xf4,5iB8Â£9q3%';
+CREATE USER 'jalvabot'@'172.18.0.2' IDENTIFIED BY 'c0Oku)44:jV^|X}bv1O@£o?n)';
 
-CREATE USER 'login'@'mysql' IDENTIFIED BY '63Gg.j9~LI|l4Q{APws'; 
+CREATE USER 'tecnic'@'172.18.0.2' IDENTIFIED BY 'H9t#11B}<$?0~>';
 
--- Privilegios para `jalvabot`@`mysql`
+CREATE USER 'treballador'@'172.18.0.2' IDENTIFIED BY 'Xf4,5iB8£9q3%';
 
-GRANT USAGE ON *.* TO 'jalvabot'@'mysql';
+CREATE USER 'login'@'172.18.0.2' IDENTIFIED BY '63Gg.j9~LI|l4Q{APws'; 
 
-GRANT SELECT, INSERT, UPDATE, DELETE, CREATE ON `gestio_incidencies`.`users` TO 'jalvabot'@'mysql';
+-- Privilegios para `jalvabot`@`172.18.0.2`
 
-GRANT SELECT, INSERT, UPDATE, DELETE, CREATE ON `gestio_incidencies`.`devices` TO 'jalvabot'@'mysql';
+GRANT USAGE ON *.* TO 'jalvabot'@'172.18.0.2';
 
-GRANT SELECT, INSERT, UPDATE, DELETE, CREATE ON `gestio_incidencies`.`incidents` TO 'jalvabot'@'mysql';
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE ON `gestio_incidencies`.`users` TO 'jalvabot'@'172.18.0.2';
 
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE ON `gestio_incidencies`.`devices` TO 'jalvabot'@'172.18.0.2';
 
--- Privilegios para `tecnic`@`mysql`
-
-GRANT USAGE ON *.* TO 'tecnic'@'mysql';
-
-GRANT SELECT, UPDATE ON `gestio_incidencies`.`users` TO 'tecnic'@'mysql';
-
-GRANT SELECT, UPDATE ON `gestio_incidencies`.`devices` TO 'tecnic'@'mysql';
-
-GRANT SELECT, INSERT, UPDATE, DELETE ON `gestio_incidencies`.`incidents` TO 'tecnic'@'mysql';
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE ON `gestio_incidencies`.`incidents` TO 'jalvabot'@'172.18.0.2';
 
 
--- Privilegios para `treballador`@`mysql`
+-- Privilegios para `tecnic`@`172.18.0.2`
 
-GRANT USAGE ON *.* TO 'treballador'@'mysql';
+GRANT USAGE ON *.* TO 'tecnic'@'172.18.0.2';
 
-GRANT SELECT, UPDATE ON `gestio_incidencies`.`users` TO 'treballador'@'mysql';
+GRANT SELECT, UPDATE ON `gestio_incidencies`.`users` TO 'tecnic'@'172.18.0.2';
 
-GRANT SELECT, UPDATE(id_incident) ON `gestio_incidencies`.`devices` TO 'treballador'@'mysql';
+GRANT SELECT, UPDATE ON `gestio_incidencies`.`devices` TO 'tecnic'@'172.18.0.2';
 
-GRANT SELECT, INSERT, UPDATE, DELETE ON `gestio_incidencies`.`incidents` TO 'treballador'@'mysql';
+GRANT SELECT, INSERT, UPDATE, DELETE ON `gestio_incidencies`.`incidents` TO 'tecnic'@'172.18.0.2';
 
--- Privilegios para `login`@`mysql`
 
-GRANT USAGE ON *.* TO 'login'@'mysql';
+-- Privilegios para `treballador`@`172.18.0.2`
 
-GRANT SELECT ON `gestio_incidencies`.`users` TO `login`@`mysql`;
+GRANT USAGE ON *.* TO 'treballador'@'172.18.0.2';
+
+GRANT SELECT, UPDATE ON `gestio_incidencies`.`users` TO 'treballador'@'172.18.0.2';
+
+GRANT SELECT, UPDATE(id_incident) ON `gestio_incidencies`.`devices` TO 'treballador'@'172.18.0.2';
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON `gestio_incidencies`.`incidents` TO 'treballador'@'172.18.0.2';
+
+-- Privilegios para `login`@`172.18.0.2`
+
+GRANT USAGE ON *.* TO 'login'@'172.18.0.2';
+
+GRANT SELECT ON `gestio_incidencies`.`users` TO `login`@`172.18.0.2`;
+
+-- Creacion usuarios 172.18.0.3
+
+CREATE USER 'jalvabot'@'172.18.0.3' IDENTIFIED BY 'c0Oku)44:jV^|X}bv1O@£o?n)';
+
+CREATE USER 'tecnic'@'172.18.0.3' IDENTIFIED BY 'H9t#11B}<$?0~>';
+
+CREATE USER 'treballador'@'172.18.0.3' IDENTIFIED BY 'Xf4,5iB8£9q3%';
+
+CREATE USER 'login'@'172.18.0.3' IDENTIFIED BY '63Gg.j9~LI|l4Q{APws'; 
+
+-- Privilegios para `jalvabot`@`172.18.0.3`
+
+GRANT USAGE ON *.* TO 'jalvabot'@'172.18.0.3';
+
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE ON `gestio_incidencies`.`users` TO 'jalvabot'@'172.18.0.3';
+
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE ON `gestio_incidencies`.`devices` TO 'jalvabot'@'172.18.0.3';
+
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE ON `gestio_incidencies`.`incidents` TO 'jalvabot'@'172.18.0.3';
+
+
+-- Privilegios para `tecnic`@`172.18.0.3`
+
+GRANT USAGE ON *.* TO 'tecnic'@'172.18.0.3';
+
+GRANT SELECT, UPDATE ON `gestio_incidencies`.`users` TO 'tecnic'@'172.18.0.3';
+
+GRANT SELECT, UPDATE ON `gestio_incidencies`.`devices` TO 'tecnic'@'172.18.0.3';
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON `gestio_incidencies`.`incidents` TO 'tecnic'@'172.18.0.3';
+
+
+-- Privilegios para `treballador`@`172.18.0.3`
+
+GRANT USAGE ON *.* TO 'treballador'@'172.18.0.3';
+
+GRANT SELECT, UPDATE ON `gestio_incidencies`.`users` TO 'treballador'@'172.18.0.3';
+
+GRANT SELECT, UPDATE(id_incident) ON `gestio_incidencies`.`devices` TO 'treballador'@'172.18.0.3';
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON `gestio_incidencies`.`incidents` TO 'treballador'@'172.18.0.3';
+
+-- Privilegios para `login`@`172.18.0.3`
+
+GRANT USAGE ON *.* TO 'login'@'172.18.0.3';
+
+GRANT SELECT ON `gestio_incidencies`.`users` TO `login`@`172.18.0.3`;
+
+
+CREATE USER 'jalvabot'@'localhost' IDENTIFIED BY 'c0Oku)44:jV^|X}bv1O@£o?n)';
+
+CREATE USER 'tecnic'@'localhost' IDENTIFIED BY 'H9t#11B}<$?0~>';
+
+CREATE USER 'treballador'@'localhost' IDENTIFIED BY 'Xf4,5iB8£9q3%';
+
+CREATE USER 'login'@'localhost' IDENTIFIED BY '63Gg.j9~LI|l4Q{APws'; 
+
+-- Privilegios para `jalvabot`@`localhost`
+
+GRANT USAGE ON *.* TO 'jalvabot'@'localhost';
+
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE ON `gestio_incidencies`.`users` TO 'jalvabot'@'localhost';
+
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE ON `gestio_incidencies`.`devices` TO 'jalvabot'@'localhost';
+
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE ON `gestio_incidencies`.`incidents` TO 'jalvabot'@'localhost';
+
+
+-- Privilegios para `tecnic`@`localhost`
+
+GRANT USAGE ON *.* TO 'tecnic'@'localhost';
+
+GRANT SELECT, UPDATE ON `gestio_incidencies`.`users` TO 'tecnic'@'localhost';
+
+GRANT SELECT, UPDATE ON `gestio_incidencies`.`devices` TO 'tecnic'@'localhost';
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON `gestio_incidencies`.`incidents` TO 'tecnic'@'localhost';
+
+
+-- Privilegios para `treballador`@`localhost`
+
+GRANT USAGE ON *.* TO 'treballador'@'localhost';
+
+GRANT SELECT, UPDATE ON `gestio_incidencies`.`users` TO 'treballador'@'localhost';
+
+GRANT SELECT, UPDATE(id_incident) ON `gestio_incidencies`.`devices` TO 'treballador'@'localhost';
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON `gestio_incidencies`.`incidents` TO 'treballador'@'localhost';
+
+-- Privilegios para `login`@`localhost`
+
+GRANT USAGE ON *.* TO 'login'@'localhost';
+
+GRANT SELECT ON `gestio_incidencies`.`users` TO `login`@`localhost`;
+
+
+CREATE USER 'jalvabot'@'%' IDENTIFIED BY 'c0Oku)44:jV^|X}bv1O@£o?n)';
+
+CREATE USER 'tecnic'@'%' IDENTIFIED BY 'H9t#11B}<$?0~>';
+
+CREATE USER 'treballador'@'%' IDENTIFIED BY 'Xf4,5iB8£9q3%';
+
+CREATE USER 'login'@'%' IDENTIFIED BY '63Gg.j9~LI|l4Q{APws'; 
+
+-- Privilegios para `jalvabot`@`%`
+
+GRANT USAGE ON *.* TO 'jalvabot'@'%';
+
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE ON `gestio_incidencies`.`users` TO 'jalvabot'@'%';
+
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE ON `gestio_incidencies`.`devices` TO 'jalvabot'@'%';
+
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE ON `gestio_incidencies`.`incidents` TO 'jalvabot'@'%';
+
+
+-- Privilegios para `tecnic`@`%`
+
+GRANT USAGE ON *.* TO 'tecnic'@'%';
+
+GRANT SELECT, UPDATE ON `gestio_incidencies`.`users` TO 'tecnic'@'%';
+
+GRANT SELECT, UPDATE ON `gestio_incidencies`.`devices` TO 'tecnic'@'%';
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON `gestio_incidencies`.`incidents` TO 'tecnic'@'%';
+
+
+-- Privilegios para `treballador`@`%`
+
+GRANT USAGE ON *.* TO 'treballador'@'%';
+
+GRANT SELECT, UPDATE ON `gestio_incidencies`.`users` TO 'treballador'@'%';
+
+GRANT SELECT, UPDATE(id_incident) ON `gestio_incidencies`.`devices` TO 'treballador'@'%';
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON `gestio_incidencies`.`incidents` TO 'treballador'@'%';
+
+-- Privilegios para `login`@`%`
+
+GRANT USAGE ON *.* TO 'login'@'%';
+
+GRANT SELECT ON `gestio_incidencies`.`users` TO `login`@`%`;

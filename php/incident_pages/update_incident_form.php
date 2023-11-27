@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,7 +35,6 @@
         </tr>
         <tr>
             <?php
-            session_start();
             $id_incident = $_POST['id_incidenti'];
             $description = str_replace('_',' ',$_POST['descriptioni']);
             echo "<td><input name='description' type='text' required='required' value='$description' /></td>";
